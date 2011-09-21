@@ -1,4 +1,5 @@
-var cluster = require('cluster'),
+var spawn = require('child_process').spawn,
+    cluster = require('cluster'),
     start = process.argv[process.argv.length - 1] === 'start';
 
 if (start) {
