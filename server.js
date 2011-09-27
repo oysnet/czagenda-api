@@ -10,8 +10,8 @@ if (start) {
     var node = process.execPath,
         cmd = process.argv.slice(1, -1);
 
-    //spawn(node, cmd, { env : process.env, setsid: true });
-    //process.exit(0);
+    spawn(node, cmd, { env : process.env, setsid: true });
+    process.exit(0);
 }
 
 
