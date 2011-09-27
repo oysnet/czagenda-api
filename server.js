@@ -1,11 +1,11 @@
 var spawn = require('child_process').spawn,
     cluster = require('cluster'),
-    mdns = require('node_mdns'),
+    mdns = require('node-bj'),
     start = process.argv[process.argv.length - 1] === 'start';
 
 
 if (start) {
-    var ad = mdns.createAdvertisement('http-api', 3000);
+    var ad = mdns.createAdvertisement('api-http', 3000);
     ad.start()
     var node = process.execPath,
         cmd = process.argv.slice(1, -1);
