@@ -1,26 +1,27 @@
 var spawn = require('child_process').spawn,
     cluster = require('cluster'),
-    mdns = require('node-bj'),
-    start = process.argv[process.argv.length - 1] === 'start';
-
-
-if (start) {
-    var ad = mdns.createAdvertisement('api-http', 3000);
-    ad.start()
-    var node = process.execPath,
-        cmd = process.argv.slice(1, -1);
-
-    spawn(node, cmd, { env : process.env, setsid: true });
-    process.exit(0);
-}
-
-
-cluster('./app')
+    start = process.argv[process.argv.length - 1] === 'start',
+    czdiscovery = require('czagenda-discovery'),
+    config = require('./config');
+console.log(config);
+var cluster = require('cluster')('./app')
   .use(cluster.logger('logs'))
   .use(cluster.stats())
   .use(cluster.pidfiles('pids'))
   .use(cluster.cli())
-//  .use(cluster.repl(8888))
-  .listen(3000);
+  .use(cluster.repl(8888))
+  .listen(config.PORT);
+
+console.log(config.IP,config.PORT);
+if (start) {
+    if (cluster.isMaster) {
+      var a = new czdiscovery.Advertisement('http-api',config.IP,config.PORT);
+      a.start();
+    }
+    var node = process.execPath,
+        cmd = process.argv.slice(1, -1);
+//    spawn(node, cmd, { env : process.env, setsid: true });
+//    process.exit(0);
+}
 
 
