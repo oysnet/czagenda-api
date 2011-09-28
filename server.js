@@ -3,7 +3,14 @@ var spawn = require('child_process').spawn,
     start = process.argv[process.argv.length - 1] === 'start',
     czdiscovery = require('czagenda-discovery'),
     config = require('./config');
-console.log(config);
+
+if (start) {
+  var node = process.execPath,
+      cmd = process.argv.slice(1, -1);
+  spawn(node, cmd, { env : process.env, setsid: true });
+  process.exit(0);
+}
+
 var cluster = require('cluster')('./app')
   .use(cluster.logger('logs'))
   .use(cluster.stats())
@@ -12,18 +19,11 @@ var cluster = require('cluster')('./app')
   .use(cluster.repl(8888))
   .listen(config.PORT);
 
-console.log(config.IP,config.PORT);
-if (start) {
-    if (cluster.isMaster) {
-      var a = new czdiscovery.Advertisement('http-api',config.IP,config.PORT);
-      a.start();
-      cluster.on('closing',function() {console.log('stop');a.stop});
-    }
-    var node = process.execPath,
-        cmd = process.argv.slice(1, -1);
-    spawn(node, cmd, { env : process.env, setsid: true });
-    process.exit(0);
-}
-
-
-
+var a = null;
+cluster.on('closing',function() {
+    a.stop();
+});
+cluster.on('start',function() {
+	a = new czdiscovery.Advertisement('http-api',config.IP,config.PORT);
+	a.start();
+});
