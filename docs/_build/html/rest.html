@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
-    <link rel="next" title="Types de documents" href="data.html" />
+    <link rel="next" title="Types of documents" href="data.html" />
     <link rel="prev" title="Welcome to Citizens Agenda’s documentation!" href="index.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="data.html" title="Types de documents"
+          <a href="data.html" title="Types of documents"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
@@ -115,6 +115,7 @@
 <p>The server returns data as below</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
 <span class="go">    &quot;total_rows&quot;:&lt;Database Document&#39;s count&gt;,</span>
+<span class="go">    &quot;offset&quot;: 0,</span>
 <span class="go">    &quot;rows&quot;:[{</span>
 <span class="go">           Document data...</span>
 <span class="go">           }]</span>
@@ -124,6 +125,7 @@
 <ul class="simple">
 <li>total_row is the document count of the specified type in the database, not in the response.</li>
 <li>rows contains the documents, see data structure for more explanations.</li>
+<li>offset is the amount of documents that are skipped when request is paginated.</li>
 </ul>
 <p>1.1. Pagination</p>
 <blockquote>
@@ -233,6 +235,24 @@
 </li>
 </ol>
 </div>
+<div class="section" id="membership">
+<h3>Membership<a class="headerlink" href="#membership" title="Permalink to this headline">¶</a></h3>
+<p>User and Group documents provide an URI to get memberships in respectively groups and users attributes.</p>
+<p>For users, the groups URI return a list of partial membership documents. Partial because only the group part is returned.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">login_user</span><span class="o">/</span><span class="n">groups</span>
+<span class="go">        {</span>
+<span class="go">        &quot;total_rows&quot;: 1,</span>
+<span class="go">        &quot;offset&quot;: 0,</span>
+<span class="go">        &quot;rows&quot;: [{</span>
+<span class="go">                &quot;group&quot;: &quot;/group/group-03144642920233309&quot;,</span>
+<span class="go">                &quot;createDate&quot;: &quot;2011-10-03T08:39:07.596Z&quot;,</span>
+<span class="go">                &quot;updateDate&quot;: &quot;2011-10-03T08:39:07.596Z&quot;,</span>
+<span class="go">                &quot;id&quot;: &quot;/membership/501b30dddab023bbc3b462653130ad69&quot;</span>
+<span class="go">        }]</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+</div>
 </div>
 </div>
 
@@ -258,6 +278,7 @@
 </li>
 <li><a class="reference internal" href="#specifics-of-the-api-by-document-type">Specifics of the API by document type</a><ul>
 <li><a class="reference internal" href="#search">Search</a></li>
+<li><a class="reference internal" href="#membership">Membership</a></li>
 </ul>
 </li>
 </ul>
@@ -269,7 +290,7 @@
                         title="previous chapter">Welcome to Citizens Agenda&#8217;s documentation!</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="data.html"
-                        title="next chapter">Types de documents</a></p>
+                        title="next chapter">Types of documents</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/rest.txt"
@@ -278,7 +299,7 @@
 <div id="searchbox" style="display: none">
   <h3>Quick search</h3>
     <form class="search" action="search.html" method="get">
-      <input type="text" name="q" size="18" />
+      <input type="text" name="q" />
       <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
@@ -299,7 +320,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="data.html" title="Types de documents"
+          <a href="data.html" title="Types of documents"
              >next</a> |</li>
         <li class="right" >
           <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
@@ -309,7 +330,7 @@
     </div>
     <div class="footer">
         &copy; Copyright 2011, Oxys SARL.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.7.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
     </div>
   </body>
 </html>

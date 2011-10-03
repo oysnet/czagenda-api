@@ -3,11 +3,11 @@ var http = require('http');
 function Rest (host, port) {
 
 	if(typeof(host) === 'undefined' || host === null) {
-		host = '127.0.0.1';
+		host = '10.7.36.130';
 	}
 
 	if(typeof(port) === 'undefined' || port === null) {
-		port = 3000;
+		port = 8000;
 	}
 
 	this.__host = host;

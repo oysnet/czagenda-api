@@ -1,105 +1,99 @@
-Types de documents
+Types of documents
 ============================
 	
-Il existe quatres types de documents: :ref:`event <doc_event>`, :ref:`user <doc_user>`, :ref:`group <doc_group>` et :ref:`schema <doc_schema>`.
+Types of documents are:
 
-Les documents de type *user* contiennent les informations relatives aux utilisateurs du service.
+	* :ref:`event <doc_event>`
+	* :ref:`user <doc_user>`
+	* :ref:`group <doc_group>`
+	* :ref:`schema <doc_schema>`
+	* ...
+	* ...
 
-Les documents de type *schema* sont des documents particuliers utilisés pour décrire et valider le contenu des documents de type *event*
 
 
-Attributs communs à tous les documents
+
+Common attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 	
 .. warning:: Les attributs ci-dessous sont en lecture seule. 
 	
 .. _common_id:
 	
-``_id (String)``  
+``id (String)``  
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Identifiant unique au travers de tous les documents du service, quelques soient leurs types.
+It is the unique identifier of the document. It is also its URI. So you can do a GET request on a document's id to get it.
 
 	
-``_rev (String)``
+``createDate (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Identifiant de révision. 
+creation date. 
 
 	
-``type (String)``
+``updateDate (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Le type de document: event, user ou schema.
-
-``hash (String)``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Son mode de calcul est spécifique à chaque type de document. Cet attribut permet d'empecher la création de documents en double.  
+Last update date.
 
 
 .. _doc_user:
 
-Document de type *user*
+Type *user*
 ^^^^^^^^^^^^^^^^^^^^^^^
 	
-Ces documents contiennent les données relatives aux comptes utilisateurs.
-	
-``first_name (String)``
+``firstName (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Prénom de l'utilisateur
 	
-``last_name (String)``
+``lastName (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Nom de l'utilisateur
 		
 ``email (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Adresse email de l'utilisateur.
-	
-
-``password (String)``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
-	Mot de passe crypté de l'utilisateur.
 
 	
-``is_active (Boolean)``
+``isActive (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Booléen indiquant si l'utilisateur est actif. Les utilisateurs inactifs ne peuvent pas accèder au service.
+	True if the user is active.  Inactive users cant's access the service.
 	
 	
-``is_staff (Boolean)``
+``isStaff (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Booléen indiquant si l'utilisateur est membre de l'équipe d'administration. Seule l'équipe d'administration a accès à l'outil d'administration.
+	True if the user is a staff member. Only staff members can access the admin interface.
 	
-	L'accès aux fonctionnalités de l'outils d'administration est affiné via une gestion de groupe.
-
 	
-``is_superuser (Boolean)``
+``isSuperuser (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Booléen indiquant si l'utilisateur est super utilisateur. Un super utilisateur a accès sans restriction à toutes les fonctionnalités du service.
+	True if the user is a super user. Super users have no restrictions when accessing the admin interface.
 	
 
-``last_login (Datetime)``
+``lastLogin (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Date de la dernière authentification sur le service.
+	Date of last authentication against the service.
 	
-``date_joined (Datetime)``
+``dateJoined (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Date d'inscription au service.
+	Date of the registration.
+		
+		
+``groups (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get groups list of which the user is a member. 
+
 		
 .. _doc_event:
 
-Document de type *event*
+Type *event*
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. _doc_event_event:
@@ -107,92 +101,115 @@ Document de type *event*
 ``event (Object)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-L'attribut *event* contient une structure de données décrivant l'évènement. Cette structure est contrainte par un document de type :ref:`schema <doc_schema>`.
+event attribute contains a data structure that describes the event itself. this structure is constrained by a :ref:`schema <doc_schema>` document type.
 
 
 ``author (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient l'identifiant (attribut :ref:`_id <common_id>`) du document de type *user*
+The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
 
-``status (Enum)``
+
+``writeGroups (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Définit le status de 'évènement. Les valeur possible sont:
-	* canceled : annulé
-	* confirmed : confirmé
-	* tentative : proposition
+Contains an URI to get write group permissions.
 
-``write_groups (List)``
+
+``readGroups (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient les identifiant des documents de type :ref:`group <doc_group>` ayant accès en écriture sur le document.
+Contains an URI to get read group permissions.
 
-**Si la longueur du tableau est 0, aucune restriction n'est appliquée.**
 
-``read_groups (List)``
+``writeUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient les identifiant des documents de type :ref:`group <doc_group>` ayant accès en lecture sur le document.
+Contains an URI to get write user permissions.
 
-Si la longueur du tableau est 0, aucune restriction n'est appliquée.
 
-``write_users (List)``
+``readUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient les identifiant des documents de type :ref:`user <doc_user>` ayant accès en écriture sur le document.
-
-Si la longueur du tableau est 0, aucune restriction n'est appliquée.
-
-``read_users (List)``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Contient les identifiant des documents de type :ref:`user <doc_user>` ayant accès en lecture sur le document.
-
-Si la longueur du tableau est 0, aucune restriction n'est appliquée.
+Contains an URI to get read user permissions.
  
 
 .. _doc_schema:
 
-Document de type *schema*
+Type *schema*
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Les documents de type *schema* sont des documents particuliers utiliser pour décrire et valider le contenu de l'attribut :ref:`event <doc_event_event>` des documents de type :ref:`event <doc_event>`. 
+These documents are used to describe and validate the :ref:`event <doc_event_event>` attribute for the :ref:`event <doc_event>` document type
 
-Comme les autres types de document, ce type de document contient des attributs systèmes ainsi que des attributs qui lui sont propres. Parmis ces attributs, l'attribut :ref:`schema <doc_schema_schema>` contient les données utilisées pour la validation.
+``name (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. _doc_schema_schema:
 
 ``schema (Object)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient les données de validation. Il s'agit d'une structure d'objet définie par les spécifications `json-schema-03 <http://tools.ietf.org/html/draft-zyp-json-schema-03>`_
+Contains the data structure used to validate. More informations can be found `here <http://tools.ietf.org/html/draft-zyp-json-schema-03>`_
 
 ``final (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Définit si un schéma peut etre utilisé pour valider un évènement, si final vaut false le schéma peut être utilisé dans un héritage de schéma.
+True if the document can be used to validate an event. If false the document must be part of an inheritance.
+
 
 ``sample (Object)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient un exemple de structure de données validant le schéma.
+Contains a data sample that validate the schema.
 
 ``template (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Contient un template pouvant être utilisé pour obtenir une structure html simple d'un évènement utilisant ce schema
+Contains a template which can be used to render an event as html.
 
 ``status (Enum)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Définit le status du document:
-	* PUBLISHED : le document est utilisable
-	* DRAFT : le document est en cours de création, il n'est pas utilisable
-	* DEPRECATED : le document est utilisé, mais son utilisation pour valider de nouveau èvènements est déconseillée
+Define document's status
+	* PUBLISHED  
+	* DRAFT 
+	* DEPRECATED
 
 
 .. _doc_group:
 
-Document de type *group*
+Type *group*
 ^^^^^^^^^^^^^^^^^^^^^^^^^	
+	
+``title (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``description (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``users (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get group memberships in terms of the group.
+
+``writeGroups (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get write group permissions.
+
+``writeUsers (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get write user permissions.
+
+
+Type *membership*
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+``user (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Contains the user id
+
+``group (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Contains the group id

@@ -72,6 +72,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	>>> {
 	    "total_rows":<Database Document's count>,
+	    "offset": 0,
 	    "rows":[{
 	 	   Document data...
 	 	   }]
@@ -79,6 +80,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	* total_row is the document count of the specified type in the database, not in the response.
 	* rows contains the documents, see data structure for more explanations.
+	* offset is the amount of documents that are skipped when request is paginated.
 	
 	1.1. Pagination
 	
@@ -193,3 +195,21 @@ Search
 		
 		Lorsque les deux paramètres start_time et end_time sont fournies, les évènements retournés sont ceux pour lesquels l'intersection des deux intervales de date n'est pas nul. 
 		
+Membership
+^^^^^^^^^^
+
+User and Group documents provide an URI to get memberships in respectively groups and users attributes. 
+
+For users, the groups URI return a list of partial membership documents. Partial because only the group part is returned.
+
+	>>> GET /user/login_user/groups
+		{
+		"total_rows": 1,
+		"offset": 0,
+		"rows": [{
+			"group": "/group/group-03144642920233309",
+			"createDate": "2011-10-03T08:39:07.596Z",
+			"updateDate": "2011-10-03T08:39:07.596Z",
+			"id": "/membership/501b30dddab023bbc3b462653130ad69"
+		}]
+		}
