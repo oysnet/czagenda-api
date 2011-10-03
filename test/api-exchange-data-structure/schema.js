@@ -32,6 +32,21 @@ var create_test_data_expected = {
 	schema : {id: '/schema/name-schema-1'}
 }
 
+var create_invalid_test_data = {
+	'name' : 'truc',
+	'final' : null,
+	schema : {}
+}
+var create_invalid_test_data_expected = { name: [ 'string length must be greater than 5' ],
+										 'final': [ 'a boolean is required' ] };
+										 
+
+var create_invalid_test_data_2 = {
+	'final' : null,
+	schema : {}
+}
+var create_invalid_test_data_expected_2 = { name: [ 'a string is required' ]};								 
+
 // UPDATE
 var update_test_data_in_database = tests_data.schema_2;
 
@@ -98,6 +113,38 @@ vows.describe('Schema API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_test_data_expected);
 		}
 		
+	},
+
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/schema', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
+	},
+	
+	'CREATE INVALID 2' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/schema', JSON.stringify(create_invalid_test_data_2), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_2)
+		}
 	},
 
 	'UPDATE' : {

@@ -26,6 +26,12 @@ var create_test_data_expected = {
 	writeGroups : '/group/title-group-1/perms/wg'
 }
 
+var create_invalid_test_data = {
+	description : 'DESCRIPTION_GROUP_1'
+}
+
+var create_invalid_test_data_expected = { title: [ 'a string is required' ]};	
+
 // UPDATE
 var update_test_data_in_database = tests_data.group_2;
 
@@ -81,6 +87,22 @@ vows.describe('Group API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_test_data_expected);
 		}
 		
+	},
+
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/group', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
 	},
 
 	'UPDATE' : {

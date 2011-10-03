@@ -25,6 +25,14 @@ var create_test_data_expected = {
 	agenda : null
 }
 
+var create_invalid_test_data = {
+	event : {title : "even title"},
+	author : '/user/login1',
+	agenda : '/test/aaaaaa'
+}
+
+var create_invalid_test_data_expected = { agenda: [ 'must match regexp: ^/agenda/[-_.0-9a-z]+$' ] };
+
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
 
@@ -134,7 +142,23 @@ vows.describe('Event API exchanged data structure').addBatch({
 		}
 		
 	},
-
+	
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/event', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
+	},
+	
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();

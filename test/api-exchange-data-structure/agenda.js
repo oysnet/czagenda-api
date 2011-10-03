@@ -26,6 +26,21 @@ var create_test_data_expected = {
 	writeGroups : '/agenda/title-agenda-1/perms/wg'
 }
 
+var description = '';
+for (var i = 0, l = 1500; i<l;i++) {
+	description += 'a';
+}
+var create_invalid_test_data = {
+	title : 'az',
+	description : description
+}
+
+var create_invalid_test_data_expected = { title: [ 'string length must be greater than 5' ], description: [ 'string length must be lower than 1024' ] };
+
+var create_invalid_test_data_2 = {
+	description : null
+}
+var create_invalid_test_data_expected_2 = { title: [ 'a string is required' ] };
 
 // UPDATE
 var update_test_data_in_database = tests_data.agenda_2;
@@ -52,7 +67,7 @@ var delete_test_data_in_database = tests_data.agenda_4;
 
 vows.describe('Agenda API exchanged data structure').addBatch({
 	
-	'create' : {
+	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
 			rest.post('/agenda', JSON.stringify(create_test_data), this.callback);
@@ -81,9 +96,40 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 				
 			assert.deepEqual(data, create_test_data_expected);
 		}
-		
 	},
-
+	
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/agenda', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
+	},
+	
+	'CREATE INVALID 2' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/agenda', JSON.stringify(create_invalid_test_data_2), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_2)
+		}
+	},
+	
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();

@@ -10,6 +10,15 @@ var tests_data = require('../tests_data');
 var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$");
 var number_re = new RegExp("^[0-9]+$");
 
+
+var create_invalid_test_data = {
+	user : '/test/login1',
+	group : '/test/aaaaaa'
+}
+
+var create_invalid_test_data_expected = { user: [ 'must match regexp: ^/user/[-_.0-9a-z]+$' ],
+										  group: [ 'must match regexp: ^/group/[-_.0-9a-z]+$'] };
+
 // ##### GET
 var user_5 = tests_data.user_5;
 
@@ -46,7 +55,8 @@ var user_7 = tests_data.user_7;
 
 
 vows.describe('User groups membership API exchanged data structure').addBatch({
-
+	
+	
 	'GET Users Memberships' : {
 		topic : function() {
 			rest = new Rest();
@@ -219,6 +229,8 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
+			delete user_5_group_5_include_docs.user.email;
+			
 			assert.deepEqual(data.rows[0], user_5_group_5_include_docs);
 		}
 	},
@@ -259,6 +271,22 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 			assert.deepEqual(data, {group : group_5.id, user :  user_6.id});
 		}
 		
+	},
+	
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/membership', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
 	},
 	
 	'DELETE Membership' : {

@@ -9,7 +9,7 @@ var tests_data = require('../tests_data');
 var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$");
 var number_re = new RegExp("^[0-9]+$");
 
-var data_keys = ['firstName', 'lastName', 'email',  'login', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'dateJoined', 'id', 'groups',  'createDate', 'updateDate' ].sort();
+var data_keys = ['firstName', 'lastName', 'login', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'dateJoined', 'id', 'groups',  'createDate', 'updateDate' ].sort();
 
 // CREATE
 var create_test_data = {
@@ -23,7 +23,7 @@ var create_test_data = {
 var create_test_data_expected = {
 	firstName : 'FIRST_NAME_USER_1',
 	lastName : 'LAST_NAME_USER_1',
-	email : 'EMAIL_USER_1@domain.com',
+	//email : 'EMAIL_USER_1@domain.com',
 	
 	login : 'LOGIN_USER_1',
 	isActive : false,
@@ -35,6 +35,25 @@ var create_test_data_expected = {
 	groups : '/user/login-user-1/groups'
 }
 
+
+var create_invalid_test_data = {
+	firstName : 'FIRST_NAME_USER_1',
+	lastName : 'LAST_NAME_USER_1',
+	email : 'EMAIL_USER_1@domain.com',
+	password : 'PASSWORD_USER_1'
+}
+
+var create_invalid_test_data_expected = { login: [ 'a string is required' ]};
+
+var create_invalid_test_data_2 = {
+	firstName : 'F',
+	lastName : 'L',
+	email : '@domain.com',
+	login : 'truc'
+}
+
+var create_invalid_test_data_expected_2 = { login: [ 'string length must be greater than 8' ],
+    										email: [ 'an email is required' ]};
 
 // UPDATE
 var update_test_data_in_database = tests_data.user_2;
@@ -50,7 +69,7 @@ var update_test_data = {
 var update_test_data_expected = {
 	firstName : 'MODIFIED_FIRST_NAME_USER_2',
 	lastName : 'MODIFIED_LAST_NAME_USER_2',
-	email : 'EMAIL_USER_2@domain.com',
+	//email : 'EMAIL_USER_2@domain.com',
 	login : 'LOGIN_USER_2',
 	isActive : false,
 	isStaff : false,
@@ -103,6 +122,39 @@ vows.describe('User API exchanged data structure').addBatch({
 		
 	},
 
+	'CREATE INVALID' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/user', JSON.stringify(create_invalid_test_data), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
+	},
+
+	'CREATE INVALID 2' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/user', JSON.stringify(create_invalid_test_data_2), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_2)
+		}
+	},
+
+
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();
@@ -141,6 +193,7 @@ vows.describe('User API exchanged data structure').addBatch({
 		
 		'check response structure' : function(err, res, data) {
 			var data = JSON.parse(data);
+			delete get_test_data_in_database.email;
 			assert.deepEqual(data, get_test_data_in_database);
 		}
 	},

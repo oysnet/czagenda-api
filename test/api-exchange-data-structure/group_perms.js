@@ -137,6 +137,7 @@ vows.describe('Group perms API exchanged data structure').addBatch({
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
+			
 			assert.deepEqual(data.rows[0], {id : write_group_perm, grantTo : write_group});
 		}
 	},
@@ -253,6 +254,7 @@ vows.describe('Group perms API exchanged data structure').addBatch({
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
+			delete write_user.email;
 			assert.deepEqual(data.rows[0], {id : write_user_perm, grantTo : write_user});
 		}
 	},
