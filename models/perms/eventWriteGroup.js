@@ -18,6 +18,10 @@ EventWriteGroup.prototype._generateId = function(doc) {
 	return '/perms/event/wg/' + this._generateUUID();
 }
 
+EventWriteGroup.prototype._validate = function () {
+	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
+}
 
 EventWriteGroup.get = function(options, callback) {
 	Base.get(options, EventWriteGroup, callback)

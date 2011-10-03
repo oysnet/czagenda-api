@@ -1,7 +1,7 @@
 var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
-
+var errors = require('./errors.js');
 //var validatorEnvironment = require('../libs/schemas/validator').validatorEnvironment;
 
 
@@ -18,6 +18,14 @@ Schema.staffAttributes = Schema.publicAttributes.concat(Base.staffAttributes);
 Schema.metaAttributes = ['schema'];
 
 Schema.prototype._validate = function () {
+	
+	this.validateString('name', false, 5, 64);
+	this.validateBoolean('final', false);
+	this.validateString('sample', true, null, null);
+	this.validateString('template', true, null, null);
+	
+	this.validateChoice('status', ['PENDING', 'DRAFT','PUBLISHED']);
+	
 	/*
 	if (this.schema === null || this.schema == {}) {
 		throw Error('Empty schema');
@@ -51,10 +59,20 @@ Schema.prototype._generateId = function () {
 }
 
 
-Schema.prototype._preSave = function () {
-	if (this.id === null) {
-		this._data.schema.id = this._data.id;
+Schema.prototype.save = function (callback) {
+	
+	if (typeof(this.name) !== 'string') {
+		this.addValidationError('name', 'a string is required')
+		callback(new errors.ValidationError(), this);
+		return;
 	}
+	
+	Base.prototype.save.call(this, callback);
+	
+}
+
+Schema.prototype._preSave = function () {
+	this._data.schema.id = this._data.id;
 }
 
 Schema.get = function(options, callback) {

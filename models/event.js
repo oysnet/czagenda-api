@@ -16,6 +16,11 @@ Event.staffAttributes = Event.publicAttributes.concat(Base.staffAttributes);
 Event.metaAttributes = ['event'];
 
 Event.prototype._validate = function () {
+	
+	this.validateRegexp('author', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
+	
+	
 	/*
 	if (this.event === null || this.event == {}) {
 		throw Error('Empty schema');

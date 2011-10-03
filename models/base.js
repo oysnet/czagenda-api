@@ -207,7 +207,7 @@ Base.prototype.save = function(callback) {
 	this.__prepareData();
 	
 	// validate datas
-	this._validate();
+	this._validate();	
 	
 	if (this.validationErrors !== null) {
 		callback(new errors.ValidationError(), this);
@@ -289,6 +289,88 @@ Base.prototype._dbSave = function(callback) {
 		}, this, callback);
 	}.bind(this));
 	q.exec();
+}
+
+
+
+Base.prototype.addValidationError = function (attr, message) {
+	
+	if (this.validationErrors === null) {
+		this.validationErrors = {};
+	}
+	
+	if (typeof(this.validationErrors[attr]) === 'undefined') {
+		this.validationErrors[attr] = [];
+	}
+	
+	this.validationErrors[attr].push(message);
+	
+	
+}
+
+Base.prototype.validateString = function (attr, nullable, min, max) {
+	
+	var value = this._data[attr];
+	if (typeof(value) !== 'string') {
+		if (!(nullable === true && value === null)) {
+			this.addValidationError(attr, 'a string is required');
+			return;
+		}
+	}
+	
+	if (value !== null) {
+		if (min !== null && value.length < min) {
+			this.addValidationError(attr, 'string length must be greater than ' + min );
+		} else if (max !== null && value.length > max) {
+			this.addValidationError(attr, 'string length must be lower than ' + max );
+		}
+	}
+}
+
+Base.prototype.validateBoolean = function (attr, nullable) {
+	
+	var value = this._data[attr];
+	if (typeof(value) !== 'boolean') {
+		if (!(nullable === true && value === null)) {
+			this.addValidationError(attr, 'a boolean is required');
+			return;
+		}
+	}
+}
+
+Base.prototype.validateChoice = function (attr, choices) {
+	
+	var value = this._data[attr];
+	if (choices.indexOf(value) === -1) {
+		this.addValidationError(attr, 'choices are: ' + choices.join(' ,'));
+			return;
+	}
+}
+
+Base.prototype.validateEmail = function (attr) {
+	var value = this._data[attr];
+	
+	if (typeof(value) !== 'string' || !(new RegExp('^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', 'i')).test(value)) {
+		this.addValidationError(attr, 'an email is required');
+		return;
+	}
+}
+
+Base.prototype.validateRegexp = function (attr, regexp, nullable) {
+	var value = this._data[attr];
+	if (typeof(value) !== 'string') {
+		if (!(nullable === true && value === null)) {
+			this.addValidationError(attr, 'must match regexp: ' + regexp);
+			return;
+		}
+	}
+	
+	if (value !== null) {
+		if (!(new RegExp(regexp)).test(value)) {
+			this.addValidationError(attr, 'must match regexp: ' + regexp);
+			return;
+		}
+	}
 }
 
 

@@ -10,9 +10,7 @@ function BasePermission (type) {
 util.inherits(BasePermission, Base);
 
 
-BasePermission.prototype._validate = function () {
-	
-}
+
 
 BasePermission.prototype._generateHash = function () {
 	c = require('crypto')

@@ -2,9 +2,6 @@ var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
 
-//var env = require('JSV').JSV.createEnvironment("json-schema-draft-03");
-//var jsonSchema = env.findSchema(env.getOption("latestJSONSchemaSchemaURI"));
-
 function Membership () {
 	this._attributs = {user : null, group : null};
 	Base.call(this, 'membership');	
@@ -17,16 +14,8 @@ Membership.publicAttributes = Base.publicAttributes.concat(['group', 'user']);
 Membership.staffAttributes = Membership.publicAttributes.concat(Base.staffAttributes);
 
 Membership.prototype._validate = function () {
-	/*
-	if (this.event === null || this.event == {}) {
-		throw Error('Empty schema');
-	}
-	
-	var report = jsonSchema.validate(this.event);
-	if (report.errors.length > 0) {
-		this.validationErrors = report.errors;
-		throw Error('Validation errors');
-	}*/
+	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false);
 }
 
 Membership.prototype._generateHash = function () {

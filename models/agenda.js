@@ -1,9 +1,7 @@
 var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
-
-//var env = require('JSV').JSV.createEnvironment("json-schema-draft-03");
-//var jsonSchema = env.findSchema(env.getOption("latestJSONSchemaSchemaURI"));
+var errors = require('./errors.js');
 
 function Agenda () {
 	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null};
@@ -16,16 +14,8 @@ Agenda.publicAttributes = Base.publicAttributes.concat(['title', 'description', 
 Agenda.staffAttributes = Agenda.publicAttributes.concat(Base.staffAttributes);
 
 Agenda.prototype._validate = function () {
-	/*
-	if (this.event === null || this.event == {}) {
-		throw Error('Empty schema');
-	}
-	
-	var report = jsonSchema.validate(this.event);
-	if (report.errors.length > 0) {
-		this.validationErrors = report.errors;
-		throw Error('Validation errors');
-	}*/
+	this.validateString('title', false, 5, 128);
+	this.validateString('description', true, null, 1024);
 }
 
 Agenda.prototype._generateHash = function () {
@@ -39,6 +29,18 @@ Agenda.prototype._generateHash = function () {
 
 Agenda.prototype._generateId = function () {
 	return '/agenda/' + utils.slugify(this.title);
+}
+
+Agenda.prototype.save = function (callback) {
+	
+	if (typeof(this.title) !== 'string') {
+		this.addValidationError('title', 'a string is required')
+		callback(new errors.ValidationError(), this);
+		return;
+	}
+	
+	Base.prototype.save.call(this, callback);
+	
 }
 
 Agenda.prototype._preSave = function () {
