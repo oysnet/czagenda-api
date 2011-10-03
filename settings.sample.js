@@ -14,7 +14,8 @@ exports.elasticsearch = {
 }
 
 exports.server = {
-	'host' : '%IP%'
+	'host' : '%IP%',
+	'port' : 3000
 }
 
 exports.redis = {
