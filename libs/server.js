@@ -8,7 +8,6 @@ var express = require('express');
 var cors = require('./cors.js');
 
 var app = module.exports = express.createServer();
-var settings = require('../settings.js')
 
 // Configuration
 

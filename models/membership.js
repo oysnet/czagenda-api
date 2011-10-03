@@ -19,6 +19,7 @@ Membership.prototype._validate = function () {
 }
 
 Membership.prototype._generateHash = function () {
+		
 	c = require('crypto')
     h = c.createHash('md5')
     h.update(this._type);

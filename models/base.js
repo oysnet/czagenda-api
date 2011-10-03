@@ -181,7 +181,6 @@ Base.prototype.__prepareData = function () {
 		this._data.hash = this._hash;
 	} else {
 		this._data.id = this._generateId();
-		this._generateHash();
 	}
 	
 	this._data.type = this._type;
@@ -208,6 +207,11 @@ Base.prototype.save = function(callback) {
 	
 	// validate datas
 	this._validate();	
+	
+	if (this._hash === null) {
+		this._generateHash();
+	}
+	
 	
 	if (this.validationErrors !== null) {
 		callback(new errors.ValidationError(), this);

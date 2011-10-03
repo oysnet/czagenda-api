@@ -168,8 +168,10 @@ RestBase.prototype.create = function(req, res) {
 	this._populateObject(obj, data)
 	
 	
+	//console.log('request data', data);
+		
 	obj.save( function( err, obj) {
-
+		
 		if(err === null) {
 			res.statusCode = statusCode.CREATED;
 			res.end(this._renderJson(req, res, this._serializeObject(obj)));

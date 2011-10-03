@@ -154,7 +154,7 @@ MassCreate.prototype.callbackCreateGroup = function (err, res, data) {
 
 module.exports = MassCreate
 
-
+/*
 var counter = 0;
 var cb = function () {
 	counter++;
@@ -163,7 +163,7 @@ var cb = function () {
 		new MassCreate(100,cb);
 	}
 	
-}
-new MassCreate(100,cb);
+}*/
+new MassCreate(2,console.log);
 
 

@@ -1,5 +1,5 @@
 var Base = require('./base.js').Base;
-var util = require("util");
+var util = require("util"), crypto = require('crypto');
 
 //var env = require('JSV').JSV.createEnvironment("json-schema-draft-03");
 //var jsonSchema = env.findSchema(env.getOption("latestJSONSchemaSchemaURI"));
@@ -37,9 +37,8 @@ Event.prototype._generateHash = function () {
 	
 	var id = this.event.id;
 	delete this.event.id;
-		
-	c = require('crypto')
-    h = c.createHash('md5')
+
+    h = crypto.createHash('md5')
     h.update(this._type);
 	h.update(JSON.stringify(this.event))		
 	this._data['hash'] = h.digest('hex')
