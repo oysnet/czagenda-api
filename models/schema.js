@@ -17,7 +17,7 @@ Schema.publicAttributes = Base.publicAttributes.concat(['schema', 'final', 'samp
 Schema.staffAttributes = Schema.publicAttributes.concat(Base.staffAttributes);
 Schema.metaAttributes = ['schema'];
 
-Schema.prototype._validate = function () {
+Schema.prototype._validate = function (callback) {
 	
 	this.validateString('name', false, 5, 64);
 	this.validateBoolean('final', false);
@@ -37,6 +37,8 @@ Schema.prototype._validate = function () {
 		this.validationErrors = report.errors;
 		throw Error('Validation errors');
 	}*/
+	
+	callback(null);
 }
 
 Schema.prototype._generateHash = function () {

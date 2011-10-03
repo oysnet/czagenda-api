@@ -18,9 +18,10 @@ GroupWriteUser.prototype._generateId = function(doc) {
 	return '/perms/group/wu/' + this._generateUUID();
 }
 
-GroupWriteUser.prototype._validate = function () {
+GroupWriteUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/group/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	callback(null);
 }
 
 GroupWriteUser.get = function(options, callback) {

@@ -27,11 +27,12 @@ User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat
 
 util.inherits(User, Base);
 
-User.prototype._validate = function() {
+User.prototype._validate = function(callback) {
 	this.validateString('login', false, 8, 32);
 	this.validateString('firstName', true, null, 128);
 	this.validateString('lastName', true, null, 128);
 	this.validateEmail('email');
+	callback(null);
 }
 
 User.prototype._generateHash = function() {

@@ -18,9 +18,10 @@ EventReadUser.prototype._generateId = function(doc) {
 	return '/perms/event/ru/' + this._generateUUID();
 }
 
-EventReadUser.prototype._validate = function () {
+EventReadUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	callback(null);
 }
 
 EventReadUser.get = function(options, callback) {

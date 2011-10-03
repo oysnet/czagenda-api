@@ -18,9 +18,10 @@ AgendaWriteGroup.prototype._generateId = function(doc) {
 	return '/perms/agenda/wg/' + this._generateUUID();
 }
 
-AgendaWriteGroup.prototype._validate = function () {
+AgendaWriteGroup.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/agenda/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
+	callback(null);
 }
 
 AgendaWriteGroup.get = function(options, callback) {

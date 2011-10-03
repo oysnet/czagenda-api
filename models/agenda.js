@@ -13,9 +13,11 @@ util.inherits(Agenda, Base);
 Agenda.publicAttributes = Base.publicAttributes.concat(['title', 'description', 'writeGroups', 'writeUsers']);
 Agenda.staffAttributes = Agenda.publicAttributes.concat(Base.staffAttributes);
 
-Agenda.prototype._validate = function () {
+Agenda.prototype._validate = function (callback) {
 	this.validateString('title', false, 5, 128);
 	this.validateString('description', true, null, 1024);
+	
+	callback(null);
 }
 
 Agenda.prototype._generateHash = function () {

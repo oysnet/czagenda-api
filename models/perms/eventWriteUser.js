@@ -18,9 +18,10 @@ EventWriteUser.prototype._generateId = function(doc) {
 	return '/perms/event/wu/' + this._generateUUID();
 }
 
-EventWriteUser.prototype._validate = function () {
+EventWriteUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	callback(null);
 }
 
 EventWriteUser.get = function(options, callback) {

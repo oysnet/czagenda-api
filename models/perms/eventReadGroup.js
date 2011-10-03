@@ -19,9 +19,10 @@ EventReadGroup.prototype._generateId = function(doc) {
 	return '/perms/event/rg/' + this._generateUUID();
 }
 
-EventReadGroup.prototype._validate = function () {
+EventReadGroup.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
+	callback(null);
 }
 
 EventReadGroup.get = function(options, callback) {

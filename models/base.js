@@ -85,7 +85,9 @@ Base.prototype._preSave = function() {}
  * This method is responsible of data validation.
  * Must be override or not.
  */
-Base.prototype._validate = function() {}
+Base.prototype._validate = function(callback) {
+	callback(null);
+}
 
 
 /**
@@ -206,36 +208,69 @@ Base.prototype.save = function(callback) {
 	this.__prepareData();
 	
 	// validate datas
-	this._validate();	
-	
-	if (this._hash === null) {
-		this._generateHash();
-	}
-	
-	
-	if (this.validationErrors !== null) {
-		callback(new errors.ValidationError(), this);
-		return;
-	}
-	
-	// do some stuff in inherited levels
-	this._preSave();
-	
-	if (this._hash === null) {
-		this._checkHashExistsInDb(function (err) {
-			if (err === null) {
-				this._dbSave(callback)
-			} else if (err instanceof errors.ObjectAlreadyExists)  {
-				callback(err, this);
-			} else {
-				callback(new errors.UnknowError(), this);
-			}
-		}.bind(this));
-	} else {
-		this._dbSave(callback)
-	}
-	
+	this._validate(function (err) {
+		
+		if (err !== null) {
+			log.critical('models.Base._validate', err);
+			callback(new errors.UnknowError(), this);
+			return;
+		}
+		
+		if (this.validationErrors !== null) {
+			callback(new errors.ValidationError(), this);
+			return;
+		}
+		
+		if (this._hash === null) {
+			this._generateHash();
+		}
+		
+		// do some stuff in inherited levels
+		this._preSave();
+		
+		if (this._hash === null) {
+			this._checkHashExistsInDb(function (err) {
+				if (err === null) {
+					this._dbSave(callback)
+				} else if (err instanceof errors.ObjectAlreadyExists)  {
+					callback(err, this);
+				} else {
+					callback(new errors.UnknowError(), this);
+				}
+			}.bind(this));
+		} else {
+			this._dbSave(callback)
+		}
+	}.bind(this));
 }
+
+
+/**
+ * Save object in database
+ */
+Base.prototype._dbSave = function(callback) {
+	
+	// encode id since elasticsearch does not support / in id
+	this._data.id = encodeURIComponent(this._data.id);
+	
+	
+	var q = elasticSearchClient.index(this._index, this._type, this._data);
+	q.on('data', function( data) {	
+					
+		var data = JSON.parse(data);
+		if (typeof(data.error) !== 'undefined') {
+			callback(new errors.UnknowError());
+			return;
+		}
+		
+		// reload instance because revision has been updated by db
+		Base.loadObject({
+			id : data._id
+		}, this, callback);
+	}.bind(this));
+	q.exec();
+}
+
 
 /**
  * Verifiy if an object already exists with the current instance computed hash (this._data.hash)
@@ -267,32 +302,6 @@ Base.prototype._checkHashExistsInDb = function (callback) {
 			}
 			
 	}.bind(this))
-}
-
-/**
- * Save object in database
- */
-Base.prototype._dbSave = function(callback) {
-	
-	// encode id since elasticsearch does not support / in id
-	this._data.id = encodeURIComponent(this._data.id);
-	
-	
-	var q = elasticSearchClient.index(this._index, this._type, this._data);
-	q.on('data', function( data) {	
-					
-		var data = JSON.parse(data);
-		if (typeof(data.error) !== 'undefined') {
-			callback(new errors.UnknowError());
-			return;
-		}
-		
-		// reload instance because revision has been updated by db
-		Base.loadObject({
-			id : data._id
-		}, this, callback);
-	}.bind(this));
-	q.exec();
 }
 
 

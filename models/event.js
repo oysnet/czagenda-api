@@ -15,11 +15,12 @@ Event.publicAttributes = Base.publicAttributes.concat(['event', 'author', 'write
 Event.staffAttributes = Event.publicAttributes.concat(Base.staffAttributes);
 Event.metaAttributes = ['event'];
 
-Event.prototype._validate = function () {
+Event.prototype._validate = function (callback) {
 	
 	this.validateRegexp('author', '^/user/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
 	
+	callback(null);
 	
 	/*
 	if (this.event === null || this.event == {}) {
