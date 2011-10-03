@@ -2,3 +2,4 @@ node_modules
 settings.js
 pids/
 .DS_Store
+.project
