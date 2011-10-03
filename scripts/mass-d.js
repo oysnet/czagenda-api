@@ -43,37 +43,37 @@ MassCreate.prototype.checkCounter = function () {
 
 MassCreate.prototype.createRelations = function () {
 	
-	var rest = new Rest('10.7.36.130',8000);
+	var rest = new Rest('10.7.36.130', 8000);
 	for (var i = 0, l = this.quantity; i<l; i++ ) {
 		
 		var data = {
 			user : this.users[Math.floor(Math.random() * this.users.length)], 
 			group : this.groups[Math.floor(Math.random() * this.groups.length)]
 		};
-		rest.post("/membership", JSON.stringify(data), this.callback.bind(this));
+		rest.post("/membership", JSON.stringify(data), this.callback.bind(this, 'MEMBERSHIP'));
 	}
 	
 }
 
 
 MassCreate.prototype.createEvents = function () {
-	var rest = new Rest('10.7.36.130',8000);
+	var rest = new Rest('10.7.36.130', 8000);
 	for (var i = 0, l = this.quantity; i<l; i++ ) {
 		
 		var data = {
 			event : {'title' : 'title event...', 'random' : Math.random()},
 			author : this.users[Math.floor(Math.random() * this.users.length)]
 		};
-		rest.post("/event", JSON.stringify(data), this.callback.bind(this));
+		rest.post("/event", JSON.stringify(data), this.callback.bind(this, 'EVENT'));
 		
 	}
 }
 
 
-MassCreate.prototype.callback = function (err, res, data) {
+MassCreate.prototype.callback = function (type, err, res, data) {
 	if (err !== null || res.statusCode !== 201) {
-		console.log('OTHER', err, res.statusCode , data);
-		return;
+		console.log(type, err, (res !== null && typeof(res) !== 'undefined' ? res.statusCode : null) , data);
+		
 	}
 	this.counter++;
 }
@@ -82,7 +82,7 @@ MassCreate.prototype.callback = function (err, res, data) {
 MassCreate.prototype.users = []
 MassCreate.prototype.createUsers = function (quantity) {
 
-	var rest = new Rest('10.7.36.130',8000);
+	var rest = new Rest('10.7.36.130', 8000);
 	for (var i = 0, l = quantity; i<l;i++) {
 		
 		var data = {
@@ -101,7 +101,7 @@ MassCreate.prototype.createUsers = function (quantity) {
 MassCreate.prototype.callbackCreateUser = function (err, res, data) {
 	
 	if (err !== null || res.statusCode !== 201) {
-		console.log('USER', err, res.statusCode , data);
+		console.log('USER', err, (res !== null && typeof(res) !== 'undefined' ? res.statusCode : null) , data);
 		return;
 	}
 	this.users.push(JSON.parse(data).id);
@@ -110,7 +110,7 @@ MassCreate.prototype.callbackCreateUser = function (err, res, data) {
 
 MassCreate.prototype.agendas = []
 MassCreate.prototype.createAgendas = function (quantity) {
-	var rest = new Rest('10.7.36.130',8000);
+	var rest = new Rest('10.7.36.130', 8000);
 	for (var i = 0, l = quantity; i<l;i++) {
 		
 		var data = {
@@ -123,7 +123,7 @@ MassCreate.prototype.createAgendas = function (quantity) {
 }
 MassCreate.prototype.callbackCreateAgenda = function (err, res, data) {
 	if (err !== null || res.statusCode !== 201) {
-		console.log('AGENDA', err, res.statusCode , data);
+		console.log('AGENDA', err, (res !== null && typeof(res) !== 'undefined' ? res.statusCode : null) , data);
 		return;
 	}
 	this.agendas.push(JSON.parse(data).id);
@@ -133,7 +133,7 @@ MassCreate.prototype.callbackCreateAgenda = function (err, res, data) {
 
 MassCreate.prototype.groups = []
 MassCreate.prototype.createGroups = function (quantity) {
-	var rest = new Rest('10.7.36.130',8000);
+	var rest = new Rest('10.7.36.130', 8000);
 	for (var i = 0, l = quantity; i<l;i++) {
 		
 		var data = {
@@ -147,7 +147,7 @@ MassCreate.prototype.createGroups = function (quantity) {
 
 MassCreate.prototype.callbackCreateGroup = function (err, res, data) {
 	if (err !== null || res.statusCode !== 201) {
-		console.log('GROUP', err, res.statusCode , data);
+		console.log('GROUP', err, (res !== null && typeof(res) !== 'undefined' ? res.statusCode : null) , data);
 		return;
 	}
 	this.groups.push(JSON.parse(data).id);
@@ -166,6 +166,6 @@ var cb = function () {
 	}
 	
 }*/
-new MassCreate(1,console.log);
+new MassCreate(10000,console.log);
 
 
