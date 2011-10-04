@@ -9,3 +9,6 @@ exports.Schema = require('./schema.js').Schema;
 exports.errors = require('./errors.js');
 
 exports.perms = require('./perms')
+
+exports.OAuthConsumer = require('./oAuthConsumer').OAuthConsumer;
+exports.OAuthToken = require('./oAuthToken').OAuthToken;
