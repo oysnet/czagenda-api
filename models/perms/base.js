@@ -9,7 +9,8 @@ function BasePermission (type) {
 
 util.inherits(BasePermission, Base);
 
-
+BasePermission.publicWriteAttributes = ['grantTo', 'applyOn'];
+BasePermission.staffWriteAttributes = BasePermission.publicWriteAttributes;
 
 
 BasePermission.prototype._generateHash = function () {

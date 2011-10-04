@@ -18,7 +18,7 @@ var create_test_data = {
 	sample : 'sample data',
 	template : 'template data',
 	schema : {},
-	status : 'DRAFT'
+	
 	
 }
 
@@ -28,21 +28,18 @@ var create_test_data_expected = {
 	sample : 'sample data',
 	template : 'template data',
 	'final' : false,
-	status : 'DRAFT',
+	status : 'PENDING',
 	schema : {id: '/schema/name-schema-1'}
 }
 
 var create_invalid_test_data = {
 	'name' : 'truc',
-	'final' : null,
 	schema : {}
 }
-var create_invalid_test_data_expected = { name: [ 'string length must be greater than 5' ],
-										 'final': [ 'a boolean is required' ] };
+var create_invalid_test_data_expected = { name: [ 'string length must be greater than 5' ]};
 										 
 
 var create_invalid_test_data_2 = {
-	'final' : null,
 	schema : {}
 }
 var create_invalid_test_data_expected_2 = { name: [ 'a string is required' ]};								 
@@ -52,8 +49,6 @@ var update_test_data_in_database = tests_data.schema_2;
 
 var update_test_data = {
 	name : 'NAME_SCHEMA_21',
-	'final' : true,
-	status : 'PUBLISHED',
 	sample : 'sample data',
 	template : 'template data',
 	schema : {
@@ -66,8 +61,8 @@ var update_test_data_expected = {
 	id : '/schema/name-schema-2',
 	name : 'NAME_SCHEMA_21',
 	createDate : tests_data.schema_2.createDate,
-	'final' : true,
-	status : 'PUBLISHED',
+	'final' : false,
+	status : 'DRAFT',
 	sample : 'sample data',
 	template : 'template data',
 	schema : {

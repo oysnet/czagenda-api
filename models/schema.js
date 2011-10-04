@@ -17,6 +17,9 @@ Schema.publicAttributes = Base.publicAttributes.concat(['schema', 'final', 'samp
 Schema.staffAttributes = Schema.publicAttributes.concat(Base.staffAttributes);
 Schema.metaAttributes = ['schema'];
 
+Schema.publicWriteAttributes = ['schema', 'name','sample', 'template' ];
+Schema.staffWriteAttributes = Schema.publicWriteAttributes.concat(['final',  'status' , 'name']);
+
 Schema.prototype._validate = function (callback) {
 	
 	this.validateString('name', false, 5, 64);

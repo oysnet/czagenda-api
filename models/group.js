@@ -13,6 +13,9 @@ util.inherits(Group, Base);
 Group.publicAttributes = Base.publicAttributes.concat(['title', 'description', 'writeGroups', 'writeUsers', 'users' ]);
 Group.staffAttributes = Group.publicAttributes.concat(Base.staffAttributes);
 
+Group.publicWriteAttributes = ['title', 'description'];
+Group.staffWriteAttributes = Group.publicWriteAttributes;
+
 Group.prototype._validate = function (callback) {
 	this.validateString('title', false, 5, 128);
 	this.validateString('description', true, null, 1024);

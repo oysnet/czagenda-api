@@ -76,12 +76,29 @@ RestBase.prototype._initServer = function() {
 /**
  * populate an object with other object attributes
  */
-RestBase.prototype._populateObject = function(obj, data) {
+RestBase.prototype._populateObject = function(obj, data, req, res) {
+	
+	var allowedKeys = obj.constructor.publicWriteAttributes;
+	var wrongKeys = [];
+	
 	for(k in data) {
-		obj[k] = data[k];
+		if (allowedKeys.indexOf(k) === -1) {
+			wrongKeys.push(k);
+		} else {
+			obj[k] = data[k];			
+		}
 	}
-
+	
+	if (wrongKeys.length === 0) {
+		return true;
+	} else {
+		res.statusCode = statusCode.FORBIDDEN;
+		res.end("Readonly attributes: " + wrongKeys.join(', '))	
+		return false;
+	}
+	
 }
+
 /**
  * Return a serializable object that contains only attributes listed in keys
  */
@@ -165,36 +182,33 @@ RestBase.prototype.create = function(req, res) {
 	var data = req.body;
 
 	var obj = new this._clazz;
-	this._populateObject(obj, data)
-	
-	
-	//console.log('request data', data);
+	if (this._populateObject(obj, data, req, res) === true) {
 		
-	obj.save( function( err, obj) {
-		
-		if(err === null) {
-			res.statusCode = statusCode.CREATED;
-			res.end(this._renderJson(req, res, this._serializeObject(obj)));
-		} else {
-
-			// @TODO : typer les erreurs
-			if( err instanceof errors.ObjectAlreadyExists) {
-				res.statusCode = statusCode.DUPLICATE_ENTRY;
-				res.end(err.message);
-
-			} else if( err instanceof errors.ValidationError) {
-				res.statusCode = statusCode.BAD_REQUEST;
-				res.end(this._renderJson(req, res, obj.validationErrors));
-
+		obj.save( function( err, obj) {
+			
+			if(err === null) {
+				res.statusCode = statusCode.CREATED;
+				res.end(this._renderJson(req, res, this._serializeObject(obj)));
 			} else {
-				res.statusCode = statusCode.INTERNAL_ERROR;
-				res.end('Internal error')
+	
+				// @TODO : typer les erreurs
+				if( err instanceof errors.ObjectAlreadyExists) {
+					res.statusCode = statusCode.DUPLICATE_ENTRY;
+					res.end(err.message);
+	
+				} else if( err instanceof errors.ValidationError) {
+					res.statusCode = statusCode.BAD_REQUEST;
+					res.end(this._renderJson(req, res, obj.validationErrors));
+	
+				} else {
+					res.statusCode = statusCode.INTERNAL_ERROR;
+					res.end('Internal error')
+				}
+	
 			}
-
-		}
-
-	}.bind(this));
-
+	
+		}.bind(this));
+	}
 }
 
 RestBase.prototype.update = function(req, res) {
@@ -219,32 +233,31 @@ RestBase.prototype.update = function(req, res) {
 			}
 
 		} else {
-			this._populateObject(obj, req.body)
+			if (this._populateObject(obj, req.body, req, res) === true) {
+				
+				obj.save( function( err, obj) {
 
-			obj.save( function( err, obj) {
-
-				if(err !== null) {
-
-					if( err instanceof errors.ObjectDoesNotExist) {
-						res.statusCode = statusCode.NOT_FOUND;
-						res.end('Not found')
-					} else if( err instanceof errors.ValidationError) {
-						res.statusCode = statusCode.BAD_REQUEST;
-						res.end(this._renderJson(req, res, obj.validationErrors));
-
+					if(err !== null) {
+						if( err instanceof errors.ObjectDoesNotExist) {
+							res.statusCode = statusCode.NOT_FOUND;
+							res.end('Not found')
+						} else if( err instanceof errors.ValidationError) {
+							res.statusCode = statusCode.BAD_REQUEST;
+							res.end(this._renderJson(req, res, obj.validationErrors));
+	
+						} else {
+							res.statusCode = statusCode.INTERNAL_ERROR;
+							res.end('Internal error')
+						}
+	
 					} else {
-						res.statusCode = statusCode.INTERNAL_ERROR;
-						res.end('Internal error')
+						res.statusCode = statusCode.ALL_OK;
+						res.end(this._renderJson(req, res, this._serializeObject(obj)));
 					}
-
-				} else {
-
-					res.statusCode = statusCode.ALL_OK;
-					res.end(this._renderJson(req, res, this._serializeObject(obj)));
-				}
-
-			}.bind(this));
-
+	
+				}.bind(this));
+			}
+			
 		}
 
 	}.bind(this))

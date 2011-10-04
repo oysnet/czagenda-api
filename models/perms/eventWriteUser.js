@@ -14,6 +14,9 @@ util.inherits(EventWriteUser, BasePermission);
 EventWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 EventWriteUser.staffAttributes = EventWriteUser.publicAttributes.concat(Base.staffAttributes);
 
+EventWriteUser.publicWriteAttributes = ['grantTo', 'applyOn'];
+EventWriteUser.staffWriteAttributes = EventWriteUser.publicWriteAttributes;
+
 EventWriteUser.prototype._generateId = function(doc) {
 	return '/perms/event/wu/' + this._generateUUID();
 }

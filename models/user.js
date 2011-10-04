@@ -25,6 +25,9 @@ function User () {
 User.publicAttributes = Base.publicAttributes.concat([ 'login', 'firstName', 'lastName', 'isActive', 'isStaff','isSuperuser', 'lastLogin', 'dateJoined', 'groups' ]);
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email']);
 
+User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email']
+User.staffWriteAttributes = User.publicWriteAttributes.concat(['isActive', 'isStaff', 'isSuperuser']);
+
 util.inherits(User, Base);
 
 User.prototype._validate = function(callback) {

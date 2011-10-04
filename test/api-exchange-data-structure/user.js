@@ -16,7 +16,6 @@ var create_test_data = {
 	firstName : 'FIRST_NAME_USER_1',
 	lastName : 'LAST_NAME_USER_1',
 	email : 'EMAIL_USER_1@domain.com',
-	password : 'PASSWORD_USER_1',
 	login : 'LOGIN_USER_1'
 }
 
@@ -39,8 +38,7 @@ var create_test_data_expected = {
 var create_invalid_test_data = {
 	firstName : 'FIRST_NAME_USER_1',
 	lastName : 'LAST_NAME_USER_1',
-	email : 'EMAIL_USER_1@domain.com',
-	password : 'PASSWORD_USER_1'
+	email : 'EMAIL_USER_1@domain.com'
 }
 
 var create_invalid_test_data_expected = { login: [ 'a string is required' ]};
@@ -62,7 +60,6 @@ var update_test_data = {
 	firstName : 'MODIFIED_FIRST_NAME_USER_2',
 	lastName : 'MODIFIED_LAST_NAME_USER_2',
 	email : 'EMAIL_USER_2@domain.com',
-	password : 'PASSWORD_USER_2',
 	login : 'LOGIN_USER_2'
 }
 

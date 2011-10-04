@@ -14,6 +14,9 @@ util.inherits(GroupWriteUser, BasePermission);
 GroupWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 GroupWriteUser.staffAttributes = GroupWriteUser.publicAttributes.concat(Base.staffAttributes);
 
+GroupWriteUser.publicWriteAttributes = ['grantTo', 'applyOn'];
+GroupWriteUser.staffWriteAttributes = GroupWriteUser.publicWriteAttributes;
+
 GroupWriteUser.prototype._generateId = function(doc) {
 	return '/perms/group/wu/' + this._generateUUID();
 }

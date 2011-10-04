@@ -13,6 +13,9 @@ util.inherits(Agenda, Base);
 Agenda.publicAttributes = Base.publicAttributes.concat(['title', 'description', 'writeGroups', 'writeUsers']);
 Agenda.staffAttributes = Agenda.publicAttributes.concat(Base.staffAttributes);
 
+Agenda.publicWriteAttributes = ['title', 'description'];
+Agenda.staffWriteAttributes = Agenda.publicWriteAttributes;
+
 Agenda.prototype._validate = function (callback) {
 	this.validateString('title', false, 5, 128);
 	this.validateString('description', true, null, 1024);

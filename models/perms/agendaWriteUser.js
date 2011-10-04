@@ -14,6 +14,9 @@ util.inherits(AgendaWriteUser, BasePermission);
 AgendaWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 AgendaWriteUser.staffAttributes = AgendaWriteUser.publicAttributes.concat(Base.staffAttributes);
 
+AgendaWriteUser.publicWriteAttributes = ['grantTo', 'applyOn'];
+AgendaWriteUser.staffWriteAttributes = AgendaWriteUser.publicWriteAttributes;
+
 AgendaWriteUser.prototype._generateId = function(doc) {
 	return '/perms/agenda/wu/' + this._generateUUID();
 }

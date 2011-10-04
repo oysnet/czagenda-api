@@ -14,6 +14,10 @@ util.inherits(EventReadUser, BasePermission);
 EventReadUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 EventReadUser.staffAttributes = EventReadUser.publicAttributes.concat(Base.staffAttributes);
 
+EventReadUser.publicWriteAttributes = ['grantTo', 'applyOn'];
+EventReadUser.staffWriteAttributes = EventReadUser.publicWriteAttributes;
+
+
 EventReadUser.prototype._generateId = function(doc) {
 	return '/perms/event/ru/' + this._generateUUID();
 }

@@ -13,6 +13,9 @@ util.inherits(Membership, Base);
 Membership.publicAttributes = Base.publicAttributes.concat(['group', 'user']);
 Membership.staffAttributes = Membership.publicAttributes.concat(Base.staffAttributes);
 
+Membership.publicWriteAttributes = ['user', 'group'];
+Membership.staffWriteAttributes = Membership.publicWriteAttributes;
+
 Membership.prototype._validate = function (callback) {
 	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false);

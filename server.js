@@ -7,8 +7,8 @@ var spawn = require('child_process').spawn,
 if (start) {
   var node = process.execPath,
       cmd = process.argv.slice(1, -1);
-  spawn(node, cmd, { env : process.env, setsid: true });
-  process.exit(0);
+//  spawn(node, cmd, { env : process.env, setsid: true });
+//  process.exit(0);
 }
 
 var cluster = require('cluster')('./app')
