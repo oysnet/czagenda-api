@@ -14,22 +14,20 @@ var data_keys = ['name', 'status', 'sample', 'template', 'final', 'createDate', 
 
 // CREATION
 var create_test_data = {
-	name : 'NAME_SCHEMA_1',
-	sample : 'sample data',
-	template : 'template data',
-	schema : {},
-	
-	
+	name: 'NAME_SCHEMA_1',
+	sample: 'sample data',
+	template: 'template data',
+	schema: {}
 }
 
 var create_test_data_expected = {
 	id: '/schema/name-schema-1',
-	name : 'NAME_SCHEMA_1',
-	sample : 'sample data',
-	template : 'template data',
-	'final' : false,
-	status : 'PENDING',
-	schema : {id: '/schema/name-schema-1'}
+	name: 'NAME_SCHEMA_1',
+	sample: 'sample data',
+	template: 'template data',
+	'final': false,
+	status: 'PENDING',
+	schema: {id: '/schema/name-schema-1'}
 }
 
 var create_invalid_test_data = {
