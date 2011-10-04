@@ -212,20 +212,289 @@
 </div>
 <div class="section" id="specifics-of-the-api-by-document-type">
 <h2>Specifics of the API by document type<a class="headerlink" href="#specifics-of-the-api-by-document-type" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="search">
-<h3>Search<a class="headerlink" href="#search" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="user">
+<h3>User<a class="headerlink" href="#user" title="Permalink to this headline">¶</a></h3>
+<p>User base uri is /user</p>
 <ol class="arabic">
-<li><p class="first">For events</p>
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                        &quot;firstName&quot; : &quot;John&quot;,</span>
+<span class="go">                        &quot;lastName&quot; : &quot;Doe&quot;,</span>
+<span class="go">                        &quot;email&quot; : &quot;john.doe@domain.com&quot;,</span>
+<span class="go">                        &quot;login&quot; : &quot;john.doe&quot;</span>
+<span class="go">                }&#39;</span>
+</pre></div>
+</div>
+<p>Server response with the 201 code</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span>    <span class="p">{</span>
+<span class="go">          &quot;id&quot;: &quot;/user/johndoe&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-10-04T08:19:16.753Z&quot;,</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T08:19:16.753Z&quot;,</span>
+<span class="go">          &quot;login&quot;: &quot;john.doe&quot;,</span>
+<span class="go">          &quot;firstName&quot;: &quot;John&quot;,</span>
+<span class="go">          &quot;lastName&quot;: &quot;Doe&quot;,</span>
+<span class="go">          &quot;isActive&quot;: false,</span>
+<span class="go">          &quot;isStaff&quot;: false,</span>
+<span class="go">          &quot;isSuperuser&quot;: false,</span>
+<span class="go">          &quot;lastLogin&quot;: null,</span>
+<span class="go">          &quot;dateJoined&quot;: null,</span>
+<span class="go">          &quot;groups&quot;: &quot;/user/johndoe/groups&quot;</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<p>Note that id was generated from the provided login.</p>
+</div></blockquote>
+</li>
+<li><p class="first">Update</p>
+<blockquote>
+<div><p>You can make a request with partial data or with a complete data structure.</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPUT http://&lt;HOST&gt;/user/johndoe?pretty=true -H 'Content-Type: application/json' -d '{
+                "firstName" : "Jack"
+        }'</pre>
+</div>
+<p>Server response with the 200 code</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;id&quot;: &quot;/user/johndoe&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-10-04T08:19:16.753Z&quot;,</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T08:24:30.840Z&quot;,</span>
+<span class="go">          &quot;login&quot;: &quot;john.doe&quot;,</span>
+<span class="go">          &quot;firstName&quot;: &quot;Jack&quot;,</span>
+<span class="go">          &quot;lastName&quot;: &quot;Doe&quot;,</span>
+<span class="go">          &quot;isActive&quot;: false,</span>
+<span class="go">          &quot;isStaff&quot;: false,</span>
+<span class="go">          &quot;isSuperuser&quot;: false,</span>
+<span class="go">          &quot;lastLogin&quot;: null,</span>
+<span class="go">          &quot;dateJoined&quot;: null,</span>
+<span class="go">          &quot;groups&quot;: &quot;/user/johndoe/groups&quot;</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" start="2">
+<li><p class="first">Delete</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">--</span><span class="n">XDELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span>
+</pre></div>
+</div>
+<p>Server response with the 204 code and an empty body.</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="group">
+<h3>Group<a class="headerlink" href="#group" title="Permalink to this headline">¶</a></h3>
+<p>Group base uri is /group</p>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPOST http://&lt;HOST&gt;/group/?pretty=true -H 'Content-Type: application/json' -d '{
+                "title" : "My group",
+                "description" : "Description of my first group"
+        }'</pre>
+</div>
+<p>Server response with the 201 code</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;id&quot;: &quot;/group/my-group&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-10-04T08:32:01.231Z&quot;,</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T08:32:01.231Z&quot;,</span>
+<span class="go">          &quot;title&quot;: &quot;My group&quot;,</span>
+<span class="go">          &quot;description&quot;: &quot;Description of my first group&quot;,</span>
+<span class="go">          &quot;writeGroups&quot;: &quot;/group/my-group/perms/wg&quot;,</span>
+<span class="go">          &quot;writeUsers&quot;: &quot;/group/my-group/perms/wu&quot;,</span>
+<span class="go">          &quot;users&quot;: &quot;/group/my-group/users&quot;</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<p>Note that id was generated from the provided title.</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="membership">
+<h3>Membership<a class="headerlink" href="#membership" title="Permalink to this headline">¶</a></h3>
+<p>Membership base uri is /membership</p>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">membership</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                        &quot;user&quot; :  &quot;/user/johndoe&quot;,</span>
+<span class="go">                        &quot;group&quot; : &quot;/group/my-group&quot;</span>
+<span class="go">                }&#39;</span>
+</pre></div>
+</div>
+<p>Server response with the 201 code</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;id&quot;: &quot;/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">          &quot;group&quot;: &quot;/group/my-group&quot;,</span>
+<span class="go">          &quot;user&quot;: &quot;/user/johndoe&quot;</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<p>A membership document is a relation between a user and a group.</p>
+</div></blockquote>
+</li>
+<li><p class="first">Get  user&#8217;s groups</p>
+<blockquote>
+<div><p>If you want to list all groups for a user just query the uri stored in the &#8220;group&#8221; attribute of the user document</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span><span class="o">/</span><span class="n">groups</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;total_rows&quot;: 1,</span>
+<span class="go">          &quot;offset&quot;: 0,</span>
+<span class="go">          &quot;rows&quot;: [</span>
+<span class="go">            {</span>
+<span class="go">              &quot;group&quot;: &quot;/group/my-group&quot;,</span>
+<span class="go">              &quot;createDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">              &quot;updateDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">              &quot;id&quot;: &quot;/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57&quot;</span>
+<span class="go">            }</span>
+<span class="go">          ]</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<p>The server will return all membership documents for the user. Observe that user attribute of the membership document is not here.</p>
+<p>If you want in the same query fetch the group document you can do it with the special query string parameter include_docs</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/user/johndoe/groups/?include_docs=true</pre>
+</div>
+<p>server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;total_rows&quot;: 1,</span>
+<span class="go">          &quot;offset&quot;: 0,</span>
+<span class="go">          &quot;rows&quot;: [</span>
+<span class="go">            {</span>
+<span class="go">              &quot;group&quot;: {</span>
+<span class="go">                &quot;title&quot;: &quot;My group&quot;,</span>
+<span class="go">                &quot;users&quot;: &quot;/group/my-group/users&quot;,</span>
+<span class="go">                &quot;description&quot;: &quot;Description of my first group&quot;,</span>
+<span class="go">                &quot;writeUsers&quot;: &quot;/group/my-group/perms/wu&quot;,</span>
+<span class="go">                &quot;createDate&quot;: &quot;2011-10-04T08:32:01.231Z&quot;,</span>
+<span class="go">                &quot;updateDate&quot;: &quot;2011-10-04T08:32:01.231Z&quot;,</span>
+<span class="go">                &quot;writeGroups&quot;: &quot;/group/my-group/perms/wg&quot;,</span>
+<span class="go">                &quot;id&quot;: &quot;/group/my-group&quot;</span>
+<span class="go">              },</span>
+<span class="go">              &quot;createDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">              &quot;updateDate&quot;: &quot;2011-10-04T08:40:32.117Z&quot;,</span>
+<span class="go">              &quot;id&quot;: &quot;/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57&quot;</span>
+<span class="go">            }</span>
+<span class="go">          ]</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Get  group&#8217;s users</p>
+<blockquote>
+<div><p>You can fetch the group&#8217;s members by requesting on the &#8220;users&#8221; attribute of the group document</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">groups</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">group</span><span class="o">/</span><span class="n">users</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/groups/my-group/users/?include_docs=true</pre>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Update</p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Update are not allowed on membership uri.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Delete</p>
+<blockquote>
+<div><p>To delete a membership relation, proceed in the same way as others documents</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">--</span><span class="n">XDELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">membership</span><span class="o">/</span><span class="mi">0</span><span class="n">b3bcb3a4b4fd153e2373f7ec49f5a57</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="agenda">
+<h3>Agenda<a class="headerlink" href="#agenda" title="Permalink to this headline">¶</a></h3>
+<p>Agenda base uri is /agenda</p>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">agenda</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                        &quot;title&quot; : &quot;My private agenda&quot;,</span>
+<span class="go">                        &quot;description&quot; : &quot;description of my private agenda&quot;</span>
+<span class="go">                }&#39;</span>
+</pre></div>
+</div>
+<p>Server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">  &quot;id&quot;: &quot;/agenda/my-private-agenda&quot;,</span>
+<span class="go">  &quot;createDate&quot;: &quot;2011-10-04T09:06:38.071Z&quot;,</span>
+<span class="go">  &quot;updateDate&quot;: &quot;2011-10-04T09:06:38.071Z&quot;,</span>
+<span class="go">  &quot;title&quot;: &quot;My private agenda&quot;,</span>
+<span class="go">  &quot;description&quot;: &quot;description of my private agenda&quot;,</span>
+<span class="go">  &quot;writeGroups&quot;: &quot;/agenda/my-private-agenda/perms/wg&quot;,</span>
+<span class="go">  &quot;writeUsers&quot;: &quot;/agenda/my-private-agenda/perms/wu&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+<p>Note that id was generated from the provided title.</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
+<div class="section" id="event">
+<h3>Event<a class="headerlink" href="#event" title="Permalink to this headline">¶</a></h3>
+<p>Event base uri is /event</p>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPOST http://&lt;HOST&gt;/event/?pretty=true -H 'Content-Type: application/json' -d '{
+                "author" : "/user/johndoe",
+                "event" : {
+                        "title" : "My first event"
+                }
+        }'</pre>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">At this time you must provide the author attribute but it will be unnecessary when auth module will work.</p>
+</div>
+<p>Server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;id&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-10-04T09:14:28.281Z&quot;,</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T09:14:28.281Z&quot;,</span>
+<span class="go">          &quot;event&quot;: {</span>
+<span class="go">            &quot;title&quot;: &quot;My first event&quot;,</span>
+<span class="go">            &quot;id&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;</span>
+<span class="go">          },</span>
+<span class="go">          &quot;author&quot;: &quot;/user/johndoe&quot;,</span>
+<span class="go">          &quot;writeGroups&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/wg&quot;,</span>
+<span class="go">          &quot;readGroups&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/rg&quot;,</span>
+<span class="go">          &quot;writeUsers&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/wu&quot;,</span>
+<span class="go">          &quot;readUsers&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/ru&quot;,</span>
+<span class="go">          &quot;agenda&quot;: null</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p class="first">Search</p>
 <blockquote>
 <div><p>Geographic and date time searchs are implemented.</p>
-<p>1.1. Geographic search</p>
+<p>2.1. Geographic search</p>
 <blockquote>
 <div><p>Geographic search is a search that limits events contained in a bounding box.</p>
 <p>For example</p>
 <div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/api/event/?bbox=&lt;TOP_LEFT_LATITUDE&gt;,&lt;TOP_LEFT_LONGITUDE&gt;,&lt;RIGHT_BOTTOM_LATITUDE&gt;,&lt;RIGHT_BOTTOM_LONGITUDE&gt;</pre>
 </div>
 </div></blockquote>
-<p>1.2. Date time search</p>
+<p>2.2. Date time search</p>
 <blockquote>
 <div><p>Two parameters are availlable: start_time and end_time (optionnal)</p>
 <p>Lorsque seul le paramètre start_time est fourni, les évènements retournés sont ceux pour lesquels la date fournie est comprise entre les dates de début et de fin de l&#8217;évènement.</p>
@@ -235,23 +504,40 @@
 </li>
 </ol>
 </div>
-<div class="section" id="membership">
-<h3>Membership<a class="headerlink" href="#membership" title="Permalink to this headline">¶</a></h3>
-<p>User and Group documents provide an URI to get memberships in respectively groups and users attributes.</p>
-<p>For users, the groups URI return a list of partial membership documents. Partial because only the group part is returned.</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">GET</span> <span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">login_user</span><span class="o">/</span><span class="n">groups</span>
-<span class="go">        {</span>
-<span class="go">        &quot;total_rows&quot;: 1,</span>
-<span class="go">        &quot;offset&quot;: 0,</span>
-<span class="go">        &quot;rows&quot;: [{</span>
-<span class="go">                &quot;group&quot;: &quot;/group/group-03144642920233309&quot;,</span>
-<span class="go">                &quot;createDate&quot;: &quot;2011-10-03T08:39:07.596Z&quot;,</span>
-<span class="go">                &quot;updateDate&quot;: &quot;2011-10-03T08:39:07.596Z&quot;,</span>
-<span class="go">                &quot;id&quot;: &quot;/membership/501b30dddab023bbc3b462653130ad69&quot;</span>
-<span class="go">        }]</span>
-<span class="go">        }</span>
-</pre></div>
-</div>
+<div class="section" id="permission">
+<h3>Permission<a class="headerlink" href="#permission" title="Permalink to this headline">¶</a></h3>
+<p>Permission documents are used to define access rights on documents.</p>
+<dl class="docutils">
+<dt>A permission document is composed of two attributes:</dt>
+<dd><ul class="first last simple">
+<li>grantTo which defines who has the permission. It could be a group or an user.</li>
+<li>applyOn which defines the document on which the permission is applied.</li>
+</ul>
+</dd>
+</dl>
+<p>Base permission uri varies depending on the document type and the permission type.</p>
+<dl class="docutils">
+<dt>Permissions types are:</dt>
+<dd><ul class="first last simple">
+<li>write user</li>
+<li>read user</li>
+<li>write group</li>
+<li>read group</li>
+</ul>
+</dd>
+</dl>
+<p>All documents types don&#8217;t have all permissions types.</p>
+<ol class="arabic">
+<li><p class="first">Permissions by document types</p>
+<blockquote>
+<div><p>1.1 Group</p>
+<blockquote>
+<div><p>Group have user and group write permissions.</p>
+<p>To create a group permission</p>
+</div></blockquote>
+</div></blockquote>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -277,8 +563,12 @@
 </ul>
 </li>
 <li><a class="reference internal" href="#specifics-of-the-api-by-document-type">Specifics of the API by document type</a><ul>
-<li><a class="reference internal" href="#search">Search</a></li>
+<li><a class="reference internal" href="#user">User</a></li>
+<li><a class="reference internal" href="#group">Group</a></li>
 <li><a class="reference internal" href="#membership">Membership</a></li>
+<li><a class="reference internal" href="#agenda">Agenda</a></li>
+<li><a class="reference internal" href="#event">Event</a></li>
+<li><a class="reference internal" href="#permission">Permission</a></li>
 </ul>
 </li>
 </ul>

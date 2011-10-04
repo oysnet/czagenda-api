@@ -171,15 +171,267 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 Specifics of the API by document type
 *************************************
 	
-Search
+User
 ^^^^^^
 
+User base uri is /user
 
-1. For events
+1. Create 
+
+	>>> curl -XPOST http://<HOST>/user/ -H 'Content-Type: application/json' -d '{
+				"firstName" : "John", 
+				"lastName" : "Doe",
+				"email" : "john.doe@domain.com",
+				"login" : "john.doe"
+			}'
+				
+	Server response	with the 201 code
+	
+	>>>	{
+		  "id": "/user/johndoe",						
+		  "createDate": "2011-10-04T08:19:16.753Z",
+		  "updateDate": "2011-10-04T08:19:16.753Z",
+		  "login": "john.doe",
+		  "firstName": "John",
+		  "lastName": "Doe",
+		  "isActive": false,
+		  "isStaff": false,
+		  "isSuperuser": false,
+		  "lastLogin": null,
+		  "dateJoined": null,
+		  "groups": "/user/johndoe/groups"				
+		}
+		
+	Note that id was generated from the provided login.
+
+2. Update
+	
+	You can make a request with partial data or with a complete data structure.
+	
+	>>> curl -XPUT http://<HOST>/user/johndoe?pretty=true -H 'Content-Type: application/json' -d '{
+			"firstName" : "Jack"
+		}'
+
+	
+	Server response	with the 200 code
+	
+	>>> {
+		  "id": "/user/johndoe",
+		  "createDate": "2011-10-04T08:19:16.753Z",
+		  "updateDate": "2011-10-04T08:24:30.840Z",		
+		  "login": "john.doe",
+		  "firstName": "Jack",							
+		  "lastName": "Doe",
+		  "isActive": false,
+		  "isStaff": false,
+		  "isSuperuser": false,
+		  "lastLogin": null,
+		  "dateJoined": null,
+		  "groups": "/user/johndoe/groups"
+		}
+
+	
+2. Delete 
+	
+	>>> curl --XDELETE http://<HOST>/user/johndoe
+	
+	Server response	with the 204 code and an empty body.
+	
+	
+Group
+^^^^^^
+	
+Group base uri is /group
+
+1. Create
+		
+	>>> curl -XPOST http://<HOST>/group/?pretty=true -H 'Content-Type: application/json' -d '{
+			"title" : "My group", 
+			"description" : "Description of my first group"
+		}'
+		
+	
+				
+	Server response	with the 201 code
+	
+	>>> {
+		  "id": "/group/my-group",
+		  "createDate": "2011-10-04T08:32:01.231Z",
+		  "updateDate": "2011-10-04T08:32:01.231Z",
+		  "title": "My group",
+		  "description": "Description of my first group",
+		  "writeGroups": "/group/my-group/perms/wg",
+		  "writeUsers": "/group/my-group/perms/wu",
+		  "users": "/group/my-group/users"
+		}
+	
+	Note that id was generated from the provided title.
+	
+	
+Membership
+^^^^^^^^^^^
+	
+Membership base uri is /membership
+
+1. Create
+
+	>>> curl -XPOST http://<HOST>/membership/ -H 'Content-Type: application/json' -d '{
+				"user" :  "/user/johndoe",
+				"group" : "/group/my-group"
+			}'
+	
+	Server response	with the 201 code
+	
+	>>> {
+		  "id": "/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57",
+		  "createDate": "2011-10-04T08:40:32.117Z",
+		  "updateDate": "2011-10-04T08:40:32.117Z",
+		  "group": "/group/my-group",
+		  "user": "/user/johndoe"
+		}
+	
+	A membership document is a relation between a user and a group.
+	
+	
+2. Get  user's groups
+
+	If you want to list all groups for a user just query the uri stored in the "group" attribute of the user document
+	
+	>>> curl -XGET http://<HOST>/user/johndoe/groups/
+	
+	Server response
+	
+	>>> {
+		  "total_rows": 1,
+		  "offset": 0,
+		  "rows": [
+		    {
+		      "group": "/group/my-group",
+		      "createDate": "2011-10-04T08:40:32.117Z",
+		      "updateDate": "2011-10-04T08:40:32.117Z",
+		      "id": "/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57"
+		    }
+		  ]
+		}
+		
+	The server will return all membership documents for the user. Observe that user attribute of the membership document is not here. 
+	
+	If you want in the same query fetch the group document you can do it with the special query string parameter include_docs
+	
+	>>> curl -XGET http://<HOST>/user/johndoe/groups/?include_docs=true
+	
+	server response
+	
+	>>> {
+		  "total_rows": 1,
+		  "offset": 0,
+		  "rows": [
+		    {
+		      "group": {
+		        "title": "My group",
+		        "users": "/group/my-group/users",
+		        "description": "Description of my first group",
+		        "writeUsers": "/group/my-group/perms/wu",
+		        "createDate": "2011-10-04T08:32:01.231Z",
+		        "updateDate": "2011-10-04T08:32:01.231Z",
+		        "writeGroups": "/group/my-group/perms/wg",
+		        "id": "/group/my-group"
+		      },
+		      "createDate": "2011-10-04T08:40:32.117Z",
+		      "updateDate": "2011-10-04T08:40:32.117Z",
+		      "id": "/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57"
+		    }
+		  ]
+		}
+
+3. Get  group's users
+
+	You can fetch the group's members by requesting on the "users" attribute of the group document
+
+	>>> curl -XGET http://<HOST>/groups/my-group/users/
+	
+	or 
+	
+	>>> curl -XGET http://<HOST>/groups/my-group/users/?include_docs=true
+	
+4. Update
+	
+	.. warning:: Update are not allowed on membership uri.
+	
+5. Delete
+
+	To delete a membership relation, proceed in the same way as others documents
+	
+	>>> curl --XDELETE http://<HOST>/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57
+	
+
+Agenda
+^^^^^^
+
+Agenda base uri is /agenda
+
+1. Create
+
+	>>> curl -XPOST http://<HOST>/agenda/ -H 'Content-Type: application/json' -d '{
+				"title" : "My private agenda",
+				"description" : "description of my private agenda"
+			}'
+	
+	
+	
+	Server response
+	
+	>>> {
+	  "id": "/agenda/my-private-agenda",
+	  "createDate": "2011-10-04T09:06:38.071Z",
+	  "updateDate": "2011-10-04T09:06:38.071Z",
+	  "title": "My private agenda",
+	  "description": "description of my private agenda",
+	  "writeGroups": "/agenda/my-private-agenda/perms/wg",
+	  "writeUsers": "/agenda/my-private-agenda/perms/wu"
+	}
+	
+	Note that id was generated from the provided title.
+
+Event
+^^^^^^
+
+Event base uri is /event
+	
+1. Create
+
+	>>> curl -XPOST http://<HOST>/event/?pretty=true -H 'Content-Type: application/json' -d '{
+			"author" : "/user/johndoe",
+			"event" : {
+				"title" : "My first event"
+			}
+		}'
+
+	.. warning:: At this time you must provide the author attribute but it will be unnecessary when auth module will work.
+
+	Server response
+	
+	>>> {
+		  "id": "/event/b31398e4e0de03ef76bb168e32e41948",
+		  "createDate": "2011-10-04T09:14:28.281Z",
+		  "updateDate": "2011-10-04T09:14:28.281Z",
+		  "event": {
+		    "title": "My first event",
+		    "id": "/event/b31398e4e0de03ef76bb168e32e41948"
+		  },
+		  "author": "/user/johndoe",
+		  "writeGroups": "/event/b31398e4e0de03ef76bb168e32e41948/perms/wg",
+		  "readGroups": "/event/b31398e4e0de03ef76bb168e32e41948/perms/rg",
+		  "writeUsers": "/event/b31398e4e0de03ef76bb168e32e41948/perms/wu",
+		  "readUsers": "/event/b31398e4e0de03ef76bb168e32e41948/perms/ru",
+		  "agenda": null
+		}
+	
+2. Search
 
 	Geographic and date time searchs are implemented.
 
-	1.1. Geographic search
+	2.1. Geographic search
 	
 		Geographic search is a search that limits events contained in a bounding box.
 	
@@ -187,7 +439,7 @@ Search
 		
 		>>> curl -XGET http://<HOST>/api/event/?bbox=<TOP_LEFT_LATITUDE>,<TOP_LEFT_LONGITUDE>,<RIGHT_BOTTOM_LATITUDE>,<RIGHT_BOTTOM_LONGITUDE>
 		
-	1.2. Date time search
+	2.2. Date time search
 		
 		Two parameters are availlable: start_time and end_time (optionnal)
 				
@@ -195,21 +447,33 @@ Search
 		
 		Lorsque les deux paramètres start_time et end_time sont fournies, les évènements retournés sont ceux pour lesquels l'intersection des deux intervales de date n'est pas nul. 
 		
-Membership
+		
+Permission
 ^^^^^^^^^^
 
-User and Group documents provide an URI to get memberships in respectively groups and users attributes. 
+Permission documents are used to define access rights on documents.
 
-For users, the groups URI return a list of partial membership documents. Partial because only the group part is returned.
+A permission document is composed of two attributes:
+	* grantTo which defines who has the permission. It could be a group or an user.
+	* applyOn which defines the document on which the permission is applied.
+	
+Base permission uri varies depending on the document type and the permission type.
 
-	>>> GET /user/login_user/groups
-		{
-		"total_rows": 1,
-		"offset": 0,
-		"rows": [{
-			"group": "/group/group-03144642920233309",
-			"createDate": "2011-10-03T08:39:07.596Z",
-			"updateDate": "2011-10-03T08:39:07.596Z",
-			"id": "/membership/501b30dddab023bbc3b462653130ad69"
-		}]
-		}
+Permissions types are:
+	* write user
+	* read user
+	* write group 
+	* read group
+	
+All documents types don't have all permissions types.
+
+1. Permissions by document types
+	
+	1.1 Group
+		
+		Group have user and group write permissions.
+		
+		To create a group permission
+
+
+		
