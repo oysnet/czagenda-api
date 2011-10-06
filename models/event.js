@@ -68,11 +68,11 @@ Event.get = function(options, callback) {
 }
 
 Event.search = function(query,attrs, callback) {
-	Base.search(query, 'agenda', 'event',attrs,Event, callback)
+	Base.search(query, settings.elasticsearch.index, 'event',attrs,Event, callback)
 }
 
 Event.count = function(query, callback) {
-	Base.count(query, 'agenda', 'event',callback)
+	Base.count(query, settings.elasticsearch.index, 'event',callback)
 }
 
 exports.Event = Event;

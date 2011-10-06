@@ -65,11 +65,11 @@ Group.get = function(options, callback) {
 }
 
 Group.search = function(query, attrs,callback) {
-	Base.search(query, 'agenda', 'group',attrs, Group, callback)
+	Base.search(query, settings.elasticsearch.index, 'group',attrs, Group, callback)
 }
 
 Group.count = function(query, callback) {
-	Base.count(query, 'agenda', 'group',callback)
+	Base.count(query, settings.elasticsearch.index, 'group',callback)
 }
 
 

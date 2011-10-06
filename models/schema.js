@@ -85,12 +85,12 @@ Schema.get = function(options, callback) {
 }
 
 Schema.search = function(query,attrs, callback) {
-	Base.search(query, 'agenda', 'schema', attrs, Schema, callback)
+	Base.search(query, settings.elasticsearch.index, 'schema', attrs, Schema, callback)
 }
 
 
 Schema.count = function(query, callback) {
-	Base.count(query, 'agenda', 'schema',callback)
+	Base.count(query, settings.elasticsearch.index, 'schema',callback)
 }
 
 exports.Schema = Schema;

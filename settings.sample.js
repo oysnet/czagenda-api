@@ -1,12 +1,11 @@
 
-
-exports.couchdb = {
-	'address' : '10.7.50.101',
-	'port' : 5984,
-	'db' : 'agenda3'
+exports.czdiscovery = {
+	'enabled': true,
+	'key' : 'http-api'
 }
 
 exports.elasticsearch = {
+	index : 'agenda',
 	hosts : [{
 		'host' : '10.7.50.110',
 		'port' : 9200

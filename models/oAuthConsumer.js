@@ -69,11 +69,11 @@ OAuthConsumer.get = function(options, callback) {
 
 
 OAuthConsumer.search = function(query, attrs, callback) {
-	Base.search(query, 'agenda', 'oauth-consumer', attrs, OAuthConsumer, callback)
+	Base.search(query, settings.elasticsearch.index, 'oauth-consumer', attrs, OAuthConsumer, callback)
 }
 
 OAuthConsumer.count = function(query, callback) {
-	Base.count(query, 'agenda', 'oauth-consumer',callback)
+	Base.count(query, settings.elasticsearch.index, 'oauth-consumer',callback)
 }
 
 exports.OAuthConsumer = OAuthConsumer;

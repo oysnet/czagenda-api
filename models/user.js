@@ -75,11 +75,11 @@ User.get = function(options, callback) {
 }
 
 User.search = function(query, attrs, callback) {
-	Base.search(query, 'agenda', 'user', attrs, User, callback)
+	Base.search(query, settings.elasticsearch.index, 'user', attrs, User, callback)
 }
 
 User.count = function(query, callback) {
-	Base.count(query, 'agenda', 'user',callback)
+	Base.count(query, settings.elasticsearch.index, 'user',callback)
 }
 
 exports.User = User;

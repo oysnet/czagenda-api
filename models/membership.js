@@ -37,11 +37,11 @@ Membership.get = function(options, callback) {
 }
 
 Membership.search = function(query,attrs, callback) {
-	Base.search(query, 'agenda', 'membership', attrs, Membership, callback)
+	Base.search(query, settings.elasticsearch.index, 'membership', attrs, Membership, callback)
 }
 
 Membership.count = function(query, callback) {
-	Base.count(query, 'agenda', 'membership',callback)
+	Base.count(query, settings.elasticsearch.index, 'membership',callback)
 }
 
 

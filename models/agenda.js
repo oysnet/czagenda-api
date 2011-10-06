@@ -2,6 +2,7 @@ var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
+var settings = require('../settings.js');
 
 function Agenda () {
 	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null};
@@ -60,11 +61,11 @@ Agenda.get = function(options, callback) {
 }
 
 Agenda.search = function(query, attrs, callback) {
-	Base.search(query, 'agenda', 'agenda',attrs, Agenda, callback)
+	Base.search(query, settings.elasticsearch.index, 'agenda',attrs, Agenda, callback)
 }
 
 Agenda.count = function(query, callback) {
-	Base.count(query, 'agenda', 'agenda',callback)
+	Base.count(query, settings.elasticsearch.index, 'agenda',callback)
 }
 
 exports.Agenda = Agenda;
