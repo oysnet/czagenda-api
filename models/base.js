@@ -19,7 +19,7 @@ function Base(type) {
 	this._rev = null;
 	this._data = {};
 	this._type = type;
-	this._index = 'agenda';
+	this._index = settings.elasticsearch.index;
 	this._hash = null;
 	
 	this.id = null;

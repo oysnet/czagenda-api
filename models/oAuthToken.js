@@ -69,11 +69,11 @@ OAuthToken.get = function(options, callback) {
 }
 
 OAuthToken.search = function(query, attrs, callback) {
-	Base.search(query, 'agenda', 'oauth-token', attrs, OAuthToken, callback)
+	Base.search(query, settings.elasticsearch.index, 'oauth-token', attrs, OAuthToken, callback)
 }
 
 OAuthToken.count = function(query, callback) {
-	Base.count(query, 'agenda', 'oauth-token',callback)
+	Base.count(query, settings.elasticsearch.index, 'oauth-token',callback)
 }
 
 exports.OAuthToken = OAuthToken;
