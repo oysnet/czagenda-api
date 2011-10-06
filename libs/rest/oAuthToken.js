@@ -112,7 +112,7 @@ RestOAuthToken.prototype.accessToken = function(req, res) {
 			nobj.consumer = req.consumer;
 			nobj.tokenType = 'ACCESS';
 			nobj.user = obj.user;
-			nob.isApproved = true;
+			nobj.isApproved = true;
 			
 			nobj.save( function(err, nobj) {
 				if(err === null) {
