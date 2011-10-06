@@ -17,6 +17,7 @@ var cluster = require('cluster')('./app')
   .use(cluster.pidfiles('pids'))
   .use(cluster.cli())
   .use(cluster.repl(8888))
+  .use(cluster.reload())
   .listen(config.port);
 
 var a = null;

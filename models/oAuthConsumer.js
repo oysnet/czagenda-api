@@ -25,15 +25,17 @@ OAuthConsumer.prototype._validate = function (callback) {
 	this.validateString('key', false, null, 18);
 	this.validateString('secret', false, null, 32);
 	this.validateChoice('status', ['PENDING', 'ACCEPTED', 'CANCELED', 'REJECTED']);
-	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', true);	
+	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', false);	
 	callback(null);
 }
 
 OAuthConsumer.prototype._generateHash = function () {
+	
 	c = require('crypto')
     h = c.createHash('md5')
     h.update(this._type);
 	h.update(this.name);
+	h.update(this.user);
 	this._data['hash'] = h.digest('hex')
 }
 

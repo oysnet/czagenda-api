@@ -1,23 +1,18 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 
 var models = require('../../models');
 
 function RestAgenda (server) {
 	
-	RestBase.call(this, 'agenda', models.Agenda, server);
+	RestOAuthModel.call(this, 'agenda', models.Agenda, server);
 	
-	var urls = {
-		get : {
-			'/agenda/:id/perms/wu' : this.permsUserWrite,
-			'/agenda/:id/perms/wg' : this.permsGroupWrite
-		}
-	}
-	this.addurls(urls);
+	this._urls.get[this._urlPrefix + '/:id/perms/wu'] = {fn :  this.permsUserWrite};
+	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {fn :  this.permsGroupWrite};
 	
 	this._initServer();
 }
-util.inherits(RestAgenda, RestBase);
+util.inherits(RestAgenda, RestOAuthModel);
 
 RestAgenda.prototype.permsUserWrite = function (req, res) {
 	var permClass = models.perms.getPermClass('agenda', 'user', 'write'), grantToClass = models.User;

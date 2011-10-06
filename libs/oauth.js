@@ -15,6 +15,8 @@ exports.OAuthError.prototype = new Error;
 
 exports.parseHeader = function () {
 	return function (req, res, next) {
+		
+		
 		// Patch aoauthParams objects into the request
 		req.oauthParams = {};
 		req.oauthHeaderParams = {};
@@ -38,6 +40,7 @@ exports.parseHeader = function () {
 				req.oauthParams[key] = req.oauthHeaderParams[key] = value;
 			}
 		}
+		
 		
 		next();
 	};
@@ -203,6 +206,7 @@ exports.verifyBody = function () {
 		} else if (req.rawBody && !req.is('application/x-www-form-urlencoded')) {
 			return next(new exports.OAuthError("missing OAuth body digest"));
 		}
+		
 		
 		next();
 	};

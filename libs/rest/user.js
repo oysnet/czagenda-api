@@ -1,4 +1,4 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 var models = require('../../models');
 
@@ -11,22 +11,15 @@ var async = require('async');
 
 var RestUser = exports.RestUser = function (server) {
 	
-	RestBase.call(this, 'user', models.User, server);
+	RestOAuthModel.call(this, 'user', models.User, server);
 	
-	var urls = {
-		get : {
-			'/user/:id/events/_count' : this.getEventCount,
-			'/user/:id/groups' : this.memberships,
-		},
-		post : {
-			'/user/:id/_checkpassword' : this.checkpassword
-		}
-	}
-	this.addurls(urls);
+	this._urls.get[this._urlPrefix + '/:id/events/_count'] = {fn :  this.getEventCount};
+	this._urls.get[this._urlPrefix + '/:id/groups'] = {fn :  this.memberships};
+	this._urls.post[this._urlPrefix + '/:id/_checkpassword'] = {fn :  this.checkpassword};
 	
 	this._initServer();
 }
-util.inherits(RestUser, RestBase);
+util.inherits(RestUser, RestOAuthModel);
 
 
 RestUser.prototype.memberships = function(req, res) {

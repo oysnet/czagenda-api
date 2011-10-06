@@ -1,4 +1,4 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var statusCode = require('../statusCodes.js');
 var util = require("util");
 var models = require('../../models');
@@ -9,21 +9,16 @@ var restError = require('./errors');
 
 var RestEvent = exports.RestEvent = function(server) {
 
-	RestBase.call(this, 'event', models.Event, server);
+	RestOAuthModel.call(this, 'event', models.Event, server);
 	
-	var urls = {
-		get : {
-			'/event/:id/perms/wu' : this.permsUserWrite,
-			'/event/:id/perms/wg' : this.permsGroupWrite,
-			'/event/:id/perms/ru' : this.permsUserRead,
-			'/event/:id/perms/rg' : this.permsGroupRead
-		}
-	}
-	this.addurls(urls);
+	this._urls.get[this._urlPrefix + '/:id/perms/wu'] = {fn :  this.permsUserWrite};
+	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {fn :  this.permsGroupWrite};
+	this._urls.get[this._urlPrefix + '/:id/perms/ru'] = {fn :  this.permsUserRead};
+	this._urls.get[this._urlPrefix + '/:id/perms/rg'] = {fn :  this.permsGroupRead};
 	
 	this._initServer();
 }
-util.inherits(RestEvent, RestBase);
+util.inherits(RestEvent, RestOAuthModel);
 
 
 RestEvent.prototype.permsUserWrite = function (req, res) {

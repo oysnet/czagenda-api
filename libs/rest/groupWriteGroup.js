@@ -1,18 +1,17 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthBasePerm = require('./oAuthBasePerm.js').RestOAuthBasePerm;
 var util = require("util");
 
 var models = require('../../models');
 
 function RestGroupWriteGroup (server) {
-	RestBase.call(this, 'group-write-group', models.perms.GroupWriteGroup, server);
-	
 	this._urlPrefix = '/perms/group/wg';
-	this._allowedMethods = [ 'post', 'del'];
+	
+	RestOAuthBasePerm.call(this, 'group-write-group', models.perms.GroupWriteGroup, server);
 	
 	this._initServer();
 	
 }
-util.inherits(RestGroupWriteGroup, RestBase);
+util.inherits(RestGroupWriteGroup, RestOAuthBasePerm);
 
 
 exports.RestGroupWriteGroup = RestGroupWriteGroup

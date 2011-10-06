@@ -1,9 +1,9 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 var models = require('../../models');
 
 var RestMembership = exports.RestMembership = function (server) {
-	RestBase.call(this, 'membership', models.Membership, server);
+	RestOAuthModel.call(this, 'membership', models.Membership, server);
 	this._initServer();
 }
-util.inherits(RestMembership, RestBase);
+util.inherits(RestMembership, RestOAuthModel);

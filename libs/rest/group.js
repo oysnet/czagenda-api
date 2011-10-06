@@ -1,4 +1,4 @@
-var RestBase = require('./base.js').RestBase;
+var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 
 var models = require('../../models');
@@ -8,20 +8,16 @@ var async = require('async');
 
 var RestGroup = exports.RestGroup = function (server) {
 	
-	RestBase.call(this, 'group', models.Group, server);
+	RestOAuthModel.call(this, 'group', models.Group, server);
 	
-	var urls = {
-		get : {
-			'/group/:id/users' : this.memberships,
-			'/group/:id/perms/wu' : this.permsUserWrite,
-			'/group/:id/perms/wg' : this.permsGroupWrite
-		}
-	}
-	this.addurls(urls);
+	this._urls.get[this._urlPrefix + '/:id/users'] = {fn :  this.memberships};
+	this._urls.get[this._urlPrefix + '/:id/perms/wu'] = {fn :  this.permsUserWrite};
+	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {fn :  this.permsGroupWrite};
+	
 	
 	this._initServer();
 }
-util.inherits(RestGroup, RestBase);
+util.inherits(RestGroup, RestOAuthModel);
 
 RestGroup.prototype.permsUserWrite = function (req, res) {
 	var permClass = models.perms.getPermClass('group', 'user', 'write'), grantToClass = models.User;
