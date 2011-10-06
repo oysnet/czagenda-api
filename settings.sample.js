@@ -20,9 +20,7 @@ exports.server = {
 exports.redis = {
 	'host' : '10.7.50.119',
 	'port' : 6379,
-	'keyTTL' : 3600
+	'keyTTL' : 3600,
+	db : 0
 }
 
-exports.schema = {
-	user : "/schema/6cbf5d5f9c7675cc1c5e2025676210d4"
-}
