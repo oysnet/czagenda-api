@@ -24,6 +24,7 @@ function RestOAuthToken(server) {
 	
 	// Model
 	
+	this._idRegexp = '([0-9a-zA-Z]+)';
 	
 	this._urls.post[this._urlPrefix + '/:id/_authorize'] = {middleware : modelMiddleware, fn :  this.authorize};
 	
@@ -111,7 +112,8 @@ RestOAuthToken.prototype.accessToken = function(req, res) {
 			nobj.consumer = req.consumer;
 			nobj.tokenType = 'ACCESS';
 			nobj.user = obj.user;
-
+			nob.isApproved = true;
+			
 			nobj.save( function(err, nobj) {
 				if(err === null) {
 					res.statusCode = statusCode.CREATED;

@@ -27,7 +27,7 @@ exports._verifySignature = oauth.verifySignature(function(req, type, identifier,
 			id : "/oauth-token/" + identifier
 		}, function(err, obj) {
 
-			if(err !== null) {
+			if(err !== null || obj.isApproved === false) {
 				callback();
 			} else {
 				req.token = obj.id;

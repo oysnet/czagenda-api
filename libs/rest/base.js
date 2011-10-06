@@ -15,8 +15,10 @@ var RestBase = exports.RestBase = function(type, clazz, server) {
 	this._type = type;
 	this._clazz = clazz;
 	this._server = server;
-
+	
 	this._urlPrefix = this._urlPrefix === null ? '/' + this._type : this._urlPrefix;
+	
+	this._idRegexp = '([^_]?[^\/]+)'
 	
 	this.__initialized = false;
 
@@ -46,8 +48,15 @@ RestBase.prototype._initServer = function() {
 	for(method in this._urls) {
 		var sub_map = this._urls[method];
 		for(url in sub_map) {
-			log.debug('REST url added: ' + method.toUpperCase() + ' ' + url);
-			server[method](url, this._getDefaultMiddleware().concat(typeof(sub_map[url].middleware) === 'undefined' ? [] : sub_map[url].middleware),sub_map[url].fn.bind(this));
+
+			var updatedUrl = url;
+			
+			if (this._idRegexp !== null) {
+				updatedUrl = url.replace(/(\:id)/g, "$1" + this._idRegexp);
+			}
+			
+			log.debug('REST url added: ' + method.toUpperCase() + ' ' + updatedUrl);
+			server[method](updatedUrl, this._getDefaultMiddleware().concat(typeof(sub_map[url].middleware) === 'undefined' ? [] : sub_map[url].middleware),sub_map[url].fn.bind(this));
 		}
 		
 	}
