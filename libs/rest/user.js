@@ -15,8 +15,11 @@ var RestUser = exports.RestUser = function (server) {
 	
 	var urls = {
 		get : {
-			'/user/:id/eventscount' : this.getEventCount,
+			'/user/:id/events/_count' : this.getEventCount,
 			'/user/:id/groups' : this.memberships,
+		},
+		post : {
+			'/user/:id/_checkpassword' : this.checkpassword
 		}
 	}
 	this.addurls(urls);
@@ -91,6 +94,45 @@ RestUser.prototype.memberships = function(req, res) {
 	
 	
 
+}
+
+RestUser.prototype.checkpassword = function(req, res) {
+	var data = req.body;
+	
+	if (typeof(data) === 'undefined' || typeof(data.password) === 'undefined') {
+		res.statusCode = statusCode.BAD_REQUEST;
+		res.end('Missing password');
+		return;
+	}
+	
+	models.User.get({
+		id : '/user/' + req.params.id
+	}, function( err, obj) {
+
+		if(err !== null) {
+
+			if( err instanceof errors.ObjectDoesNotExist) {
+				res.statusCode = statusCode.NOT_FOUND;
+				res.end('Not found')
+			}  else {
+				res.statusCode = statusCode.INTERNAL_ERROR;
+				res.end('Internal error')
+			}
+
+		} else {
+			
+			res.statusCode = statusCode.ALL_OK;
+			
+			if (data.password === obj.password) {
+				res.end('{"success":true}');
+			} else {
+				res.end('{"success":false}');
+			}
+			
+		}
+
+	}.bind(this))
+	
 }
 
 

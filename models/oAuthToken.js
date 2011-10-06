@@ -2,6 +2,7 @@ var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
+var oauth = require('../libs/oauth');
 
 function OAuthToken () {
 	this._attributs = {key : null, secret : null, verifier : null, tokenType : null, isApproved : false, user : null, consumer:null, callback:null, callbackConfirmed:false};
@@ -19,12 +20,12 @@ OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'to
 OAuthToken.prototype._validate = function (callback) {
 	this.validateString('key', false, null, 18);
 	this.validateString('secret', false, null, 32);
-	this.validateString('verifier', false, null, 10);
+	this.validateString('verifier', true, null, 10);
 	this.validateChoice('tokenType',[ 'REQUEST', 'ACCESS']);
 	this.validateBoolean('isApproved', false);
 	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', true);	
-	this.validateRegexp('consumer', '^/oauth-consumer/[\-_\.0-9a-z]+$', true);
-	this.validateString('callback', false, null, 255);
+	//this.validateRegexp('consumer', '^/oauth-consumer/[\-_\.0-9a-z]+$', true);
+	this.validateString('callback', true, null, 255);
 	this.validateBoolean('callbackConfirmed', false);
 	callback(null);
 }
@@ -38,19 +39,27 @@ OAuthToken.prototype._generateHash = function () {
 	this._data['hash'] = h.digest('hex')
 }
 
-/*
+OAuthToken.prototype._generateId = function () {
+	return '/oauth-token/' + this.key;
+}
+
+
+OAuthToken.prototype.setVerifier = function () {
+	this.verifier = oauth.generateToken(10);
+}
+
+
 OAuthToken.prototype.save = function (callback) {
 	
-	if (typeof(this.title) !== 'string') {
-		this.addValidationError('title', 'a string is required')
-		callback(new errors.ValidationError(), this);
-		return;
+	if (this.id === null) {
+		this.key = oauth.generateToken(18);
+		this.secret = oauth.generateToken(32);
 	}
 	
 	Base.prototype.save.call(this, callback);
 	
 }
-*/
+
 OAuthToken.prototype._preSave = function () {
 	
 }

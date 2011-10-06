@@ -24,6 +24,8 @@ cluster.on('closing',function() {
     a.stop();
 });
 cluster.on('start',function() {
-	a = new czdiscovery.Advertisement('http-api',config.host,config.port);
+	a = new czdiscovery.Advertisement('http-api-dev',config.host,config.port);
 	a.start();
 });
+
+

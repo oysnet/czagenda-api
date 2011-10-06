@@ -22,19 +22,20 @@ function User () {
 	Base.call(this, 'user');
 }
 
-User.publicAttributes = Base.publicAttributes.concat([ 'login', 'firstName', 'lastName', 'isActive', 'isStaff','isSuperuser', 'lastLogin', 'dateJoined', 'groups' ]);
-User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email']);
+User.publicAttributes = Base.publicAttributes.concat([ 'login', 'firstName', 'lastName', 'isActive', 'isStaff','isSuperuser', 'lastLogin', 'dateJoined', 'groups' ]); // enlever email
+User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 
-User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email']
-User.staffWriteAttributes = User.publicWriteAttributes.concat(['isActive', 'isStaff', 'isSuperuser']);
+User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email', 'password', 'isActive']; // enlever password
+User.staffWriteAttributes = User.publicWriteAttributes.concat(['isActive', 'isStaff', 'isSuperuser']); // ajouter password
 
 util.inherits(User, Base);
 
 User.prototype._validate = function(callback) {
-	this.validateString('login', false, 8, 32);
+	this.validateString('login', false, 2, 30);
 	this.validateString('firstName', true, null, 128);
 	this.validateString('lastName', true, null, 128);
 	this.validateEmail('email');
+	
 	callback(null);
 }
 
@@ -47,7 +48,7 @@ User.prototype._generateHash = function() {
 }
 
 User.prototype._generateId = function () {
-	return '/user/' + utils.slugify(this.login);
+	return '/user/' + this.login;
 }
 
 User.prototype.save = function (callback) {
