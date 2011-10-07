@@ -1,7 +1,7 @@
 var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
-
+var settings = require('../settings.js');
 function Membership () {
 	this._attributs = {user : null, group : null};
 	Base.call(this, 'membership');	

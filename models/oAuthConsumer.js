@@ -3,7 +3,7 @@ var util = require("util");
 var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
 var oauth = require('../libs/oauth');
-
+var settings = require('../settings.js');
 var log = require('czagenda-log').from(__filename);
 
 function OAuthConsumer () {

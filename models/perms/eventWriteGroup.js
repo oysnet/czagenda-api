@@ -1,7 +1,7 @@
 var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
-
+var settings = require('../../settings.js');
 
 const type = 'event-write-group'
 
@@ -32,11 +32,11 @@ EventWriteGroup.get = function(options, callback) {
 }
 
 EventWriteGroup.search = function(query, attrs,callback) {
-	Base.search(query, 'agenda', type, attrs,EventWriteGroup, callback)
+	Base.search(query, settings.elasticsearch.index, type, attrs,EventWriteGroup, callback)
 }
 
 EventWriteGroup.count = function(query, callback) {
-	Base.count(query, 'agenda', type,callback)
+	Base.count(query, settings.elasticsearch.index, type,callback)
 }
 
 

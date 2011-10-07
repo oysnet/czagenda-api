@@ -1,7 +1,7 @@
 var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
-
+var settings = require('../../settings.js');
 
 const type = 'event-read-user'
 
@@ -33,11 +33,11 @@ EventReadUser.get = function(options, callback) {
 }
 
 EventReadUser.search = function(query, attrs,callback) {
-	Base.search(query, 'agenda', type, attrs,EventReadUser, callback)
+	Base.search(query, settings.elasticsearch.index, type, attrs,EventReadUser, callback)
 }
 
 EventReadUser.count = function(query, callback) {
-	Base.count(query, 'agenda', type,callback)
+	Base.count(query, settings.elasticsearch.index, type,callback)
 }
 
 module.exports = EventReadUser;

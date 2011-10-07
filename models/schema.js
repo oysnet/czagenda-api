@@ -3,7 +3,7 @@ var util = require("util");
 var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
 //var validatorEnvironment = require('../libs/schemas/validator').validatorEnvironment;
-
+var settings = require('../settings.js');
 
 function Schema () {
 	this._attributs = {schema : null, final : false, sample : null, template : null, status : 'PENDING', name : null};

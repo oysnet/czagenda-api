@@ -1,7 +1,7 @@
 var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
-
+var settings = require('../../settings.js');
 
 const type = 'agenda-write-group'
 
@@ -32,11 +32,11 @@ AgendaWriteGroup.get = function(options, callback) {
 }
 
 AgendaWriteGroup.search = function(query, attrs,callback) {
-	Base.search(query, 'agenda', type, attrs,AgendaWriteGroup, callback)
+	Base.search(query, settings.elasticsearch.index, type, attrs,AgendaWriteGroup, callback)
 }
 
 AgendaWriteGroup.count = function(query, callback) {
-	Base.count(query, 'agenda', type,callback)
+	Base.count(query, settings.elasticsearch.index, type,callback)
 }
 
 module.exports = AgendaWriteGroup;

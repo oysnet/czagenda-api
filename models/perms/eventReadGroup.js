@@ -1,7 +1,7 @@
 var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
-
+var settings = require('../../settings.js');
 
 const type = 'event-read-group'
 
@@ -32,11 +32,11 @@ EventReadGroup.get = function(options, callback) {
 }
 
 EventReadGroup.search = function(query, attrs,callback) {
-	Base.search(query, 'agenda', type, attrs,EventReadGroup, callback)
+	Base.search(query, settings.elasticsearch.index, type, attrs,EventReadGroup, callback)
 }
 
 EventReadGroup.count = function(query, callback) {
-	Base.count(query, 'agenda', type,callback)
+	Base.count(query, settings.elasticsearch.index, type,callback)
 }
 
 

@@ -1,6 +1,6 @@
 var Base = require('./base.js').Base;
 var util = require("util"), crypto = require('crypto');
-
+var settings = require('../settings.js');
 //var env = require('JSV').JSV.createEnvironment("json-schema-draft-03");
 //var jsonSchema = env.findSchema(env.getOption("latestJSONSchemaSchemaURI"));
 

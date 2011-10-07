@@ -3,7 +3,7 @@ var util = require("util");
 var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
 var oauth = require('../libs/oauth');
-
+var settings = require('../settings.js');
 function OAuthToken () {
 	this._attributs = {key : null, secret : null, verifier : null, tokenType : null, isApproved : false, user : null, consumer:null, callback:null, callbackConfirmed:false};
 	Base.call(this, 'oauth-token');	
