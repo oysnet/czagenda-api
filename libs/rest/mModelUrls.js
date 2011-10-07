@@ -1,7 +1,7 @@
 var log = require('czagenda-log').from(__filename);
 var statusCodes = require('../statusCodes');
 var errors = require('../../models').errors;
-
+var async = require('async');
 
 exports.populateModelUrls = function () {
 	this._urls.get[this._urlPrefix] = { middleware : [], fn : this.list};
@@ -158,7 +158,10 @@ exports.create = function(req, res) {
 
 exports.update = function(req, res) {
 	// load object...
-
+	
+	console.log(req.url);
+	console.log(req.url.split('?')[0]);
+	
 	this._clazz.get({
 		id : req.url.split('?')[0]
 	}, function(err, obj) {
