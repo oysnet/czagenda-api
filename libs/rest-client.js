@@ -1,4 +1,6 @@
-var http = require('http');
+//var http = require('http');
+
+var settings = require('../settings');
 
 function Rest (host, port) {
 
@@ -10,12 +12,42 @@ function Rest (host, port) {
 		port = 3000;
 	}
 
-	this.__host = host;
-	this.__port = port;
-
+	
+	this.__url = "http://"+ host + ":" + port;
+	
+	this.token = settings.oauth.access_token;
+	this.token_secret = settings.oauth.access_secret;
+	
+	var consumer= settings.oauth.consumer_token;
+	var consumer_secret = settings.oauth.consumer_secret;
+	
+	var OAuth= require('node-oauth').OAuth;
+	this.client= new OAuth("","",consumer,consumer_secret,"1.0",null,"HMAC-SHA1")
+	                  
+	
+	
 }
 
+
+Rest.prototype._callback = function (callback, err, data, response) {
+	callback(err, response, data);
+}
+
+
 Rest.prototype.request = function(options, data, callback) {
+	
+	if (options.method === 'POST') {
+		this.client.post(this.__url + options.path, this.token, this.token_secret, data, 'application/json', this._callback.bind(this, callback))
+	} else if (options.method === 'PUT') {
+		this.client.put(this.__url + options.path, this.token, this.token_secret, data, 'application/json', this._callback.bind(this, callback))
+	}
+	else {
+		this.client.getProtectedResource(this.__url + options.path, options.method, this.token, this.token_secret,  this._callback.bind(this, callback));
+	}
+	
+	
+	
+	/*
 	var req = http.request(options, function(res) {
 		
 		var data = null;
@@ -45,8 +77,9 @@ Rest.prototype.request = function(options, data, callback) {
 		req.write(data);
 	}
 	
-	req.end();
+	req.end();*/
 }
+
 Rest.prototype.get = function(path, callback) {
 	var options = {
 		host : this.__host,
@@ -54,6 +87,7 @@ Rest.prototype.get = function(path, callback) {
 		path : path,
 		method : 'GET'
 	};
+	
 	this.request(options, null, callback)
 }
 
