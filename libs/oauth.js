@@ -53,7 +53,7 @@ function oauthBaseStringURI(req) {
 	var hostname = req.header('host').split(':')[0].toLowerCase();
 	var port = parseInt(req.header('host').split(':')[1], 10);
 	
-	if ((port != NaN)
+	if (!isNaN(port) 
 	    && (scheme != 'http' || port != 80)
 	    && (scheme != 'https' || port != 443))
 		hostname = hostname + ':' + port;
