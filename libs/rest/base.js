@@ -55,6 +55,8 @@ RestBase.prototype._initServer = function() {
 				updatedUrl = url.replace(/(\:id)/g, "$1" + this._idRegexp);
 			}
 			
+			updatedUrl = '/api' + updatedUrl;
+			
 			log.debug('REST url added: ' + method.toUpperCase() + ' ' + updatedUrl);
 			server[method](updatedUrl, this._getDefaultMiddleware().concat(typeof(sub_map[url].middleware) === 'undefined' ? [] : sub_map[url].middleware),sub_map[url].fn.bind(this));
 		}
