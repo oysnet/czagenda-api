@@ -18,7 +18,6 @@ var verifyConsumerToken = function(req, identifier, callback) {
 
 exports._verifySignature = oauth.verifySignature(function(req, type, identifier, callback) {
 	
-	
 	if(type == 'client') {
 		verifyConsumerToken(req, identifier, callback);
 	}
@@ -31,11 +30,15 @@ exports._verifySignature = oauth.verifySignature(function(req, type, identifier,
 				callback();
 			} else {
 				req.token = obj.id;
+				req.user = obj.user
+				
 				callback(obj.secret);
 			}
 		});
 	}
 });
+
+
 
 exports._verifyConsumerSignature = oauth.verifySignature(function(req, type, identifier, callback) {
 		

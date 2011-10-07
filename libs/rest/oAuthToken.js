@@ -5,21 +5,28 @@ var models = require('../../models');
 var oauth = require('../oauth');
 var mOAuth = require('./mOAuth');
 var mModelUrls = require('./mModelUrls');
-
+var mPermissions = require('./mPermissions');
 
 function RestOAuthToken(server) {
 
 	RestBase.call(this, 'oauth-token', models.OAuthToken, server);
 	
+	// mixin mOAuth
 	for (k in mOAuth) {
 		this[k] = mOAuth[k];
 	}
+	
+	// mixin mModelUrls
 	for (k in mModelUrls) {
 		this[k] = mModelUrls[k];
 	}
 	
+	// mixin mPermissions
+	for (k in mPermissions) {
+		this[k] = mPermissions[k];
+	}
 	
-	var modelMiddleware = [this._verifySignature]
+	var modelMiddleware = [this._verifySignature, this.getUserPermsAndGroups ,this.staffOnly]
 	
 	
 	// Model

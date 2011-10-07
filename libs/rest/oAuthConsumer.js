@@ -9,6 +9,14 @@ function RestOAuthConsumer (server) {
 	
 	this._idRegexp = '([0-9a-zA-Z]+)';
 	
+	// add staffOnly middleware to all urls
+	for(method in this._urls) {
+		var sub_map = this._urls[method];
+		for(url in sub_map) {
+			sub_map[url].middleware.push(this.staffOnly);
+		}
+	}
+	
 	this._initServer();
 }
 util.inherits(RestOAuthConsumer,RestOAuthModel );

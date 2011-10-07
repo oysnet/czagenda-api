@@ -22,8 +22,14 @@ exports._populateObject = function(obj, data, req, res) {
 	log.notice("[TODO] exports._populateObject Supprimer oauthKeys");
 
 	var oauthKeys = ['oauth_nonce', 'oauth_timestamp', 'oauth_consumer_key', 'oauth_signature_method', 'oauth_version', 'oauth_token', 'oauth_signature'];
-
+	
 	var allowedKeys = obj.constructor.publicWriteAttributes;
+	
+	if (req.user.isStaff || req.user.isSuperuser) {
+		allowedKeys = obj.constructor.staffWriteAttributes;
+	} 
+	
+	
 	var wrongKeys = [];
 
 	for(k in data) {
@@ -49,8 +55,19 @@ exports._populateObject = function(obj, data, req, res) {
 /**
  * Return a serializable object that contains only attributes listed in keys
  */
-exports._serializeObject = function(obj) {
-	return obj.serialize(obj.constructor.publicAttributes);
+exports._serializeObject = function(obj, req) {
+	
+	if (typeof(req.user) === 'undefined') {
+		log.warning('_serializeObject : req is undefined ')
+	}
+	
+	var keys = obj.constructor.publicAttributes;
+	if (req.user.isStaff || req.user.isSuperuser) {
+		keys =obj.constructor.staffAttributes;
+	} 
+	
+	
+	return obj.serialize(keys);
 }
 
 exports._getQueryFromRequest = function(req, callback) {
@@ -117,7 +134,7 @@ exports.read = function(req, res) {
 			}
 		} else {
 			res.statusCode = statusCodes.ALL_OK;
-			res.end(this._renderJson(req, res, this._serializeObject(obj)));
+			res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 		}
 
 	}.bind(this));
@@ -134,7 +151,7 @@ exports.create = function(req, res) {
 
 			if(err === null) {
 				res.statusCode = statusCodes.CREATED;
-				res.end(this._renderJson(req, res, this._serializeObject(obj)));
+				res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 			} else {
 
 				if( err instanceof errors.ObjectAlreadyExists) {
@@ -197,7 +214,7 @@ exports.update = function(req, res) {
 
 					} else {
 						res.statusCode = statusCodes.ALL_OK;
-						res.end(this._renderJson(req, res, this._serializeObject(obj)));
+						res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 					}
 
 				}.bind(this));
@@ -266,7 +283,10 @@ exports._search = function(req, res, query) {
 	}
 
 	var attrs = this._clazz.publicAttributes;
-
+	if (req.user.isStaff || req.user.isSuperuser) {
+		attrs = this._clazz.staffAttributes;
+	} 
+	
 	this._clazz.search(query, attrs, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {
@@ -345,8 +365,13 @@ exports._perms = function(req, res, permClass, grantToClass) {
 					}
 				}
 			}
-
-			grantToClass.search(q, grantToClass.publicAttributes, function(err, objects) {
+			
+			var attrs = grantToClass.publicAttributes;
+			if (req.user.isStaff || req.user.isSuperuser) {
+				attrs = grantToClass.staffAttributes;
+			} 
+			
+			grantToClass.search(q, attrs, function(err, objects) {
 
 				if(err !== null) {
 					callback(err);
