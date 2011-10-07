@@ -1,6 +1,4 @@
-var settings = require('../settings.js');
-var redis = require("redis"), redisClient = redis.createClient(settings.redis.port, settings.redis.host);
-
+var redisClient = require('../libs/redis-client');
 redisClient.on('ready', function () {
 	redisClient.flushall(function () {
 		console.log('flush done')
