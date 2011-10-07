@@ -194,7 +194,8 @@ exports.verifyBody = function () {
 			return next();
 		if (req.oauthParams['oauth_signature_method'] == 'PLAINTEXT')
 			return next();
-
+		
+		
 		// Verify the body hash if given
 		if (req.oauthParams['oauth_body_hash'] != undefined) {
 			var hash = crypto.createHash('sha1');
@@ -203,7 +204,7 @@ exports.verifyBody = function () {
 			if (hash.digest('base64') != req.oauthParams['oauth_body_hash'])
 				return next(new exports.OAuthError("failed OAuth body verification"));
 				
-		} else if (req.rawBody && !req.is('application/x-www-form-urlencoded')) {
+		} else if (req.rawBody && !(req.is('application/x-www-form-urlencoded') || req.is('application/json'))) {
 			return next(new exports.OAuthError("missing OAuth body digest"));
 		}
 		
