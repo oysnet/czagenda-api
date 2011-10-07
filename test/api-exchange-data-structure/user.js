@@ -30,8 +30,8 @@ var create_test_data_expected = {
 	isSuperuser : false,
 	lastLogin: null,
 	dateJoined: null,	
-	id : '/user/login-user-1',
-	groups : '/user/login-user-1/groups'
+	id : '/user/LOGIN_USER_1',
+	groups : '/user/LOGIN_USER_1/groups'
 }
 
 
@@ -50,8 +50,7 @@ var create_invalid_test_data_2 = {
 	login : 'truc'
 }
 
-var create_invalid_test_data_expected_2 = { login: [ 'string length must be greater than 8' ],
-    										email: [ 'an email is required' ]};
+var create_invalid_test_data_expected_2 = { email: [ 'an email is required' ]};
 
 // UPDATE
 var update_test_data_in_database = tests_data.user_2;
