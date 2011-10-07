@@ -104,7 +104,7 @@ exports.count = function(req, res) {
 exports.read = function(req, res) {
 
 	this._clazz.get({
-		id : req.url.split('?')[0]
+		id : this._urlPrefix + "/" + req.params.id 
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -159,11 +159,8 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
 	// load object...
 	
-	console.log(req.url);
-	console.log(req.url.split('?')[0]);
-	
 	this._clazz.get({
-		id : req.url.split('?')[0]
+		id : this._urlPrefix + "/" + req.params.id 
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -215,7 +212,7 @@ exports.del = function(req, res) {
 
 	// load object...
 	this._clazz.get({
-		id : req.url.split('?')[0]
+		id : this._urlPrefix + "/" + req.params.id 
 	}, function(err, obj) {
 
 		if(err !== null) {
