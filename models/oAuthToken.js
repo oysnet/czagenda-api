@@ -11,10 +11,10 @@ function OAuthToken () {
 
 util.inherits(OAuthToken, Base);
 
-OAuthToken.publicAttributes = Base.publicAttributes.concat(['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed']); // empty this after oauth works
+OAuthToken.publicAttributes = Base.publicAttributes.concat([]);
 OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes);
 
-OAuthToken.publicWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed']; // empty this after oauth works
+OAuthToken.publicWriteAttributes = []; 
 OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];
 
 OAuthToken.prototype._validate = function (callback) {

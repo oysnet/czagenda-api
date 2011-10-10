@@ -13,10 +13,10 @@ function OAuthConsumer () {
 
 util.inherits(OAuthConsumer, Base);
 
-OAuthConsumer.publicAttributes = Base.publicAttributes.concat(['name', 'description', 'key', 'secret', 'status', 'user']); // empty this after oauth works
+OAuthConsumer.publicAttributes = Base.publicAttributes.concat([]);
 OAuthConsumer.staffAttributes = OAuthConsumer.publicAttributes.concat(Base.staffAttributes);
 
-OAuthConsumer.publicWriteAttributes = ['name', 'description', 'status', 'user']; // empty this after oauth works
+OAuthConsumer.publicWriteAttributes = []; 
 OAuthConsumer.staffWriteAttributes = ['name', 'description', 'status', 'user'];
 
 OAuthConsumer.prototype._validate = function (callback) {
