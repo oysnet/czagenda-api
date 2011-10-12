@@ -41,7 +41,7 @@ var create_invalid_test_data = {
 	email : 'EMAIL_USER_1@domain.com'
 }
 
-var create_invalid_test_data_expected = { login: [ 'a string is required' ]};
+var create_invalid_test_data_expected = {items:{ login: [ 'a string is required' ]}, errors:[]};
 
 var create_invalid_test_data_2 = {
 	firstName : 'F',
@@ -50,7 +50,7 @@ var create_invalid_test_data_2 = {
 	login : 'truc'
 }
 
-var create_invalid_test_data_expected_2 = { email: [ 'an email is required' ]};
+var create_invalid_test_data_expected_2 = { items:{ email: [ 'an email is required' ]}, errors:[]};
 
 // UPDATE
 var update_test_data_in_database = tests_data.user_2;
@@ -90,7 +90,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/user', JSON.stringify(create_test_data), this.callback);
+			rest.post('/api/user', JSON.stringify(create_test_data), this.callback);
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -121,7 +121,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/user', JSON.stringify(create_invalid_test_data), this.callback);
+			rest.post('/api/user', JSON.stringify(create_invalid_test_data), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -137,7 +137,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'CREATE INVALID 2' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/user', JSON.stringify(create_invalid_test_data_2), this.callback);
+			rest.post('/api/user', JSON.stringify(create_invalid_test_data_2), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -155,7 +155,7 @@ vows.describe('User API exchanged data structure').addBatch({
 		topic : function() {
 			rest = new Rest();
 			
-			rest.put(update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
+			rest.put('/api'+update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
 		},
 				
 		'check updateDate' : function(err, res, data) {
@@ -180,7 +180,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'GET' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(get_test_data_in_database.id, this.callback);
+			rest.get('/api'+get_test_data_in_database.id, this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -197,7 +197,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'GET LIST' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/user',  this.callback);
+			rest.get('/api/user',  this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -243,7 +243,7 @@ vows.describe('User API exchanged data structure').addBatch({
 	'DELETE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del(delete_test_data_in_database.id, this.callback);
+			rest.del('/api'+delete_test_data_in_database.id, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);

@@ -16,8 +16,8 @@ var create_invalid_test_data = {
 	group : '/test/aaaaaa'
 }
 
-var create_invalid_test_data_expected = { user: [ 'must match regexp: ^/user/[-_.0-9a-z]+$' ],
-										  group: [ 'must match regexp: ^/group/[-_.0-9a-z]+$'] };
+var create_invalid_test_data_expected = { items : {user: [ 'must match regexp: ^/user/[-_.0-9a-zA-Z]+$' ],
+										  group: [ 'must match regexp: ^/group/[-_.0-9a-z]+$']}, errors:[] };
 
 // ##### GET
 var user_5 = tests_data.user_5;
@@ -60,7 +60,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'GET Users Memberships' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(user_5.groups, this.callback);
+			rest.get('/api'+user_5.groups, this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -105,7 +105,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'GET Users Memberships include_docs' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(user_5.groups + '?include_docs=true', this.callback);
+			rest.get('/api'+user_5.groups + '?include_docs=true', this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -150,7 +150,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'GET Group Memberships' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(group_5.users, this.callback);
+			rest.get('/api'+group_5.users, this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -193,7 +193,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'GET Groups Memberships include_docs' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(group_5.users + '?include_docs=true', this.callback);
+			rest.get('/api'+group_5.users + '?include_docs=true', this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -239,7 +239,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'CREATE Membership' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/membership', JSON.stringify({group : group_5.id, user : user_6.id}), this.callback);
+			rest.post('/api/membership', JSON.stringify({group : group_5.id, user : user_6.id}), this.callback);
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -276,7 +276,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/membership', JSON.stringify(create_invalid_test_data), this.callback);
+			rest.post('/api/membership', JSON.stringify(create_invalid_test_data), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -292,7 +292,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 	'DELETE Membership' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del(tests_data.membership_user_7_group_5, this.callback);
+			rest.del('/api'+tests_data.membership_user_7_group_5, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);

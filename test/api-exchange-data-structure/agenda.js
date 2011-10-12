@@ -35,12 +35,12 @@ var create_invalid_test_data = {
 	description : description
 }
 
-var create_invalid_test_data_expected = { title: [ 'string length must be greater than 5' ], description: [ 'string length must be lower than 1024' ] };
+var create_invalid_test_data_expected = { errors : [], items : {title: [ 'string length must be greater than 5' ], description: [ 'string length must be lower than 1024' ] }};
 
 var create_invalid_test_data_2 = {
 	description : null
 }
-var create_invalid_test_data_expected_2 = { title: [ 'a string is required' ] };
+var create_invalid_test_data_expected_2 = {  errors : [], items : {title: [ 'a string is required' ] }};
 
 // UPDATE
 var update_test_data_in_database = tests_data.agenda_2;
@@ -70,7 +70,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/agenda', JSON.stringify(create_test_data), this.callback);
+			rest.post('/api/agenda', JSON.stringify(create_test_data), this.callback);
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -101,7 +101,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/agenda', JSON.stringify(create_invalid_test_data), this.callback);
+			rest.post('/api/agenda', JSON.stringify(create_invalid_test_data), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -117,7 +117,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'CREATE INVALID 2' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/agenda', JSON.stringify(create_invalid_test_data_2), this.callback);
+			rest.post('/api/agenda', JSON.stringify(create_invalid_test_data_2), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -133,7 +133,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.put(update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
+			rest.put('/api'+update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
 		},
 				
 		'check updateDate' : function(err, res, data) {
@@ -158,7 +158,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'GET' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(get_test_data_in_database.id, this.callback);
+			rest.get('/api'+get_test_data_in_database.id, this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -174,7 +174,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'GET LIST' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/agenda',  this.callback);
+			rest.get('/api/agenda',  this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -220,7 +220,7 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 	'DELETE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del(delete_test_data_in_database.id, this.callback);
+			rest.del('/api'+delete_test_data_in_database.id, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);

@@ -80,7 +80,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/schema', JSON.stringify(create_test_data), this.callback);
+			rest.post('/api/schema', JSON.stringify(create_test_data), this.callback);
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -111,7 +111,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/schema', JSON.stringify(create_invalid_test_data), this.callback);
+			rest.post('/api/schema', JSON.stringify(create_invalid_test_data), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -127,7 +127,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'CREATE INVALID 2' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/schema', JSON.stringify(create_invalid_test_data_2), this.callback);
+			rest.post('/api/schema', JSON.stringify(create_invalid_test_data_2), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -143,7 +143,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.put(update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
+			rest.put('/api'+update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
 		},
 				
 		'check updateDate' : function(err, res, data) {
@@ -168,7 +168,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'GET' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(get_test_data_in_database.id,  this.callback);
+			rest.get('/api'+get_test_data_in_database.id,  this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -184,7 +184,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'GET LIST' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/schema',  this.callback);
+			rest.get('/api/schema',  this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -230,7 +230,7 @@ vows.describe('Schema API exchanged data structure').addBatch({
 	'DELETE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del(delete_test_data_in_database.id, this.callback);
+			rest.del('/api'+delete_test_data_in_database.id, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);

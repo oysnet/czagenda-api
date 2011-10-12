@@ -30,7 +30,7 @@ var create_invalid_test_data = {
 	description : 'DESCRIPTION_GROUP_1'
 }
 
-var create_invalid_test_data_expected = { title: [ 'a string is required' ]};	
+var create_invalid_test_data_expected = { items : {title: [ 'a string is required' ]}, errors : []};	
 
 // UPDATE
 var update_test_data_in_database = tests_data.group_2;
@@ -61,7 +61,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/group', JSON.stringify(create_test_data), this.callback);
+			rest.post('/api/group', JSON.stringify(create_test_data), this.callback);
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -92,7 +92,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/group', JSON.stringify(create_invalid_test_data), this.callback);
+			rest.post('/api/group', JSON.stringify(create_invalid_test_data), this.callback);
 		},
 		
 		'check statusCode is 400' : function(err, res, data) {
@@ -108,7 +108,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.put(update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
+			rest.put('/api'+update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
 		},
 				
 		'check updateDate' : function(err, res, data) {
@@ -133,7 +133,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'GET' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get(get_test_data_in_database.id, this.callback);
+			rest.get('/api'+get_test_data_in_database.id, this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -149,7 +149,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'GET LIST' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/group',  this.callback);
+			rest.get('/api/group',  this.callback);
 		},
 		
 		'check statusCode is 200' : function(err, res, data) {
@@ -195,7 +195,7 @@ vows.describe('Group API exchanged data structure').addBatch({
 	'DELETE' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del(delete_test_data_in_database.id, this.callback);
+			rest.del('/api'+delete_test_data_in_database.id, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
