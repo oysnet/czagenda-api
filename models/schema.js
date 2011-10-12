@@ -42,7 +42,7 @@ Schema.prototype._findMissingDependencies = function(schema, env) {
 
 		var testValue = schema[k];
 
-		if(k === '$ref' || k === 'href') {
+		if(k === '$ref' || (k === 'href' && typeof(testValue) === 'string')) {
 
 			if( typeof (env.findSchema(schema[k])) === 'undefined') {
 				deps.push(schema[k]);
