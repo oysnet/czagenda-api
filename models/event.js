@@ -1,8 +1,7 @@
 var Base = require('./base.js').Base;
 var util = require("util"), crypto = require('crypto');
 var settings = require('../settings.js');
-//var env = require('JSV').JSV.createEnvironment("json-schema-draft-03");
-//var jsonSchema = env.findSchema(env.getOption("latestJSONSchemaSchemaURI"));
+var validator = require('../libs/schemas/validator');
 
 function Event () {
 	this._attributs = {approved : [], disapproved:[], agenda : null, event : null, author : null, writeGroups : null, readGroups : null, writeUsers : null, readUsers : null};
@@ -15,7 +14,7 @@ Event.publicAttributes = Base.publicAttributes.concat(['event', 'author', 'write
 Event.staffAttributes = Event.publicAttributes.concat(Base.staffAttributes);
 Event.metaAttributes = ['event'];
 
-Event.publicWriteAttributes = ['event', 'author', 'agenda'];
+Event.publicWriteAttributes = ['event', 'agenda'];
 Event.staffWriteAttributes = Event.publicWriteAttributes;
 
 Event.prototype._validate = function (callback) {
@@ -23,18 +22,50 @@ Event.prototype._validate = function (callback) {
 	this.validateRegexp('author', '^/user/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
 	
-	callback(null);
+	var schema = null;
+	
+	if (this.event === null) {
+		this.addValidationError('event', 'required');
+	} 
+	else if (typeof(this.event.links) === 'undefined') {
+		this.addValidationError('event.links', 'required')
+	} else {
+		
+		var found = false;
+		for (var i = 0, l = this.event.links.length; i<l;i++) {
+			if (this.event.links[i].rel === 'describedby' ) {
+				schema = validator.approvedEnvironment.getEnv().findSchema(this.event.links[i].href);
+				if (typeof(schema) === 'undefined') {
+					this.addValidationError('event.links', 'Link with rel=describedby doesn\'t match any schema: ' + this.event.links[i].href);
+				} else {
+					
+					var report = validator.approvedEnvironment.getEnv().validate(this.event, schema);
+					if (report.errors.length > 0) {
+						this.parseJSVErrors(report.errors);
+					}
+				}
+				found = true;
+				break;
+			}
+		}
+		
+		if (!found) {
+			this.addValidationError('event.links', 'Must contain an entry with rel=describedby ')
+		}
+		
+	}
+	
 	
 	/*
 	if (this.event === null || this.event == {}) {
 		throw Error('Empty schema');
 	}
+	*/
 	
-	var report = jsonSchema.validate(this.event);
-	if (report.errors.length > 0) {
-		this.validationErrors = report.errors;
-		throw Error('Validation errors');
-	}*/
+	
+	
+	
+	callback(null);
 }
 
 Event.prototype._generateHash = function () {
