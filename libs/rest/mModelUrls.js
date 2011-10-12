@@ -44,14 +44,15 @@ exports._populateObject = function(obj, data, req, res) {
 		return true;
 	} else {
 		res.statusCode = statusCodes.BAD_REQUEST;
-		res.end(JSON.stringify({
-			error : "Readonly attributes",
-			attributes : wrongKeys
-		}))
+		
+		res.end(this._renderJson(req, res, {
+			errors : ["Bad attributes: " + wrongKeys.join(' ,') ]
+			
+		}));
 		return false;
 	}
-
 }
+
 /**
  * Return a serializable object that contains only attributes listed in keys
  */
@@ -78,17 +79,9 @@ exports._getQueryFromRequest = function(req, callback) {
 	});
 }
 
+
 exports.list = function(req, res) {
 
-	var query = req.query;
-
-	if( typeof (query.skip) !== 'undefined') {
-		query.skip = parseInt(query.skip);
-	}
-
-	if( typeof (query.limit) !== 'undefined') {
-		query.limit = parseInt(query.limit);
-	}
 
 	this._getQueryFromRequest(req, function(err, query) {
 
@@ -143,7 +136,7 @@ exports.read = function(req, res) {
 exports.create = function(req, res) {
 
 	var data = req.body;
-
+	
 	var obj = new this._clazz;
 	if(this._populateObject(obj, data, req, res) === true) {
 
