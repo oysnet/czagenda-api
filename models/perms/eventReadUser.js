@@ -24,7 +24,7 @@ EventReadUser.prototype._generateId = function(doc) {
 
 EventReadUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
-	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	callback(null);
 }
 

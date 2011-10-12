@@ -23,7 +23,7 @@ GroupWriteUser.prototype._generateId = function(doc) {
 
 GroupWriteUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/group/[\-_\.0-9a-z]+$', false);
-	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	callback(null);
 }
 

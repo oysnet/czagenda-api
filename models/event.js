@@ -19,7 +19,7 @@ Event.staffWriteAttributes = Event.publicWriteAttributes;
 
 Event.prototype._validate = function (callback) {
 	
-	this.validateRegexp('author', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('author', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
 	
 	var schema = null;

@@ -23,8 +23,7 @@ OAuthToken.prototype._validate = function (callback) {
 	this.validateString('verifier', true, null, 10);
 	this.validateChoice('tokenType',[ 'REQUEST', 'ACCESS']);
 	this.validateBoolean('isApproved', false);
-	this.validateRegexp('user', '^/user/[\-_\.0-9a-z]+$', true);	
-	//this.validateRegexp('consumer', '^/oauth-consumer/[\-_\.0-9a-z]+$', true);
+	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
 	this.validateString('callback', true, null, 255);
 	this.validateBoolean('callbackConfirmed', false);
 	callback(null);

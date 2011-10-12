@@ -23,7 +23,7 @@ AgendaWriteUser.prototype._generateId = function(doc) {
 
 AgendaWriteUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/agenda/[\-_\.0-9a-z]+$', false);
-	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-z]+$', false);
+	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	callback(null);
 }
 

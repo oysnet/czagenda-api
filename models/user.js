@@ -31,7 +31,8 @@ User.staffWriteAttributes = User.publicWriteAttributes.concat(['isActive', 'isSt
 util.inherits(User, Base);
 
 User.prototype._validate = function(callback) {
-	this.validateString('login', false, 2, 30);
+	//this.validateString('login', false, 2, 30);
+	this.validateRegexp('login', '^[\-_\.0-9a-zA-Z]{2,30}$', false);
 	this.validateString('firstName', true, null, 128);
 	this.validateString('lastName', true, null, 128);
 	this.validateEmail('email');
