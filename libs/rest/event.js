@@ -21,6 +21,16 @@ var RestEvent = exports.RestEvent = function(server) {
 util.inherits(RestEvent, RestOAuthModel);
 
 
+RestEvent.prototype._populateObject = function (obj, data, req, res) {
+	
+	if (obj.author === null ) {
+		obj.author = req.user.id;
+	}
+			
+	return RestOAuthModel.prototype._populateObject.call(this, obj, data, req, res);
+	
+}
+
 RestEvent.prototype.permsUserWrite = function (req, res) {
 	var permClass = models.perms.getPermClass('event', 'user', 'write'), grantToClass = models.User;
 	this._perms(req, res, permClass, grantToClass);
