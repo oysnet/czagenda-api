@@ -4,4 +4,7 @@ var settings = require('../settings.js'),
 	
 redisClient.select(settings.redis.db);
 
-module.exports = redisClient;
+exports.redisClient = redisClient;
+
+exports.PREFIX_SCHEMA_PROPOSAL = "schemasProposal_";
+exports.SCHEMA_APPROVED = "schemasApproved";
