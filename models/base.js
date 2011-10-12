@@ -5,7 +5,7 @@ var ElasticSearchClient = require('elasticsearchclient');
 var elasticSearchClient = new ElasticSearchClient(settings.elasticsearch);
 var log = require('czagenda-log').from(__filename);
 
-var redisClient = require('../libs/redis-client');
+var redis = require('../libs/redis-client');
 
 var readStats = require('../libs/stats.js').readStats;
 var writeStats = require('../libs/stats.js').writeStats;
@@ -76,6 +76,16 @@ Base.prototype._generateUUID = function(doc) {
  */
 Base.prototype._preSave = function() {
 }
+
+
+Base.prototype._postSave = function() {
+
+}
+
+Base.prototype._postDel = function() {
+
+}
+
 /**
  * This method is responsible of data validation.
  * Must be override or not.
@@ -95,16 +105,24 @@ Base.prototype._generateHash = function() {
 Base.prototype._generateId = function(doc) {
 	return '/' + this._type + '/' + this._generateUUID();
 }
+
+Base.prototype.__cachedAttributes = null;
+
 /**
  * Return a list of instance public attributes
  */
 Base.prototype.getAttributs = function(doc) {
-
-	var lst = [];
-	for(var k in this._attributs) {
-		lst.push(k);
+	
+	if (this.__cachedAttributes === null) {
+		var lst = [];
+		for(var k in this._attributs) {
+			lst.push(k);
+		}
+		this.__cachedAttributes = lst;
 	}
-	return lst;
+	
+	
+	return this.__cachedAttributes;
 }
 /**
  * Return an object containing instance public attributes
@@ -128,19 +146,23 @@ Base.prototype.del = function(callback) {
 		q.on('data', function(data) {
 
 			var data = JSON.parse(data);
-
+			
 			if(data.ok === true) {
 				if(data.found === true) {
 					callback(null, this);
-
-					redisClient.del(this._hash, this.id, function(err, success) {
-
+					
+					redis.redisClient.del(this._hash, this.id, function(err, success) {
+						
 						if(err != null || success === 0) {
-							log.warning('REDIS: error on del keys ', this.id, this._hash, err)
+							log.warning('REDIS: error on del keys ', this.id, this._hash, success, err)
+						} else {
+							log.debug('REDIS: deleted keys ', this.id, this._hash)
 						}
 
 					}.bind(this))
-
+					
+					this._postDel();
+					
 				} else {
 					callback(new errors.ObjectDoesNotExist(this.id), this);
 				}
@@ -195,7 +217,7 @@ Base.prototype.save = function(callback) {
 
 		if(err !== null) {
 			log.critical('error during validation', this._type, this._data.id, err);
-			callback(new errors.UnknowError(), this);
+			callback(err, this);
 			return;
 		}
 
@@ -241,7 +263,7 @@ Base.prototype._dbSave = function(callback) {
 
 	// encode id since elasticsearch does not support / in id
 	this._data.id = encodeURIComponent(this._data.id);
-
+	
 	var q = elasticSearchClient.index(this._index, this._type, this._data);
 	q.on('data', function(data) {
 
@@ -253,7 +275,7 @@ Base.prototype._dbSave = function(callback) {
 			// if it is a new object
 			if(this._hash === null) {
 				log.debug('removing keys in redis due to new object failed save', this._type, this._data.id, this._data.hash);
-				redisClient.del(this._data.hash, this._data.id, function(err, success) {
+				redis.redisClient.del(this._data.hash, this._data.id, function(err, success) {
 
 					if(err != null || success === 0) {
 						log.warning('REDIS: error on del keys ', this.id, this._hash, err)
@@ -264,11 +286,14 @@ Base.prototype._dbSave = function(callback) {
 
 			return;
 		}
-
+		
 		// reload instance because revision has been updated by db
 		Base.loadObject({
 			id : data._id
-		}, this, callback);
+		}, this, function (err, res) {
+					callback(err,res);
+					this._postSave()
+				}.bind(this));
 	}.bind(this));
 	q.exec();
 }
@@ -283,7 +308,7 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 
 	log.debug('_checkHashExistsInDb', this._type, this._data.id, this._data.hash);
 
-	redisClient.msetnx(this._data.id, null, this._data.hash, null, function(err, success) {
+	redis.redisClient.msetnx(this._data.id, null, this._data.hash, null, function(err, success) {
 		if(err !== null) {
 			callback(new errors.UnknowError(), this);
 			log.critical("REDIS error on msetnx", this._data.id, this._data.hash, err);
@@ -292,7 +317,7 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 			log.notice('ObjectAlreadyExists', this._data.id);
 		} else {
 
-			redisClient.expire(this._data.hash, settings.redis.keyTTL, function(err, success) {
+			redis.redisClient.expire(this._data.hash, settings.redis.keyTTL, function(err, success) {
 
 				if(err != null || success === 0) {
 					log.warning('REDIS: error on set expire to ' + this._data.hash, err)
@@ -306,18 +331,55 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 	}.bind(this))
 }
 
-Base.prototype.addValidationError = function(attr, message) {
 
+Base.prototype.addGlobalValidationError = function(message) {
+	
 	if(this.validationErrors === null) {
-		this.validationErrors = {};
+		this.validationErrors = {items : {}, errors : []};
+	}
+	
+	this.validationErrors.errors.push(message);
+	
+}
+
+
+Base.prototype.addValidationError = function(attr, message) {
+	
+	if(this.validationErrors === null) {
+		this.validationErrors = {items : {}, errors : []};
+	}
+	
+	if( typeof (this.validationErrors.items[attr]) === 'undefined') {
+		this.validationErrors.items[attr] = [];
 	}
 
-	if( typeof (this.validationErrors[attr]) === 'undefined') {
-		this.validationErrors[attr] = [];
+	this.validationErrors.items[attr].push(message);
+	
+}
+
+Base.prototype.parseJSVErrors = function (errors) {
+	
+	var _errors = {};
+	
+	for (var i = 0, l = errors.length; i<l;i++) {
+		if (errors[i].attribute === "additionalProperties") {
+			this.addGlobalValidationError(errors[i].message)
+		} else {
+			this.addValidationError(errors[i].uri.split('#')[1], this._getMessageFromJSVError(errors[i]));
+		}
+		
+		
 	}
+	
+}
 
-	this.validationErrors[attr].push(message);
-
+Base.prototype._getMessageFromJSVError = function (error) {
+	if (error.attribute === 'type' && error.message === "Instance is not a required type") {
+		return "a " + error.details[0] + " is required"; 
+	}  
+	else {
+		return error.message
+	}
 }
 
 Base.prototype.validateString = function(attr, nullable, min, max) {
