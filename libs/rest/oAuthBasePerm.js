@@ -9,9 +9,6 @@ var RestOAuthBasePerm =  function() {
 	
 	RestOAuth.apply(this, arguments);
 	
-	for (k in mModelUrls) {
-		this[k] = mModelUrls[k];
-	}
 	
 	this._urls.post[this._urlPrefix] =  { middleware : [], fn :this.create};
 	this._urls.del[this._urlPrefix + '/:id'] =  { middleware : [], fn :this.del};
@@ -20,5 +17,10 @@ var RestOAuthBasePerm =  function() {
 
 util.inherits(RestOAuthBasePerm, RestOAuth);
 
+// mixin mModelUrls
+for (k in mModelUrls) {
+	RestOAuthBasePerm.prototype[k] = mModelUrls[k];
+}
+	
 
 exports.RestOAuthBasePerm = RestOAuthBasePerm;

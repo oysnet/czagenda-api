@@ -11,20 +11,7 @@ function RestOAuthToken(server) {
 
 	RestBase.call(this, 'oauth-token', models.OAuthToken, server);
 	
-	// mixin mOAuth
-	for (k in mOAuth) {
-		this[k] = mOAuth[k];
-	}
 	
-	// mixin mModelUrls
-	for (k in mModelUrls) {
-		this[k] = mModelUrls[k];
-	}
-	
-	// mixin mPermissions
-	for (k in mPermissions) {
-		this[k] = mPermissions[k];
-	}
 	
 	var modelMiddleware = [this._verifySignature, this.getUserPermsAndGroups ,this.staffOnly]
 	
@@ -56,6 +43,21 @@ function RestOAuthToken(server) {
 }
 
 util.inherits(RestOAuthToken, RestBase);
+
+// mixin mOAuth
+for (k in mOAuth) {
+	RestOAuthToken.prototype[k] = mOAuth[k];
+}
+
+// mixin mModelUrls
+for (k in mModelUrls) {
+	RestOAuthToken.prototype[k] = mModelUrls[k];
+}
+
+// mixin mPermissions
+for (k in mPermissions) {
+	RestOAuthToken.prototype[k] = mPermissions[k];
+}
 
 RestOAuthToken.prototype._getDefaultMiddleware = function () {
 	return [oauth.verifyBody()];
