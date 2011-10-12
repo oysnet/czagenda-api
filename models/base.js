@@ -365,12 +365,13 @@ Base.prototype.parseJSVErrors = function (errors) {
 		if (errors[i].attribute === "additionalProperties") {
 			this.addGlobalValidationError(errors[i].message)
 		} else {
-			this.addValidationError(errors[i].uri.split('#')[1], this._getMessageFromJSVError(errors[i]));
+			this.addValidationError(this.getJSVErrorAttribute(errors[i].uri.split('#')[1]), this._getMessageFromJSVError(errors[i]));
 		}
-		
-		
 	}
-	
+}
+
+Base.prototype.getJSVErrorAttribute = function (attr) {
+	return "/" + this._type + attr;
 }
 
 Base.prototype._getMessageFromJSVError = function (error) {
@@ -420,6 +421,27 @@ Base.prototype.validateChoice = function(attr, choices) {
 		return;
 	}
 }
+
+Base.prototype.validateNotEmptyObject = function(attr) {
+
+	var value = this._data[attr];
+	
+	console.log(value, attr)
+	
+	var keys = [];
+	
+	for (k in value) {
+		keys.push(k)
+	}
+	
+	console.log(keys, value)
+	
+	if (value === null || keys.length === 0) {
+		this.addValidationError(attr, 'empty object not allowed');
+	}
+	
+}
+
 
 Base.prototype.validateEmail = function(attr) {
 	var value = this._data[attr];

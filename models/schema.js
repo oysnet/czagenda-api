@@ -13,7 +13,7 @@ function Schema() {
 		'final' : false,
 		sample : null,
 		template : null,
-		status : this.constructor.REFUSED,
+		status : this.constructor.PROPOSAL,
 		name : null,
 		"description" : null,
 		author : null
@@ -72,7 +72,9 @@ Schema.prototype._validate = function(callback) {
 	this.validateString('sample', true, null, null);
 	this.validateString('template', true, null, null);
 	this.validateChoice('status', [Schema.REFUSED, Schema.PROPOSAL, Schema.APPROVED]);
-
+	
+	this.validateNotEmptyObject('schema');
+	
 	// validate schema with user environment (include user's schema with status proposal')
 	if(this.status === Schema.PROPOSAL) {
 		var userEnv = new validator.ValidatorEnvironment();
@@ -204,11 +206,11 @@ Schema.prototype._postDel = function() {
 	this.__deleteKey(redis.PREFIX_SCHEMA_PROPOSAL + this.author, false);
 
 }
-
+/*
 Schema.prototype._preSave = function() {
 	this._data.schema.id = this._data.id;
 }
-
+*/
 Schema.get = function(options, callback) {
 	Base.get(options, Schema, callback)
 }

@@ -89,7 +89,7 @@ Event.prototype._preSave = function () {
 		this._data.readGroups = this._data.id + '/perms/rg';
 		this._data.readUsers = this._data.id + '/perms/ru';
 		
-		this._data.event.id = this._data.id;
+		//this._data.event.id = this._data.id;
 		
 	}
 }

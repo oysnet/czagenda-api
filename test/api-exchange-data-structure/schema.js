@@ -10,37 +10,47 @@ var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}
 var number_re = new RegExp("^[0-9]+$");
 var eventid_re = new RegExp("^\/event\/[a-z0-9]+$");
 
-var data_keys = ['name', 'status', 'sample', 'template', 'final', 'createDate', 'updateDate', 'id', 'schema'].sort();
+var data_keys = ['name', 'status', 'sample', 'template', 'final', 'createDate', 'updateDate', 'id', 'schema', 'author'].sort();
 
 // CREATION
 var create_test_data = {
 	name: 'NAME_SCHEMA_1',
 	sample: 'sample data',
 	template: 'template data',
-	schema: {}
+	schema: {
+		'extends' : {'$ref' : '/schema/event'}
+	}
 }
 
 var create_test_data_expected = {
-	id: '/schema/name-schema-1',
+	id: '/schema/name-schema-1-abstract',
 	name: 'NAME_SCHEMA_1',
 	sample: 'sample data',
 	template: 'template data',
-	'final': false,
-	status: 'PENDING',
-	schema: {id: '/schema/name-schema-1'}
+	'final' : false,
+	status: 'PROPOSAL',
+	schema: {
+		'extends' : {'$ref' : '/schema/event'}
+	},
+	author : '/user/test'
 }
 
 var create_invalid_test_data = {
-	'name' : 'truc',
-	schema : {}
+	name : 'test',
+	schema : {  }
 }
-var create_invalid_test_data_expected = { name: [ 'string length must be greater than 5' ]};
+var create_invalid_test_data_expected = { items : {schema: [ 'empty object not allowed' ]}, errors : []};
 										 
 
 var create_invalid_test_data_2 = {
-	schema : {}
+	name : 'test',
+	schema : {
+		"description": "Event",
+		"type": "object",
+		"extends": {"$ref" : "/schema/empty" },
+	}
 }
-var create_invalid_test_data_expected_2 = { name: [ 'a string is required' ]};								 
+var create_invalid_test_data_expected_2 = { items : [], errors: [ 'Missing schema dependencies: /schema/empty' ]};								 
 
 // UPDATE
 var update_test_data_in_database = tests_data.schema_2;
@@ -50,7 +60,6 @@ var update_test_data = {
 	sample : 'sample data',
 	template : 'template data',
 	schema : {
-		id :  '/schema/name-schema-2',
 		description : 'schema description'
 	}
 }
@@ -60,13 +69,13 @@ var update_test_data_expected = {
 	name : 'NAME_SCHEMA_21',
 	createDate : tests_data.schema_2.createDate,
 	'final' : false,
-	status : 'DRAFT',
+	status : 'PROPOSAL',
 	sample : 'sample data',
 	template : 'template data',
 	schema : {
-		id :  '/schema/name-schema-2',
 		description : 'schema description'
-	}
+	},
+	author : '/user/test'
 }
 
 // GET

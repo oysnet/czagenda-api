@@ -15,31 +15,41 @@ var data_keys = ['agenda', 'author', 'createDate', 'updateDate', 'writeUsers', '
 
 // CREATION
 var create_test_data = {
-	event : {title : "even title"},
-	author : '/user/login1'
+	event : {title : "event title",
+			links : [{rel:"describedby", href:"/schema/event"}],
+			where : [{valueString:"Pau"}]}
 }
 
 var create_test_data_expected = {
-	author : '/user/login1',
-	event : {title : "even title"},
+	author : '/user/test',
+	event : {title : "event title",links : [{rel:"describedby", href:"/schema/event"}],
+			where : [{valueString:"Pau"}]},
 	agenda : null
 }
 
 var create_invalid_test_data = {
-	event : {title : "even title"},
-	author : '/user/login1',
+	event : {title : "even title"},	
 	agenda : '/test/aaaaaa'
 }
 
-var create_invalid_test_data_expected = { agenda: [ 'must match regexp: ^/agenda/[-_.0-9a-z]+$' ] };
+var create_invalid_test_data_expected = { items : {agenda: [ 'must match regexp: ^/agenda/[-_.0-9a-z]+$' ], 'event.links': [ 'required' ] }, errors : []};
+
+
+var create_invalid_test_data_2 = {
+	event : {title : "event that fail to validate against schema",links : [{rel:"describedby", href:"/schema/event"}],
+			where : [{valueString: 2}]}
+}
+
+var create_invalid_test_data_expected_2 = { items : { '/event/where/0/valueString': [ 'a string is required' ] }, errors : []};
 
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
 
 var update_test_data = {
 	event : {
-		id :tests_data.event_1.id,
-		title : 'modified title event'
+		title : 'modified title event',
+		links : [{rel:"describedby", href:"/schema/event"}],
+		where : [{valueString:"Pau"}]
 	}
 }
 
@@ -52,8 +62,9 @@ var update_test_data_expected = {
 	readGroups :tests_data.event_1.readGroups,
 	author : '/user/login-user-2',
 	event : {
-		id : tests_data.event_1.id,
-		title : 'modified title event'
+		title : 'modified title event',
+		links : [{rel:"describedby", href:"/schema/event"}],
+		where : [{valueString:"Pau"}]
 	},
 	agenda : null
 }
@@ -106,21 +117,12 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.equal(data.readGroups, data.id + '/perms/rg');
 		},
 		
-		'check event.id' : function(err, res, data) {
-			var data = JSON.parse(data);
-			assert.equal(data.event.id, data.id);
-		},
 		
 		'check id' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(eventid_re.test(data.id), true);
 		},
 		
-		'check event id' : function(err, res, data) {
-			var data = JSON.parse(data);
-			assert.equal(eventid_re.test(data.event.id), true);
-			assert.equal(data.id, data.event.id);
-		},
 		
 		'check response structure' : function(err, res, data) {
 			var data = JSON.parse(data);
@@ -136,7 +138,6 @@ vows.describe('Event API exchanged data structure').addBatch({
 			delete data.updateDate;
 			
 			delete data.id;
-			delete data.event.id;
 				
 			assert.deepEqual(data, create_test_data_expected);
 		}
@@ -156,6 +157,22 @@ vows.describe('Event API exchanged data structure').addBatch({
 		'check validation errors' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.deepEqual(data, create_invalid_test_data_expected)
+		}
+	},
+	
+	'CREATE INVALID 2' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_invalid_test_data_2), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_2)
 		}
 	},
 	

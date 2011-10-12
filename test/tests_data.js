@@ -48,7 +48,9 @@ exports.event_1 = {
 	readGroups : '/event/295384e87e6c0761caec6995a7922f44/perms/rg',
 	author : '/user/login-user-2',
 	event : {
-		id : '/event/295384e87e6c0761caec6995a7922f44'
+		title : 'title event 1',
+		links : [{rel:"describedby", href:"/schema/event"}],
+		where : [{valueString:"Pau"}]
 	},
 	agenda : null
 }
@@ -56,15 +58,16 @@ exports.event_1 = {
 exports.event_2 = {
 	id : '/event/80c22a5b8fa95ddbe73ac218a07704bc',
 	createDate : '2011-09-21T12:56:22.193Z',
-	updateDate : '2011-09-21T12:56:22.193Z',
+	updateDate : '2011-10-12T10:55:33.233Z',
 	writeUsers : '/event/80c22a5b8fa95ddbe73ac218a07704bc/perms/wu',
 	writeGroups : '/event/80c22a5b8fa95ddbe73ac218a07704bc/perms/wg',
 	readUsers : '/event/80c22a5b8fa95ddbe73ac218a07704bc/perms/ru',
 	readGroups : '/event/80c22a5b8fa95ddbe73ac218a07704bc/perms/rg',
 	author : '/user/login-user-2',
 	event : {
-		id : '/event/80c22a5b8fa95ddbe73ac218a07704bc',
-		title : 'title event 2'
+		title : 'title event 2',
+		links : [{rel:"describedby", href:"/schema/event"}],
+		where : [{valueString:"Pau"}]
 	},
 	agenda : null
 }
@@ -79,8 +82,9 @@ exports.event_3 = {
 	readGroups : '/event/d9adce07499071b73636aafbfe91aa78/perms/rg',
 	author : '/user/login-user-2',
 	event : {
-		id : '/event/d9adce07499071b73636aafbfe91aa78',
-		title : 'title event 3'
+		title : 'title event 3',
+		links : [{rel:"describedby", href:"/schema/event"}],
+		where : [{valueString:"Pau"}]
 	},
 	agenda : null
 }
@@ -145,9 +149,10 @@ exports.schema_2 ={
 	updateDate : '2011-09-21T13:47:40.034Z',
 	createDate : '2011-09-21T13:47:40.034Z',
 	'final' : false,
-	status : 'DRAFT',
+	status : 'PROPOSAL',
 	sample : '',
 	template : '',
+	author:"/user/test",
 	schema : {
 		id : '/schema/name-schema-2'
 	}
@@ -159,9 +164,10 @@ exports.schema_3 = {
 	updateDate : '2011-09-21T13:47:40.036Z',
 	createDate : '2011-09-21T13:47:40.036Z',
 	'final' : true,
-	status : 'PUBLISHED',
+	status : 'APPROVED',
 	sample : 'sample data',
 	template : 'template data',
+	author:"/user/test",
 	schema : {
 		id :  '/schema/name-schema-3',
 		description : 'schema description'
@@ -174,9 +180,10 @@ exports.schema_4 = {
 	updateDate : '2011-09-21T13:54:47.513Z',
 	createDate : '2011-09-21T13:54:47.513Z',
 	'final' : true,
-	status : 'PUBLISHED',
+	status : 'APPROVED',
 	sample : 'sample data',
 	template : 'template data',
+	author:"/user/test",
 	schema : {
 		id :  '/schema/name-schema-4',
 		description : 'schema description'

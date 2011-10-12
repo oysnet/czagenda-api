@@ -7,8 +7,11 @@ var RestSchema = exports.RestSchema = function (server) {
 	this._initServer();
 }
 
+util.inherits(RestSchema, RestOAuthModel);
 
 RestSchema.prototype._populateObject = function (obj, data, req, res) {
+	
+	
 	
 	if (obj.author === null ) {
 		obj.author = req.user.id;
@@ -19,4 +22,4 @@ RestSchema.prototype._populateObject = function (obj, data, req, res) {
 }
 
 
-util.inherits(RestSchema, RestOAuthModel);
+
