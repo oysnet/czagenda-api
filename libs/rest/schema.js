@@ -6,4 +6,17 @@ var RestSchema = exports.RestSchema = function (server) {
 	RestOAuthModel.call(this, 'schema', Schema, server);
 	this._initServer();
 }
+
+
+RestSchema.prototype._populateObject = function (obj, data, req, res) {
+	
+	if (obj.author === null ) {
+		obj.author = req.user.id;
+	}
+			
+	return RestOAuthModel.prototype._populateObject.call(this, obj, data, req, res);
+	
+}
+
+
 util.inherits(RestSchema, RestOAuthModel);
