@@ -31,6 +31,7 @@ ValidatorEnvironment.prototype.load = function(callback, user) {
 	keys.push(function (err, res) {
 		if (err !== null) {
 			log.critical('Fail to fetch schemas id from redis', err);
+			callback(err);
 			return;
 		}
 		
@@ -74,6 +75,7 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 			
 			if (err !== null && typeof(err) !== 'undefined') {
 				log.critical('Fail to fetch schemas from db', err);
+				callback(new Error('Fail to fetch schemas from db'));
 				return;
 			}
 			

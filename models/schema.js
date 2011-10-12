@@ -81,6 +81,7 @@ Schema.prototype._validate = function(callback) {
 		userEnv.load( function(err, res) {
 			if(err !== null) {
 				log.warning('Unable to load ValidatorEnvironment for user ' + this.author, err);
+				callback(err);
 			} else {
 				var veSchema = userEnv.getEnv().findSchema(userEnv.getEnv().getOption("latestJSONSchemaSchemaURI"));
 				var report = veSchema.validate(this.schema);
