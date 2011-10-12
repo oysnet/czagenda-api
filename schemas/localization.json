@@ -1,0 +1,34 @@
+{
+	"type": "object",
+	"description" : "Localization description",
+	"additionalProperties": false,
+	"properties": {
+		"city": {
+			"type": "string",
+			"required": false
+		},
+		"country": {
+			"type": "string",
+			"required": false
+		},
+		"admin_level_2": {
+			"description": "Administrative level such as region, state, etc...",
+			"type": "string",
+			"required": false
+		},
+		"admin_level_3": {
+			"description": "Administrative level such as department, metropolitan area, etc...",
+			"type": "string",
+			"required": false
+		},
+		"geoPt": {
+			"$ref": "/schema/geo",
+			"required": false
+		},
+		"valueString" : {
+			"description": "A simple string value that can be used as a representation of this localization.",
+			"type": "string",
+			"required": false
+		}
+	}
+}

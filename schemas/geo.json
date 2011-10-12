@@ -1,0 +1,15 @@
+{
+	"type": "object",	
+	"description" : "Localization coordinates",
+	"additionalProperties": false,
+	"properties": {
+		"lat": {
+			"type": "number",
+			"required": true
+		},
+		"lon": {
+			"type": "number",
+			"required": true
+		}
+	}
+}
