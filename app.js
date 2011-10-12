@@ -1,16 +1,5 @@
-var log = require('util').log;
-// ##################################################################################
-// VALIDATOR INITIALISATION
-// ##################################################################################
-/*var validatorEnvironment = require('./libs/schemas/validator').validatorEnvironment;
-log('Loading validatorEnvironment');
-validatorEnvironment.load(function(err, success) {
-	if(err !== null) {
-		console.error(err);
-	} else {
-		init_server();
-	}
-})*/
+var log = require('czagenda-log').from(__filename);
+
 // ##################################################################################
 // HTTP SERVER INITIALISATION
 // ##################################################################################
@@ -19,10 +8,26 @@ var init_server = function() {
 	server.get('/', function(req, res) {
 		res.end('It works !');
 	});
-	require('./libs/rest').setup(server)
+	require('./libs/rest').setup(server);
 }
-init_server();
+//init_server();
 module.exports = server;
+
+// ##################################################################################
+// VALIDATOR INITIALISATION
+// ##################################################################################
+var validator = require('./libs/schemas/validator');
+
+validator.approvedEnvironment.load( function(err, success) {
+	if(err !== null) {
+		log.critical('ValidatorEnvironment', err);
+	} else {
+		log.notice('ValidatorEnvironment loaded');
+		init_server();
+	}
+})
+
+
 /*
 var io = require('socket.io').listen(server);
 var sockets = [];
