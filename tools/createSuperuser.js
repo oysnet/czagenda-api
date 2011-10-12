@@ -1,4 +1,4 @@
-var redisClient = require('../libs/redis-client');
+var redisClient = require('../libs/redis-client').redisClient;
 
 var models = require('../models');
 
