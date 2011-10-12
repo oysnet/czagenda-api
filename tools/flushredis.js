@@ -1,6 +1,6 @@
 var redisClient = require('../libs/redis-client').redisClient;
 redisClient.on('ready', function () {
-	redisClient.flushall(function () {
+	redisClient.flushdb(function () {
 		console.log('flush done')
 		redisClient.end();
 	});
