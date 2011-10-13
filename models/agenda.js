@@ -49,11 +49,13 @@ Agenda.prototype.save = function (callback) {
 	
 }
 
-Agenda.prototype._preSave = function () {
+Agenda.prototype._preSave = function (callback) {
 	if (this.id === null) {
 		this._data.writeGroups = this._data.id + '/perms/wg';
 		this._data.writeUsers = this._data.id + '/perms/wu';
 	}
+	
+	callback(null);
 }
 
 

@@ -58,10 +58,10 @@ Base.prototype.populate = function(doc) {
 	this._hash = doc._source.hash;
 
 	for(key in this._attributs) {
-		if (typeof(doc._source[key]) !== 'undefined') {
+		if( typeof (doc._source[key]) !== 'undefined') {
 			this[key] = doc._source[key];
 		}
-		
+
 	}
 }
 /**
@@ -76,8 +76,10 @@ Base.prototype._generateUUID = function(doc) {
 /**
  * This method is called before save but after _data attribute was populated.
  * Must be override or not.
+ * if an error is provided as callback first argument, save process is stopped.
  */
-Base.prototype._preSave = function() {
+Base.prototype._preSave = function(callback) {
+	callback(null);
 }
 /**
  * This method is called after save was done.
@@ -88,7 +90,7 @@ Base.prototype._postSave = function(err, next) {
 	next();
 }
 /**
- * This method is called before deleting content, if an error is provided as first argument, deletion process is stopped.
+ * This method is called before deleting content, if an error is provided as callback first argument, deletion process is stopped.
  */
 Base.prototype._preDel = function(callback) {
 	callback(null);
@@ -270,31 +272,39 @@ Base.prototype.save = function(callback) {
 		}
 
 		// do some stuff in inherited levels
-		this._preSave();
-
-		if(this._hash === null) {
-			this._checkHashExistsInDb( function(err) {
-				if(err === null) {
-					this._dbSave(callback)
-				} else {
-
-					if( err instanceof errors.ObjectAlreadyExists) {
-						this._postSave(err, function() {
-							callback(err, this);
-						}.bind(this));
-
+		this._preSave( function(err) {
+			
+			if (err !== null) {
+				callback(err, this);
+				return;	
+			}
+			
+			if(this._hash === null) {
+				this._checkHashExistsInDb( function(err) {
+					if(err === null) {
+						this._dbSave(callback)
 					} else {
-						var err = new errors.UnknowError();
-						this._postSave(err, function() {
-							callback(err, this);
-						}.bind(this));
-					}
 
-				}
-			}.bind(this));
-		} else {
-			this._dbSave(callback)
-		}
+						if( err instanceof errors.ObjectAlreadyExists) {
+							this._postSave(err, function() {
+								callback(err, this);
+							}.bind(this));
+
+						} else {
+							var err = new errors.UnknowError();
+							this._postSave(err, function() {
+								callback(err, this);
+							}.bind(this));
+						}
+
+					}
+				}.bind(this));
+			} else {
+				this._dbSave(callback)
+			}
+
+		}.bind(this));
+
 	}.bind(this));
 }
 /**
@@ -309,7 +319,7 @@ Base.prototype._dbSave = function(callback) {
 
 	// set id on instance because elasticsearchclient will delete it in this._data.id
 	this.id = this._data.id;
-	
+
 	var q = elasticSearchClient.index(this._index, this._type, this._data);
 	q.on('data', function(data) {
 
@@ -368,7 +378,7 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 			callback(new errors.UnknowError(), this);
 			log.critical("REDIS error on msetnx", this._data.id, this._data.hash, err);
 		} else {
-			
+
 			// even if all keys didn't be create
 			redis.redisClient.expire(this._data.hash, settings.redis.keyTTL, function(err, success) {
 
@@ -377,17 +387,14 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 				}
 
 			}.bind(this));
-			
+
 			if(success === 0) {
 				callback(new errors.ObjectAlreadyExists(this._data.id), this);
 				log.notice('ObjectAlreadyExists', this._data.id);
 			} else {
-				callback(null);	
+				callback(null);
 			}
 
-			
-
-			
 		}
 
 	}.bind(this))

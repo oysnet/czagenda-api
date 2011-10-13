@@ -82,7 +82,7 @@ Event.prototype._generateHash = function () {
 }
 
 
-Event.prototype._preSave = function () {
+Event.prototype._preSave = function (callback) {
 	if (this.id === null) {
 		this._data.writeGroups = this._data.id + '/perms/wg';
 		this._data.writeUsers = this._data.id + '/perms/wu';
@@ -90,8 +90,9 @@ Event.prototype._preSave = function () {
 		this._data.readUsers = this._data.id + '/perms/ru';
 		
 		//this._data.event.id = this._data.id;
-		
 	}
+	
+	callback(null);
 }
 
 Event.get = function(options, callback) {

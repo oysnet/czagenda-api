@@ -59,9 +59,6 @@ OAuthToken.prototype.save = function (callback) {
 	
 }
 
-OAuthToken.prototype._preSave = function () {
-	
-}
 
 OAuthToken.get = function(options, callback) {
 	Base.get(options,OAuthToken, callback)

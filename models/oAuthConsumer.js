@@ -59,9 +59,6 @@ OAuthConsumer.prototype.save = function (callback) {
 	
 }
 
-OAuthConsumer.prototype._preSave = function () {
-	
-}
 
 OAuthConsumer.get = function(options, callback) {
 	Base.get(options,OAuthConsumer, callback)

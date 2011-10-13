@@ -64,10 +64,13 @@ User.prototype.save = function (callback) {
 	
 }
 
-User.prototype._preSave = function () {
+User.prototype._preSave = function (callback) {
 	if (this.id === null) {
 		this._data.groups = this._data.id + '/groups';
 	}
+	
+	callback(null);
+	
 }
 
 

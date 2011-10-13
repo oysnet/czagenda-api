@@ -50,14 +50,14 @@ Group.prototype.save = function (callback) {
 	
 }
 
-Group.prototype._preSave = function () {
+Group.prototype._preSave = function (callback) {
 	
 	if (this.id === null) {
 		this._data.writeGroups = this._data.id + '/perms/wg';
 		this._data.writeUsers = this._data.id + '/perms/wu';
 		this._data.users = this._data.id + '/users';
 	}
-		
+	callback(null);
 }
 
 Group.get = function(options, callback) {
