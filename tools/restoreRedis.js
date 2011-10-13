@@ -61,18 +61,21 @@ var populateAsync = function(cb) {
 		methods.push(function(callback) {
 
 			urls.push(function(err, nb) {
-
+				
 				if( typeof (err) !== 'undefined') {
 					callback(err);
 					return;
 				}
 
-				if(nb !== (urls.length - 1) / 2) {
+				if(nb !== 1) {
 					err = 'not all urls were added';
+					callback(err);
+					return;
 				}
-
-				callback(err);
+				log.debug('urls added', nb)
+				callback(null);
 			});
+			
 			log.debug('add urls', urls.length)
 			redisClient.msetnx.apply(redisClient, urls);
 		})
