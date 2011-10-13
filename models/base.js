@@ -247,7 +247,7 @@ Base.prototype.save = function(callback) {
 			log.critical('error during validation', this._type, this._data.id, err);
 			this._postSave(err, function() {
 				callback(err, this);
-			}.bind(this));			
+			}.bind(this));
 			return;
 		}
 
@@ -362,11 +362,9 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 		if(err !== null) {
 			callback(new errors.UnknowError(), this);
 			log.critical("REDIS error on msetnx", this._data.id, this._data.hash, err);
-		} else if(success === 0) {
-			callback(new errors.ObjectAlreadyExists(this._data.id), this);
-			log.notice('ObjectAlreadyExists', this._data.id);
 		} else {
-
+			
+			// even if all keys didn't be create
 			redis.redisClient.expire(this._data.hash, settings.redis.keyTTL, function(err, success) {
 
 				if(err != null || success === 0) {
@@ -374,8 +372,17 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 				}
 
 			}.bind(this));
+			
+			if(success === 0) {
+				callback(new errors.ObjectAlreadyExists(this._data.id), this);
+				log.notice('ObjectAlreadyExists', this._data.id);
+			} else {
+				callback(null);	
+			}
 
-			callback(null);
+			
+
+			
 		}
 
 	}.bind(this))
