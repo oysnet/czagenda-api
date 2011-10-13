@@ -37,6 +37,7 @@ Agenda.prototype._generateId = function () {
 	return '/agenda/' + utils.slugify(this.title);
 }
 
+
 Agenda.prototype.save = function (callback) {
 	
 	if (typeof(this.title) !== 'string') {
