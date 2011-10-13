@@ -2,7 +2,7 @@ var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
-
+var models = require('../../models');
 const type = 'event-read-group'
 
 function EventReadGroup () {
@@ -25,6 +25,25 @@ EventReadGroup.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
 	callback(null);
+}
+
+EventReadGroup.prototype._postSave = function (err, next) {
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedReadGroups', true, next);
+}
+
+EventReadGroup.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedReadGroups', false, next);
 }
 
 EventReadGroup.get = function(options, callback) {

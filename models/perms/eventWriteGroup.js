@@ -2,7 +2,7 @@ var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
-
+var models = require('../../models');
 const type = 'event-write-group'
 
 function EventWriteGroup () {
@@ -26,6 +26,27 @@ EventWriteGroup.prototype._validate = function (callback) {
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
 	callback(null);
 }
+
+EventWriteGroup.prototype._postSave = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedWriteGroups', true, next);
+}
+
+EventWriteGroup.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedWriteGroups', false, next);
+}
+
 
 EventWriteGroup.get = function(options, callback) {
 	Base.get(options, EventWriteGroup, callback)

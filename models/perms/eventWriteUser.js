@@ -2,7 +2,7 @@ var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
-
+var models = require('../../models');
 const type = 'event-write-user'
 
 function EventWriteUser () {
@@ -25,6 +25,27 @@ EventWriteUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	callback(null);
+}
+
+
+EventWriteUser.prototype._postSave = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedWriteUsers', true, next);
+}
+
+EventWriteUser.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedWriteUsers', false, next);
 }
 
 EventWriteUser.get = function(options, callback) {

@@ -2,7 +2,7 @@ var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
-
+var models = require('../../models');
 const type = 'event-read-user'
 
 function EventReadUser () {
@@ -26,6 +26,26 @@ EventReadUser.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
 	callback(null);
+}
+
+EventReadUser.prototype._postSave = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedReadUsers', true, next);
+}
+
+EventReadUser.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Event, 'computedReadUsers', false, next);
 }
 
 EventReadUser.get = function(options, callback) {

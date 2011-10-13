@@ -4,7 +4,7 @@ var settings = require('../settings.js');
 var validator = require('../libs/schemas/validator');
 
 function Event () {
-	this._attributs = {approved : [], disapproved:[], agenda : null, event : null, author : null, writeGroups : null, readGroups : null, writeUsers : null, readUsers : null};
+	this._attributs = {approved : [], disapproved:[], agenda : null, event : null, author : null, writeGroups : null, readGroups : null, writeUsers : null, readUsers : null, computedWriteUsers : [], computedWriteGroups : [], computedReadUsers : [], computedReadGroups : []};
 	Base.call(this, 'event');	
 }
 

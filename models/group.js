@@ -4,7 +4,7 @@ var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
 var settings = require('../settings.js');
 function Group () {
-	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, users : null};
+	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, users : null, computedWriteUsers : [], computedWriteGroups : []};
 	Base.call(this, 'group');	
 }
 

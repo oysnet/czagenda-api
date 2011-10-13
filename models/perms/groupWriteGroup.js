@@ -2,7 +2,7 @@ var BasePermission = require('./base.js').BasePermission;
 var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
-
+var models = require('../../models');
 const type = 'group-write-group'
 
 function GroupWriteGroup () {
@@ -25,6 +25,26 @@ GroupWriteGroup.prototype._validate = function (callback) {
 	this.validateRegexp('applyOn', '^/group/[\-_\.0-9a-z]+$', false);
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
 	callback(null);
+}
+
+GroupWriteGroup.prototype._postSave = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Group, 'computedWriteGroups', true, next);
+}
+
+GroupWriteGroup.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Group, 'computedWriteGroups', false, next);
 }
 
 GroupWriteGroup.get = function(options, callback) {

@@ -3,6 +3,8 @@ var Base = require('../base.js').Base;
 var util = require("util");
 var settings = require('../../settings.js');
 
+var models = require('../../models');
+
 const type = 'agenda-write-group'
 
 function AgendaWriteGroup () {
@@ -26,6 +28,29 @@ AgendaWriteGroup.prototype._validate = function (callback) {
 	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
 	callback(null);
 }
+
+
+AgendaWriteGroup.prototype._postSave = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Agenda, 'computedWriteGroups', true, next);
+}
+
+AgendaWriteGroup.prototype._postDel = function (err, next) {
+	
+	if (err !== null && !(err instanceof models.errors.ObjectAlreadyExists)) {
+		next();
+		return;
+	}
+	
+	this.updateComputedValue(models.Agenda, 'computedWriteGroups', false, next);
+}
+
+
 
 AgendaWriteGroup.get = function(options, callback) {
 	Base.get(options, AgendaWriteGroup, callback)

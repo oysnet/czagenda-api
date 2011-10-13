@@ -5,7 +5,7 @@ var errors = require('./errors.js');
 var settings = require('../settings.js');
 
 function Agenda () {
-	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null};
+	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, computedWriteUsers : [], computedWriteGroups : []};
 	Base.call(this, 'agenda');	
 }
 
@@ -55,6 +55,8 @@ Agenda.prototype._preSave = function () {
 		this._data.writeUsers = this._data.id + '/perms/wu';
 	}
 }
+
+
 
 Agenda.get = function(options, callback) {
 	Base.get(options,Agenda, callback)

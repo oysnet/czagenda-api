@@ -1,6 +1,7 @@
 var Base = require('../base.js').Base;
 var util = require("util");
 var utils = require('../../libs/utils.js');
+var log = require('czagenda-log').from(__filename);
 
 function BasePermission (type) {
 	this._attributs = {grantTo : null, applyOn : null};
@@ -11,6 +12,37 @@ util.inherits(BasePermission, Base);
 
 BasePermission.publicWriteAttributes = ['grantTo', 'applyOn'];
 BasePermission.staffWriteAttributes = BasePermission.publicWriteAttributes;
+
+/**
+ * Update computed values such as computedWriteUsers, computedWriteGroups, etc... on applyOn document
+ * clazz is the class to deal with applyOn document
+ * attr is the attribute to consider according to permission type
+ * add is true if the permission is added, false if removed
+ */
+BasePermission.prototype.updateComputedValue = function (clazz, attr, add, callback) {
+	clazz.get({id : this.applyOn}, function (err, obj) {
+		
+		if (err !== null) {
+			log.critical('BasePermission.prototype.updateComputedValue: unable to load applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
+		}
+		
+		if (add === true) {
+			if (obj[attr].indexOf(this.grantTo) === -1) {
+				obj[attr].push(this.grantTo)
+			}
+		} else {
+			if (obj[attr].indexOf(this.grantTo) !== -1) {
+				obj[attr].splice(obj[attr].indexOf(this.grantTo),1)
+			}
+		}
+		obj.save(function (err) {
+			if (err !== null) {
+				log.critical('BasePermission.prototype.updateComputedValue: unable to save applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
+			}
+			callback();
+		});
+	}.bind(this));
+}
 
 
 BasePermission.prototype._generateHash = function () {

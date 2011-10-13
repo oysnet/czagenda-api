@@ -52,13 +52,16 @@ Base.prototype.populate = function(doc) {
 	if(doc['_type'] !== this._type) {
 		throw Error('Doc type mismatch');
 	}
-	this._data = doc;
+	//this._data = doc;
 	this.id = doc['_id'];
 	this._rev = doc['_version'];
 	this._hash = doc._source.hash;
 
 	for(key in this._attributs) {
-		this[key] = doc._source[key];
+		if (typeof(doc._source[key]) !== 'undefined') {
+			this[key] = doc._source[key];
+		}
+		
 	}
 }
 /**
@@ -209,6 +212,8 @@ Base.prototype.del = function(callback) {
  */
 Base.prototype.__prepareData = function() {
 
+	console.log(this._data)
+
 	if(this._hash !== null) {
 		this._data.id = this.id;
 		this._data.hash = this._hash;
@@ -304,7 +309,7 @@ Base.prototype._dbSave = function(callback) {
 
 	// set id on instance because elasticsearchclient will delete it in this._data.id
 	this.id = this._data.id;
-
+	
 	var q = elasticSearchClient.index(this._index, this._type, this._data);
 	q.on('data', function(data) {
 
