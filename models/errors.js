@@ -43,3 +43,11 @@ util.inherits(ValidationError, Error);
 ValidationError.prototype.name = 'ValidationError';
 exports.ValidationError = ValidationError;
 
+
+function InternalError (message) {
+	Error.call(this);	
+	this.message = message;
+}
+util.inherits(InternalError, Error);
+UnknowError.prototype.name = 'InternalError';
+exports.InternalError = InternalError;

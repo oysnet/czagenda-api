@@ -76,16 +76,28 @@ Base.prototype._generateUUID = function(doc) {
  */
 Base.prototype._preSave = function() {
 }
-
-
-Base.prototype._postSave = function() {
-
+/**
+ * This method is called after save was done.
+ * err : null if success or the error that happened
+ * next : call this function to continue process
+ */
+Base.prototype._postSave = function(err, next) {
+	next();
 }
-
-Base.prototype._postDel = function() {
-
+/**
+ * This method is called before deleting content, if an error is provided as first argument, deletion process is stopped.
+ */
+Base.prototype._preDel = function(callback) {
+	callback(null);
 }
-
+/**
+ * This method is called after deletion was done.
+ * err : null if success or the error that happened
+ * next : call this function to continue process
+ */
+Base.prototype._postDel = function(err, next) {
+	next();
+}
 /**
  * This method is responsible of data validation.
  * Must be override or not.
@@ -112,16 +124,15 @@ Base.prototype.__cachedAttributes = null;
  * Return a list of instance public attributes
  */
 Base.prototype.getAttributs = function(doc) {
-	
-	if (this.__cachedAttributes === null) {
+
+	if(this.__cachedAttributes === null) {
 		var lst = [];
 		for(var k in this._attributs) {
 			lst.push(k);
 		}
 		this.__cachedAttributes = lst;
 	}
-	
-	
+
 	return this.__cachedAttributes;
 }
 /**
@@ -141,39 +152,56 @@ Base.prototype.del = function(callback) {
 	} else {
 		var self = this;
 
-		var q = elasticSearchClient.deleteDocument(this._index, this._type, encodeURIComponent(this.id));
+		this._preDel( function(err) {
 
-		q.on('data', function(data) {
-
-			var data = JSON.parse(data);
-			
-			if(data.ok === true) {
-				if(data.found === true) {
-					callback(null, this);
-					
-					redis.redisClient.del(this._hash, this.id, function(err, success) {
-						
-						if(err != null || success === 0) {
-							log.warning('REDIS: error on del keys ', this.id, this._hash, success, err)
-						} else {
-							log.debug('REDIS: deleted keys ', this.id, this._hash)
-						}
-
-					}.bind(this))
-					
-					this._postDel();
-					
-				} else {
-					callback(new errors.ObjectDoesNotExist(this.id), this);
-				}
-			} else {
-				callback(new errors.UnknowError(this.id), this);
+			// if an error happened, stop the process
+			if(err !== null) {
+				callback(err);
+				return;
 			}
 
+			var q = elasticSearchClient.deleteDocument(this._index, this._type, encodeURIComponent(this.id));
+
+			q.on('data', function(data) {
+
+				var data = JSON.parse(data);
+
+				if(data.ok === true) {
+					if(data.found === true) {
+
+						this._postDel(null, function() {
+							callback(null, this);
+						}.bind(this));
+
+						redis.redisClient.del(this._hash, this.id, function(err, success) {
+
+							if(err != null || success === 0) {
+								log.critical('REDIS: error on del keys ', this.id, this._hash, success, err)
+							} else {
+								log.debug('REDIS: deleted keys ', this.id, this._hash)
+							}
+
+						}.bind(this))
+
+					} else {
+
+						var err = new errors.ObjectDoesNotExist(this.id);
+						this._postDel(err, function() {
+							callback(err, this);
+						}.bind(this));
+
+					}
+				} else {
+					var err = new errors.UnknowError(this.id);
+					this._postDel(err, function() {
+						callback(err, this);
+					}.bind(this));
+				}
+
+			}.bind(this));
+			q.exec();
+
 		}.bind(this));
-
-		q.exec();
-
 	}
 }
 /**
@@ -217,12 +245,17 @@ Base.prototype.save = function(callback) {
 
 		if(err !== null) {
 			log.critical('error during validation', this._type, this._data.id, err);
-			callback(err, this);
+			this._postSave(err, function() {
+				callback(err, this);
+			}.bind(this));			
 			return;
 		}
 
 		if(this.validationErrors !== null) {
-			callback(new errors.ValidationError(), this);
+			var err = new errors.ValidationError();
+			this._postSave(err, function() {
+				callback(err, this);
+			}.bind(this));
 			return;
 		}
 
@@ -241,10 +274,15 @@ Base.prototype.save = function(callback) {
 				} else {
 
 					if( err instanceof errors.ObjectAlreadyExists) {
-						callback(err, this);
-					} else {
+						this._postSave(err, function() {
+							callback(err, this);
+						}.bind(this));
 
-						callback(new errors.UnknowError(), this);
+					} else {
+						var err = new errors.UnknowError();
+						this._postSave(err, function() {
+							callback(err, this);
+						}.bind(this));
 					}
 
 				}
@@ -263,13 +301,22 @@ Base.prototype._dbSave = function(callback) {
 
 	// encode id since elasticsearch does not support / in id
 	this._data.id = encodeURIComponent(this._data.id);
-	
+
+	// set id on instance because elasticsearchclient will delete it in this._data.id
+	this.id = this._data.id;
+
 	var q = elasticSearchClient.index(this._index, this._type, this._data);
 	q.on('data', function(data) {
 
 		var data = JSON.parse(data);
 		if( typeof (data.error) !== 'undefined') {
-			callback(new errors.UnknowError());
+
+			// call _postSave with success false
+			var err = new errors.UnknowError();
+			this._postSave(err, function() {
+				callback(err);
+			}.bind(this));
+
 			log.debug('save failed, redis error', data.error);
 
 			// if it is a new object
@@ -278,22 +325,25 @@ Base.prototype._dbSave = function(callback) {
 				redis.redisClient.del(this._data.hash, this._data.id, function(err, success) {
 
 					if(err != null || success === 0) {
-						log.warning('REDIS: error on del keys ', this.id, this._hash, err)
+						log.critical('REDIS: error on del keys ', this.id, this._hash, err)
 					}
 
 				}.bind(this))
 			}
 
-			return;
-		}
-		
-		// reload instance because revision has been updated by db
-		Base.loadObject({
-			id : data._id
-		}, this, function (err, res) {
-					callback(err,res);
-					this._postSave()
+		} else {
+
+			// call _postSave with success true
+			this._postSave(null, function() {
+				// reload instance before send response
+				Base.loadObject({
+					id : data._id
+				}, this, function(err, res) {
+					callback(err, res);
 				}.bind(this));
+			}.bind(this));
+
+		}
 	}.bind(this));
 	q.exec();
 }
@@ -331,38 +381,42 @@ Base.prototype._checkHashExistsInDb = function(callback) {
 	}.bind(this))
 }
 
-
 Base.prototype.addGlobalValidationError = function(message) {
-	
+
 	if(this.validationErrors === null) {
-		this.validationErrors = {items : {}, errors : []};
+		this.validationErrors = {
+			items : {},
+			errors : []
+		};
 	}
-	
+
 	this.validationErrors.errors.push(message);
-	
+
 }
 
-
 Base.prototype.addValidationError = function(attr, message) {
-	
+
 	if(this.validationErrors === null) {
-		this.validationErrors = {items : {}, errors : []};
+		this.validationErrors = {
+			items : {},
+			errors : []
+		};
 	}
-	
+
 	if( typeof (this.validationErrors.items[attr]) === 'undefined') {
 		this.validationErrors.items[attr] = [];
 	}
 
 	this.validationErrors.items[attr].push(message);
-	
+
 }
 
-Base.prototype.parseJSVErrors = function (errors) {
-	
+Base.prototype.parseJSVErrors = function(errors) {
+
 	var _errors = {};
-	
-	for (var i = 0, l = errors.length; i<l;i++) {
-		if (errors[i].attribute === "additionalProperties") {
+
+	for(var i = 0, l = errors.length; i < l; i++) {
+		if(errors[i].attribute === "additionalProperties") {
 			this.addGlobalValidationError(errors[i].message)
 		} else {
 			this.addValidationError(this.getJSVErrorAttribute(errors[i].uri.split('#')[1]), this._getMessageFromJSVError(errors[i]));
@@ -370,15 +424,14 @@ Base.prototype.parseJSVErrors = function (errors) {
 	}
 }
 
-Base.prototype.getJSVErrorAttribute = function (attr) {
+Base.prototype.getJSVErrorAttribute = function(attr) {
 	return "/" + this._type + attr;
 }
 
-Base.prototype._getMessageFromJSVError = function (error) {
-	if (error.attribute === 'type' && error.message === "Instance is not a required type") {
-		return "a " + error.details[0] + " is required"; 
-	}  
-	else {
+Base.prototype._getMessageFromJSVError = function(error) {
+	if(error.attribute === 'type' && error.message === "Instance is not a required type") {
+		return "a " + error.details[0] + " is required";
+	} else {
 		return error.message
 	}
 }
@@ -425,23 +478,22 @@ Base.prototype.validateChoice = function(attr, choices) {
 Base.prototype.validateNotEmptyObject = function(attr) {
 
 	var value = this._data[attr];
-	
+
 	console.log(value, attr)
-	
+
 	var keys = [];
-	
-	for (k in value) {
+
+	for(k in value) {
 		keys.push(k)
 	}
-	
+
 	console.log(keys, value)
-	
-	if (value === null || keys.length === 0) {
+
+	if(value === null || keys.length === 0) {
 		this.addValidationError(attr, 'empty object not allowed');
 	}
-	
-}
 
+}
 
 Base.prototype.validateEmail = function(attr) {
 	var value = this._data[attr];

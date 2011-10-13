@@ -6,6 +6,7 @@ var validator = require('../libs/schemas/validator');
 var settings = require('../settings.js');
 var redis = require('../libs/redis-client');
 var log = require('czagenda-log').from(__filename);
+var async = require('async');
 
 function Schema() {
 	this._attributs = {
@@ -42,7 +43,7 @@ Schema.prototype._findMissingDependencies = function(schema, env) {
 
 		var testValue = schema[k];
 
-		if(k === '$ref' || (k === 'href' && typeof(testValue) === 'string')) {
+		if(k === '$ref' || (k === 'href' && typeof (testValue) === 'string')) {
 
 			if( typeof (env.findSchema(schema[k])) === 'undefined') {
 				deps.push(schema[k]);
@@ -72,9 +73,9 @@ Schema.prototype._validate = function(callback) {
 	this.validateString('sample', true, null, null);
 	this.validateString('template', true, null, null);
 	this.validateChoice('status', [Schema.REFUSED, Schema.PROPOSAL, Schema.APPROVED]);
-	
+
 	this.validateNotEmptyObject('schema');
-	
+
 	// validate schema with user environment (include user's schema with status proposal')
 	if(this.status === Schema.PROPOSAL) {
 		var userEnv = new validator.ValidatorEnvironment();
@@ -152,66 +153,106 @@ Schema.prototype.save = function(callback) {
 
 }
 
-Schema.prototype.__deleteKey = function(key, broadcast) {
+Schema.prototype.__deleteKey = function(key, broadcast, callback) {
 
 	redis.redisClient.srem(key, this.id, function(err, res) {
 
 		if(err !== null) {
-			log.warning('REDIS SCHEMAS: error on del key ', key, this.id, err)
+			log.critical('REDIS SCHEMAS: error on sdel ', key, this.id, err)
 		} else if(res === 1 && broadcast === true) {
 			// braodcast
 		}
-
+		
+		callback(err);
+		
 	}.bind(this))
 }
 
-Schema.prototype.__addKey = function(key, broadcast) {
+Schema.prototype.__addKey = function(key, broadcast, callback) {
 	log.debug('REDIS SCHEMAS: add key ' + key + ' ' + this.id)
 	redis.redisClient.sadd(key, this.id, function(err, res) {
 
 		if(err !== null) {
-			log.warning('REDIS SCHEMAS: error on add key ', key, this.id, err)
+			log.critical('REDIS SCHEMAS: error on sadd ', key, this.id, err)
 		} else if(res === 1 && broadcast === true) {
 			// braodcast
 		}
-
+		
+		callback(err);
+		
 	}.bind(this))
 }
 
-Schema.prototype._postSave = function() {
-	// approved => supprimer userId proposal + ajouter dans approved
-
+Schema.prototype.__getRedisSchemasTasks = function () {
+	var methods = [];
+		
 	if(this.status === Schema.APPROVED) {
-		this.__addKey(redis.SCHEMA_APPROVED, true);
-		this.__deleteKey(redis.PREFIX_SCHEMA_PROPOSAL + this.author, false);
+		// approved => supprimer userId proposal + ajouter dans approved
+		methods.push(this.__addKey.bind(this, redis.SCHEMA_APPROVED, true));
+		methods.push(this.__deleteKey.bind(this, redis.PREFIX_SCHEMA_PROPOSAL + this.author, false));
+		
+	} else if(this.status === Schema.PROPOSAL) {
+		// proposal => ajouter dans userId proposal + supprimer dans approved
+		methods.push(this.__deleteKey.bind(this, redis.SCHEMA_APPROVED, true));
+		methods.push(this.__addKey.bind(this, redis.PREFIX_SCHEMA_PROPOSAL + this.author, false));
+		
+	} else if(this.status === Schema.REFUSED) {
+		// refused => this._postDel
+		methods.push(this.__deleteKey.bind(this, redis.SCHEMA_APPROVED, true));
+		methods.push(this.__deleteKey.bind(this, redis.PREFIX_SCHEMA_PROPOSAL + this.author, false));
 	}
-
-	// proposal => ajouter dans userId proposal + supprimer dans approved
 	
-else if(this.status === Schema.PROPOSAL) {
-		this.__deleteKey(redis.SCHEMA_APPROVED, true);
-		this.__addKey(redis.PREFIX_SCHEMA_PROPOSAL + this.author, false);
-	}
+	return methods;
+}
 
-	// refused => this._postDel
+
+Schema.prototype._postSave = function(err, next) {
 	
-else if(this.status === Schema.REFUSED) {
-		this.__deleteKey(redis.SCHEMA_APPROVED, true);
-		this.__deleteKey(redis.PREFIX_SCHEMA_PROPOSAL + this.author, false);
+	if (err === null) {
+		
+		async.parallel(this.__getRedisSchemasTasks(), function () {
+			next();
+		})
+		
+	} else {
+		next();		
 	}
-
 }
 
-Schema.prototype._postDel = function() {
-	this.__deleteKey(redis.SCHEMA_APPROVED, true);
-	this.__deleteKey(redis.PREFIX_SCHEMA_PROPOSAL + this.author, false);
 
+Schema.prototype._preDel = function(callback) {
+	
+	
+	
+	var methods = [];
+	
+	methods.push(this.__deleteKey.bind(this,redis.SCHEMA_APPROVED, true));
+	methods.push(this.__deleteKey.bind(this,redis.PREFIX_SCHEMA_PROPOSAL + this.author, false));
+	
+	async.parallel(this.__getRedisSchemasTasks(), function (err) {
+		if (typeof(err) !== 'undefined' && err !== null) {
+			callback(new errors.InternalError('Error when trying to remove or add key in redis'));
+		} else {
+			callback(null);
+		}
+		
+		
+	});
+	
 }
-/*
-Schema.prototype._preSave = function() {
-	this._data.schema.id = this._data.id;
+
+Schema.prototype._postDel = function(err, next) {
+	if (err === null || err instanceof errors.ObjectDoesNotExist) {
+		next();
+	} else {
+		// restore redis
+		async.parallel(this.__getRedisSchemasTasks(), function () {
+			next();
+		})
+	}
+	
 }
-*/
+
 Schema.get = function(options, callback) {
 	Base.get(options, Schema, callback)
 }
