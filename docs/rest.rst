@@ -56,7 +56,7 @@ URI are prefixed with /api/, followed by the document’s type and optionnaly by
 Playing with the API
 ^^^^^^^^^^^^^^^^^^^^^
 
-Curl is used in examples bellow to make request to the server. If you're not familiar with please take a look at http://curl.haxx.se/
+curl-oauth is used in examples bellow to make request to the server. If you're not familiar with please take a look at https://github.com/oxys/curl-oauth
 	
 1. Get a document's list
 
@@ -64,7 +64,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	*Request*
 	
-	>>> curl -XGET http://<HOST>/api/<DOCUMENT_TYPE>/
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/
 	
 	*Response*
 	
@@ -88,7 +88,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 		
 		For example
 		
-		>>> curl -XGET http://<HOST>/api/<DOCUMENT_TYPE>/?skip=10&limit=5
+		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?skip=10&limit=5
 		
 		This query will return documents from 10th to 15th 
 		
@@ -98,13 +98,13 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 		
 		For example
 		
-		>>> curl -XGET http://<HOST>/api/<DOCUMENT_TYPE>/?fulltext=<SEARCH_STRING>
+		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?fulltext=<SEARCH_STRING>
 		
 		The search string can contain boolean operators such as AND and OR
 		
 		For example
 		
-		>>> curl -XGET http://<HOST>/api/<DOCUMENT_TYPE>/?fulltext="search_string OR another_search_string"
+		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?fulltext="search_string OR another_search_string"
 		
 2. Get a document
 	
@@ -112,7 +112,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	*Request*
 	
-	>>> curl -XGET http://<HOST>/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>/
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>/
 	
 	*Response*
 	
@@ -126,11 +126,11 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	*Request*
 	
-	>>> curl -XPOST http://<HOST>/api/<DOCUMENT_TYPE>/ -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/  -d '{
 			"an_attribute" : "a value", "another_attribute" : "another value" 
 		}'
 	
-	.. warning:: Do not forget the Content-Type parameter
+	
 
 	*Response*
 	
@@ -143,11 +143,11 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	*Request*
 	
-	>>> curl -XPUT http://<HOST>/api/<DOCUMENT_TYPE>/ -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X PUT http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/  -d '{
 			"an_attribute" : "an updated value", "another_attribute" : "another value" 
 		}'
 	
-	.. warning:: Do not forget the Content-Type parameter
+	
 
 	*Response*
 	
@@ -160,7 +160,7 @@ Curl is used in examples bellow to make request to the server. If you're not fam
 	
 	*Request*
 	
-	>>> curl -XDEL http://<HOST>/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
+	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
 		
 	*Response*
 	
@@ -178,7 +178,7 @@ User base uri is /user
 
 1. Create 
 
-	>>> curl -XPOST http://<HOST>/user/ -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/user/  -d '{
 				"firstName" : "John", 
 				"lastName" : "Doe",
 				"email" : "john.doe@domain.com",
@@ -208,7 +208,7 @@ User base uri is /user
 	
 	You can make a request with partial data or with a complete data structure.
 	
-	>>> curl -XPUT http://<HOST>/user/johndoe?pretty=true -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X PUT http://api-master.czagenda.oxys.net/user/johndoe?pretty=true  -d '{
 			"firstName" : "Jack"
 		}'
 
@@ -233,7 +233,7 @@ User base uri is /user
 	
 2. Delete 
 	
-	>>> curl --XDELETE http://<HOST>/user/johndoe
+	>>> curl-oauth --domain cz-api --X DELETE http://api-master.czagenda.oxys.net/user/johndoe
 	
 	Server response	with the 204 code and an empty body.
 	
@@ -245,7 +245,7 @@ Group base uri is /group
 
 1. Create
 		
-	>>> curl -XPOST http://<HOST>/group/?pretty=true -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/group/?pretty=true  -d '{
 			"title" : "My group", 
 			"description" : "Description of my first group"
 		}'
@@ -275,7 +275,7 @@ Membership base uri is /membership
 
 1. Create
 
-	>>> curl -XPOST http://<HOST>/membership/ -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/membership/  -d '{
 				"user" :  "/user/johndoe",
 				"group" : "/group/my-group"
 			}'
@@ -297,7 +297,7 @@ Membership base uri is /membership
 
 	If you want to list all groups for a user just query the uri stored in the "group" attribute of the user document
 	
-	>>> curl -XGET http://<HOST>/user/johndoe/groups/
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/user/johndoe/groups/
 	
 	Server response
 	
@@ -318,7 +318,7 @@ Membership base uri is /membership
 	
 	If you want in the same query fetch the group document you can do it with the special query string parameter include_docs
 	
-	>>> curl -XGET http://<HOST>/user/johndoe/groups/?include_docs=true
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/user/johndoe/groups/?include_docs=true
 	
 	server response
 	
@@ -348,11 +348,11 @@ Membership base uri is /membership
 
 	You can fetch the group's members by requesting on the "users" attribute of the group document
 
-	>>> curl -XGET http://<HOST>/groups/my-group/users/
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/groups/my-group/users/
 	
 	or 
 	
-	>>> curl -XGET http://<HOST>/groups/my-group/users/?include_docs=true
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/groups/my-group/users/?include_docs=true
 	
 4. Update
 	
@@ -362,7 +362,7 @@ Membership base uri is /membership
 
 	To delete a membership relation, proceed in the same way as others documents
 	
-	>>> curl --XDELETE http://<HOST>/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57
+	>>> curl-oauth --domain cz-api --X DELETE http://api-master.czagenda.oxys.net/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57
 	
 
 Agenda
@@ -372,7 +372,7 @@ Agenda base uri is /agenda
 
 1. Create
 
-	>>> curl -XPOST http://<HOST>/agenda/ -H 'Content-Type: application/json' -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/agenda/  -d '{
 				"title" : "My private agenda",
 				"description" : "description of my private agenda"
 			}'
@@ -400,15 +400,16 @@ Event base uri is /event
 	
 1. Create
 
-	>>> curl -XPOST http://<HOST>/event/?pretty=true -H 'Content-Type: application/json' -d '{
-			"author" : "/user/johndoe",
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/event/?pretty=true  -d '{
 			"event" : {
-				"title" : "My first event"
+				"title" : "My first event",
+				"where" : [{"valueString" : "Somewhere on earth planet !"}],
+				"links" : [{"rel" : "describedby", "href" : "/schema/event"}]
 			}
 		}'
-
-	.. warning:: At this time you must provide the author attribute but it will be unnecessary when auth module will work.
-
+	
+	Data structure in the event attribute is written according to schema /schema/event. see `schemas <schemas.html>`_
+	
 	Server response
 	
 	>>> {
@@ -417,7 +418,8 @@ Event base uri is /event
 		  "updateDate": "2011-10-04T09:14:28.281Z",
 		  "event": {
 		    "title": "My first event",
-		    "id": "/event/b31398e4e0de03ef76bb168e32e41948"
+		    "where" : [{"valueString" : "Somewhere on earth planet !"}],
+			"links" : [{"rel" : "describedby", "href" : "/schema/event"}]
 		  },
 		  "author": "/user/johndoe",
 		  "writeGroups": "/event/b31398e4e0de03ef76bb168e32e41948/perms/wg",
@@ -426,6 +428,8 @@ Event base uri is /event
 		  "readUsers": "/event/b31398e4e0de03ef76bb168e32e41948/perms/ru",
 		  "agenda": null
 		}
+	
+	Note that author was automatically added according to your oauth domain
 	
 2. Search
 
@@ -437,7 +441,7 @@ Event base uri is /event
 	
 		For example
 		
-		>>> curl -XGET http://<HOST>/api/event/?bbox=<TOP_LEFT_LATITUDE>,<TOP_LEFT_LONGITUDE>,<RIGHT_BOTTOM_LATITUDE>,<RIGHT_BOTTOM_LONGITUDE>
+		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/event/?bbox=<TOP_LEFT_LATITUDE>,<TOP_LEFT_LONGITUDE>,<RIGHT_BOTTOM_LATITUDE>,<RIGHT_BOTTOM_LONGITUDE>
 		
 	2.2. Date time search
 		

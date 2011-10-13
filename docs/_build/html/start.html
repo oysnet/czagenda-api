@@ -1,0 +1,143 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Start with oauth and account registration &mdash; Citizens Agenda v0.1 documentation</title>
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '',
+        VERSION:     '0.1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
+    <link rel="next" title="RESTful API" href="rest.html" />
+    <link rel="prev" title="Welcome to Citizens Agenda’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="rest.html" title="RESTful API"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="start-with-oauth-and-account-registration">
+<h1>Start with oauth and account registration<a class="headerlink" href="#start-with-oauth-and-account-registration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="curl-oauth">
+<h2>curl-oauth<a class="headerlink" href="#curl-oauth" title="Permalink to this headline">¶</a></h2>
+<p>curl-oauth is a curl like tool with oauth support. Sample below use it. You can download it at <a class="reference external" href="https://github.com/oxys/curl-oauth">github</a></p>
+</div>
+<div class="section" id="registration">
+<h2>Registration<a class="headerlink" href="#registration" title="Permalink to this headline">¶</a></h2>
+<p>To access api you must have an account and oauth tokens used to sign requests to api. So go to this <a class="reference external" href="http://auth.czagenda.oxys.net/auth/register/">url</a> and proceed with account registration.</p>
+<p>Second step is to create a consumer that will be allowed to access the api, fill the form <a class="reference external" href="http://auth.czagenda.oxys.net/oauth/register/">here</a> and validate. You have now the token and the secret for your new consumer.</p>
+<p>Third step is to get access token and access secret for this consumer. Achieve this by using curl-oauth:</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span> <span class="n">API</span><span class="o">=</span><span class="s">&quot;http://api-master.czagenda.oxys.net/api;</span>
+<span class="go">        curl-oauth --domain cz-api \</span>
+<span class="go">          --request-token \</span>
+<span class="go">          --consumer-secret &lt;CONSUMER_SECRET&gt; \</span>
+<span class="go">          --consumer-key &lt;CONSUMER_TOKEN&gt;  \</span>
+<span class="go">          --request-token-url $API/oauth-token/_request-token \</span>
+<span class="go">          --request-token-callback http://www.oxys.net \</span>
+<span class="go">          --request-token-authorize-url http://auth.czagenda.oxys.net/oauth/authorize/</span>
+<span class="go">          --request-token-access-token-url $API/oauth-token/_access-token</span>
+</pre></div>
+</div>
+<p>Follow instructions, the pin asked is the oauth_verifier parameter provided in querystring of the callback url.</p>
+<p>At the end of process you can request api using curl-oauth &#8211;domain cz-api.</p>
+</div></blockquote>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Start with oauth and account registration</a><ul>
+<li><a class="reference internal" href="#curl-oauth">curl-oauth</a></li>
+<li><a class="reference internal" href="#registration">Registration</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to Citizens Agenda&#8217;s documentation!</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="rest.html"
+                        title="next chapter">RESTful API</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/start.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="rest.html" title="RESTful API"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2011, Oxys SARL.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+    </div>
+  </body>
+</html>

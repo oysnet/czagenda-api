@@ -24,7 +24,7 @@
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
     <link rel="next" title="Types of documents" href="data.html" />
-    <link rel="prev" title="Welcome to Citizens Agenda’s documentation!" href="index.html" /> 
+    <link rel="prev" title="Start with oauth and account registration" href="start.html" /> 
   </head>
   <body>
     <div class="related">
@@ -37,7 +37,7 @@
           <a href="data.html" title="Types of documents"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
+          <a href="start.html" title="Start with oauth and account registration"
              accesskey="P">previous</a> |</li>
         <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
       </ul>
@@ -102,13 +102,13 @@
 </div>
 <div class="section" id="playing-with-the-api">
 <h3>Playing with the API<a class="headerlink" href="#playing-with-the-api" title="Permalink to this headline">¶</a></h3>
-<p>Curl is used in examples bellow to make request to the server. If you&#8217;re not familiar with please take a look at <a class="reference external" href="http://curl.haxx.se/">http://curl.haxx.se/</a></p>
+<p>curl-oauth is used in examples bellow to make request to the server. If you&#8217;re not familiar with please take a look at <a class="reference external" href="https://github.com/oxys/curl-oauth">https://github.com/oxys/curl-oauth</a></p>
 <ol class="arabic">
 <li><p class="first">Get a document&#8217;s list</p>
 <blockquote>
 <div><p>It&#8217;s done by invoking the GET HTTP method on an URI like /api/&lt;DOCUMENT_TYPE&gt;/</p>
 <p><em>Request</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span>
 </pre></div>
 </div>
 <p><em>Response</em></p>
@@ -131,7 +131,7 @@
 <blockquote>
 <div><p>Pagination is implemented by passing extra parameters in query string. These parameters are skip and limit.</p>
 <p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/api/&lt;DOCUMENT_TYPE&gt;/?skip=10&amp;limit=5</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?skip=10&amp;limit=5</pre>
 </div>
 <p>This query will return documents from 10th to 15th</p>
 </div></blockquote>
@@ -139,11 +139,11 @@
 <blockquote>
 <div><p>Fulltext search is done by passing a fulltext parameter.</p>
 <p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/api/&lt;DOCUMENT_TYPE&gt;/?fulltext=&lt;SEARCH_STRING&gt;</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?fulltext=&lt;SEARCH_STRING&gt;</pre>
 </div>
 <p>The search string can contain boolean operators such as AND and OR</p>
 <p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/api/&lt;DOCUMENT_TYPE&gt;/?fulltext="search_string OR another_search_string"</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?fulltext="search_string OR another_search_string"</pre>
 </div>
 </div></blockquote>
 </div></blockquote>
@@ -152,7 +152,7 @@
 <blockquote>
 <div><p>It&#8217;s done by invoking the  GET HTTP method on an URI like /api/&lt;DOCUMENT_TYPE&gt;/&lt;DOCUMENT_ID&gt;</p>
 <p><em>Request</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/&lt;</span><span class="n">DOCUMENT_ID</span><span class="o">&gt;/</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/&lt;</span><span class="n">DOCUMENT_ID</span><span class="o">&gt;/</span>
 </pre></div>
 </div>
 <p><em>Response</em></p>
@@ -166,14 +166,10 @@
 <blockquote>
 <div><p>It&#8217;s done by invoking the POST HTTP method on an URI like /api/&lt;DOCUMENT_TYPE&gt;/</p>
 <p><em>Request</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                &quot;an_attribute&quot; : &quot;a value&quot;, &quot;another_attribute&quot; : &quot;another value&quot;</span>
 <span class="go">        }&#39;</span>
 </pre></div>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Do not forget the Content-Type parameter</p>
 </div>
 <p><em>Response</em></p>
 <p>The server returns the newly created document with some system attributes such as _id or _rev. Systems attributes are described HERE</p>
@@ -183,14 +179,10 @@
 <blockquote>
 <div><p>It&#8217;s done by invoking the PUT HTTP method on an URI like /api/&lt;DOCUMENT_TYPE&gt;/&lt;DOCUMENT_ID&gt;</p>
 <p><em>Request</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPUT</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">PUT</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                &quot;an_attribute&quot; : &quot;an updated value&quot;, &quot;another_attribute&quot; : &quot;another value&quot;</span>
 <span class="go">        }&#39;</span>
 </pre></div>
-</div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Do not forget the Content-Type parameter</p>
 </div>
 <p><em>Response</em></p>
 <p>The server returns the updated document.</p>
@@ -200,7 +192,7 @@
 <blockquote>
 <div><p>It&#8217;s done by invoking the DEL HTTP method on an URI like /api/&lt;DOCUMENT_TYPE&gt;/&lt;DOCUMENT_ID&gt;</p>
 <p><em>Request</em></p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XDEL</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/&lt;</span><span class="n">DOCUMENT_ID</span><span class="o">&gt;</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/&lt;</span><span class="n">DOCUMENT_ID</span><span class="o">&gt;</span>
 </pre></div>
 </div>
 <p><em>Response</em></p>
@@ -218,7 +210,7 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">user</span><span class="o">/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                        &quot;firstName&quot; : &quot;John&quot;,</span>
 <span class="go">                        &quot;lastName&quot; : &quot;Doe&quot;,</span>
 <span class="go">                        &quot;email&quot; : &quot;john.doe@domain.com&quot;,</span>
@@ -249,7 +241,7 @@
 <li><p class="first">Update</p>
 <blockquote>
 <div><p>You can make a request with partial data or with a complete data structure.</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPUT http://&lt;HOST&gt;/user/johndoe?pretty=true -H 'Content-Type: application/json' -d '{
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api --json -X PUT http://api-master.czagenda.oxys.net/user/johndoe?pretty=true  -d '{
                 "firstName" : "Jack"
         }'</pre>
 </div>
@@ -276,7 +268,7 @@
 <ol class="arabic" start="2">
 <li><p class="first">Delete</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">--</span><span class="n">XDELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span>
 </pre></div>
 </div>
 <p>Server response with the 204 code and an empty body.</p>
@@ -290,7 +282,7 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPOST http://&lt;HOST&gt;/group/?pretty=true -H 'Content-Type: application/json' -d '{
+<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/group/?pretty=true  -d '{
                 "title" : "My group",
                 "description" : "Description of my first group"
         }'</pre>
@@ -319,7 +311,7 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">membership</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">membership</span><span class="o">/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                        &quot;user&quot; :  &quot;/user/johndoe&quot;,</span>
 <span class="go">                        &quot;group&quot; : &quot;/group/my-group&quot;</span>
 <span class="go">                }&#39;</span>
@@ -341,7 +333,7 @@
 <li><p class="first">Get  user&#8217;s groups</p>
 <blockquote>
 <div><p>If you want to list all groups for a user just query the uri stored in the &#8220;group&#8221; attribute of the user document</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span><span class="o">/</span><span class="n">groups</span><span class="o">/</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">user</span><span class="o">/</span><span class="n">johndoe</span><span class="o">/</span><span class="n">groups</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>Server response</p>
@@ -361,7 +353,7 @@
 </div>
 <p>The server will return all membership documents for the user. Observe that user attribute of the membership document is not here.</p>
 <p>If you want in the same query fetch the group document you can do it with the special query string parameter include_docs</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/user/johndoe/groups/?include_docs=true</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/user/johndoe/groups/?include_docs=true</pre>
 </div>
 <p>server response</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
@@ -392,11 +384,11 @@
 <li><p class="first">Get  group&#8217;s users</p>
 <blockquote>
 <div><p>You can fetch the group&#8217;s members by requesting on the &#8220;users&#8221; attribute of the group document</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XGET</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">groups</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">group</span><span class="o">/</span><span class="n">users</span><span class="o">/</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">groups</span><span class="o">/</span><span class="n">my</span><span class="o">-</span><span class="n">group</span><span class="o">/</span><span class="n">users</span><span class="o">/</span>
 </pre></div>
 </div>
 <p>or</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/groups/my-group/users/?include_docs=true</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/groups/my-group/users/?include_docs=true</pre>
 </div>
 </div></blockquote>
 </li>
@@ -411,7 +403,7 @@
 <li><p class="first">Delete</p>
 <blockquote>
 <div><p>To delete a membership relation, proceed in the same way as others documents</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">--</span><span class="n">XDELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">membership</span><span class="o">/</span><span class="mi">0</span><span class="n">b3bcb3a4b4fd153e2373f7ec49f5a57</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">membership</span><span class="o">/</span><span class="mi">0</span><span class="n">b3bcb3a4b4fd153e2373f7ec49f5a57</span>
 </pre></div>
 </div>
 </div></blockquote>
@@ -424,7 +416,7 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span> <span class="o">-</span><span class="n">XPOST</span> <span class="n">http</span><span class="p">:</span><span class="o">//&lt;</span><span class="n">HOST</span><span class="o">&gt;/</span><span class="n">agenda</span><span class="o">/</span> <span class="o">-</span><span class="n">H</span> <span class="s">&#39;Content-Type: application/json&#39;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">agenda</span><span class="o">/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                        &quot;title&quot; : &quot;My private agenda&quot;,</span>
 <span class="go">                        &quot;description&quot; : &quot;description of my private agenda&quot;</span>
 <span class="go">                }&#39;</span>
@@ -453,17 +445,15 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl -XPOST http://&lt;HOST&gt;/event/?pretty=true -H 'Content-Type: application/json' -d '{
-                "author" : "/user/johndoe",
+<div><div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/event/?pretty=true  -d '{
                 "event" : {
-                        "title" : "My first event"
+                        "title" : "My first event",
+                        "where" : [{"valueString" : "Somewhere on earth planet !"}],
+                        "links" : [{"rel" : "describedby", "href" : "/schema/event"}]
                 }
         }'</pre>
 </div>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">At this time you must provide the author attribute but it will be unnecessary when auth module will work.</p>
-</div>
+<p>Data structure in the event attribute is written according to schema /schema/event. see <a class="reference external" href="schemas.html">schemas</a></p>
 <p>Server response</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
 <span class="go">          &quot;id&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;,</span>
@@ -471,7 +461,8 @@
 <span class="go">          &quot;updateDate&quot;: &quot;2011-10-04T09:14:28.281Z&quot;,</span>
 <span class="go">          &quot;event&quot;: {</span>
 <span class="go">            &quot;title&quot;: &quot;My first event&quot;,</span>
-<span class="go">            &quot;id&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;</span>
+<span class="go">            &quot;where&quot; : [{&quot;valueString&quot; : &quot;Somewhere on earth planet !&quot;}],</span>
+<span class="go">                &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/event&quot;}]</span>
 <span class="go">          },</span>
 <span class="go">          &quot;author&quot;: &quot;/user/johndoe&quot;,</span>
 <span class="go">          &quot;writeGroups&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/wg&quot;,</span>
@@ -482,6 +473,7 @@
 <span class="go">        }</span>
 </pre></div>
 </div>
+<p>Note that author was automatically added according to your oauth domain</p>
 </div></blockquote>
 </li>
 <li><p class="first">Search</p>
@@ -491,7 +483,7 @@
 <blockquote>
 <div><p>Geographic search is a search that limits events contained in a bounding box.</p>
 <p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl -XGET http://&lt;HOST&gt;/api/event/?bbox=&lt;TOP_LEFT_LATITUDE&gt;,&lt;TOP_LEFT_LONGITUDE&gt;,&lt;RIGHT_BOTTOM_LATITUDE&gt;,&lt;RIGHT_BOTTOM_LONGITUDE&gt;</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/event/?bbox=&lt;TOP_LEFT_LATITUDE&gt;,&lt;TOP_LEFT_LONGITUDE&gt;,&lt;RIGHT_BOTTOM_LATITUDE&gt;,&lt;RIGHT_BOTTOM_LONGITUDE&gt;</pre>
 </div>
 </div></blockquote>
 <p>2.2. Date time search</p>
@@ -576,8 +568,8 @@
 </ul>
 
   <h4>Previous topic</h4>
-  <p class="topless"><a href="index.html"
-                        title="previous chapter">Welcome to Citizens Agenda&#8217;s documentation!</a></p>
+  <p class="topless"><a href="start.html"
+                        title="previous chapter">Start with oauth and account registration</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="data.html"
                         title="next chapter">Types of documents</a></p>
@@ -613,7 +605,7 @@
           <a href="data.html" title="Types of documents"
              >next</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Welcome to Citizens Agenda’s documentation!"
+          <a href="start.html" title="Start with oauth and account registration"
              >previous</a> |</li>
         <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
       </ul>

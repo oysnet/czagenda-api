@@ -11,9 +11,10 @@ Contents:
 .. toctree::
    :maxdepth: 2
  	
+   start
    rest
    data
-   schema
+   schemas
 	
 Indices and tables
 ==================
