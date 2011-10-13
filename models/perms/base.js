@@ -14,12 +14,29 @@ BasePermission.publicWriteAttributes = ['grantTo', 'applyOn'];
 BasePermission.staffWriteAttributes = BasePermission.publicWriteAttributes;
 
 /**
+ * Override save method to allow do not call updateComputedValue in _postSave
+ * Default is to call it
+ */
+BasePermission.prototype.save = function (callback, transparent, updateComputedValue) {
+	
+	this.__updateComputedValue = updateComputedValue !== false;
+	
+	Base.prototype.save.call(this, callback, transparent);
+}
+
+/**
  * Update computed values such as computedWriteUsers, computedWriteGroups, etc... on applyOn document
  * clazz is the class to deal with applyOn document
  * attr is the attribute to consider according to permission type
  * add is true if the permission is added, false if removed
  */
 BasePermission.prototype.updateComputedValue = function (clazz, attr, add, callback) {
+	
+	if (this.__updateComputedValue === false) {
+		callback();
+		return;
+	}
+	
 	clazz.get({id : this.applyOn}, function (err, obj) {
 		
 		if (err !== null) {
@@ -40,7 +57,7 @@ BasePermission.prototype.updateComputedValue = function (clazz, attr, add, callb
 				log.critical('BasePermission.prototype.updateComputedValue: unable to save applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
 			}
 			callback();
-		});
+		}, true);
 	}.bind(this));
 }
 
