@@ -60,7 +60,7 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 		asyncMethods.push(function (i,cb) {
 			
 			models.Schema.get({id : schemas[i]}, function (err, obj) {
-				
+								
 				if (err !== null) {
 					cb(err)
 				} else {
@@ -72,7 +72,6 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 	
 	async.parallel(asyncMethods, function (err, schemas) {
 					
-			
 			if (err !== null && typeof(err) !== 'undefined') {
 				log.critical('Fail to fetch schemas from db', err);
 				callback(new Error('Fail to fetch schemas from db'));
@@ -88,7 +87,6 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 			// try to add schemas
 			while(schemas.length > 0) {
 				var tmp = this._addSchemasToEnv( schemas, this.env);
-
 				if(tmp.length === 0) {
 					log.notice('Schemas loaded');
 					callback(null, true)
@@ -98,7 +96,7 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 					callback(new Error('Fail to add schemas to validator environment'));
 					break;
 				} else {
-					tmp = schemas;
+					schemas = tmp;
 				}
 			}
 	}.bind(this));
@@ -115,10 +113,10 @@ ValidatorEnvironment.prototype._addSchemasToEnv = function(schemas, env) {
 	var tmp = []
 	for(var i = 0, l = schemas.length; i < l; i++) {
 		try {
-			
-			
+			console.log(schemas[i].id)
 			env.createSchema(schemas[i].schema, undefined, schemas[i].id)
 		} catch (e) {
+			
 			tmp.push(schemas[i])			
 		}
 	}

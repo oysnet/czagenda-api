@@ -20,7 +20,8 @@ var validator = require('./libs/schemas/validator');
 
 validator.approvedEnvironment.load( function(err, success) {
 	if(err !== null) {
-		log.critical('ValidatorEnvironment', err);
+		log.critical('ValidatorEnvironment failed to load', err);
+		throw err;
 	} else {
 		log.notice('ValidatorEnvironment loaded');
 		init_server();
