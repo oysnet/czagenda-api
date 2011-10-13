@@ -123,6 +123,23 @@ Base.prototype._generateId = function(doc) {
 	return '/' + this._type + '/' + this._generateUUID();
 }
 
+Base.prototype.__rawId = null;
+
+Base.prototype.getId = function () {
+	
+	if (this.id !== null) {
+		return this.id;
+		
+	} 
+	
+	if (this.__rawId === null) {
+		this.__rawId = this._generateId();
+	}
+	
+	return this.__rawId;
+}
+
+
 Base.prototype.__cachedAttributes = null;
 
 /**
@@ -212,22 +229,23 @@ Base.prototype.del = function(callback) {
 /**
  * populate _data attribute
  */
-Base.prototype.__prepareData = function() {
-
-	console.log(this._data)
+Base.prototype.__prepareData = function(transparent) {
 
 	if(this._hash !== null) {
 		this._data.id = this.id;
 		this._data.hash = this._hash;
 	} else {
-		this._data.id = this._generateId();
+		this._data.id = this.getId();
 	}
 
 	this._data.type = this._type;
-
-	this.updateDate = (new Date()).toISOString();
+		
 	if(this._rev === null) {
-		this.createDate = this.updateDate;
+		this.createDate = (new Date()).toISOString();
+		this.updateDate = this.createDate;
+		
+	} else if (transparent === false) {
+		this.updateDate = (new Date()).toISOString();
 	}
 
 	for(key in this._attributs) {
@@ -238,12 +256,10 @@ Base.prototype.__prepareData = function() {
 /**
  * Save instance
  */
-Base.prototype.save = function(callback) {
-
-	log.debug('save', this._type);
-
+Base.prototype.save = function(callback, transparent) {
+	
 	// populate _data
-	this.__prepareData();
+	this.__prepareData(transparent === true);
 
 	log.debug('data prepared', this._data);
 
