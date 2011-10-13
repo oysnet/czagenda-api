@@ -12,7 +12,7 @@ function OAuthToken () {
 util.inherits(OAuthToken, Base);
 
 OAuthToken.publicAttributes = Base.publicAttributes.concat([]);
-OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes);
+OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes).concat([['key', 'secret', 'isApproved', 'consumer']]);
 
 OAuthToken.publicWriteAttributes = []; 
 OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];

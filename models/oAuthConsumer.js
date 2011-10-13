@@ -14,7 +14,7 @@ function OAuthConsumer () {
 util.inherits(OAuthConsumer, Base);
 
 OAuthConsumer.publicAttributes = Base.publicAttributes.concat([]);
-OAuthConsumer.staffAttributes = OAuthConsumer.publicAttributes.concat(Base.staffAttributes);
+OAuthConsumer.staffAttributes = OAuthConsumer.publicAttributes.concat(Base.staffAttributes).concat(['name', 'description', 'key', 'secret', 'status', 'user']);
 
 OAuthConsumer.publicWriteAttributes = []; 
 OAuthConsumer.staffWriteAttributes = ['name', 'description', 'status', 'user'];
