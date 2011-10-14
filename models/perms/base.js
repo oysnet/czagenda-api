@@ -41,6 +41,8 @@ BasePermission.prototype.updateComputedValue = function (clazz, attr, add, callb
 		
 		if (err !== null) {
 			log.critical('BasePermission.prototype.updateComputedValue: unable to load applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
+			callback();
+			return;
 		}
 		
 		if (add === true) {

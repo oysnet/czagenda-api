@@ -133,36 +133,72 @@ exports.read = function(req, res) {
 	}.bind(this));
 }
 
+
+/**
+ * this methods is called before save object
+ * obj is the prepared obj to save
+ * req is the current request
+ * callback take one argument : null if all went done or an InternalError instance with a message to return as response. If an error is passed, create process is stopped
+ */
+exports._preCreate = function(obj, req, callback) {
+	callback(null)
+}
+
+/**
+ * this methods is called before save object
+ * err is an error instance or null
+ * obj is the prepared obj to save
+ * req is the current request
+ * callback take no arguments
+ */
+exports._postCreate = function(err, obj, req, callback) {
+	callback();
+}
+
 exports.create = function(req, res) {
 
 	var data = req.body;
-	
+
 	var obj = new this._clazz;
+
 	if(this._populateObject(obj, data, req, res) === true) {
 
-		obj.save( function(err, obj) {
+		this._preCreate(obj, req, function(err) {
 
-			if(err === null) {
-				res.statusCode = statusCodes.CREATED;
-				res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
-			} else {
-
-				if( err instanceof errors.ObjectAlreadyExists) {
-					res.statusCode = statusCodes.DUPLICATE_ENTRY;
-					res.end(err.message);
-
-				} else if( err instanceof errors.ValidationError) {
-					res.statusCode = statusCodes.BAD_REQUEST;
-					res.end(this._renderJson(req, res, obj.validationErrors));
-
-				} else {
-					res.statusCode = statusCodes.INTERNAL_ERROR;
-					res.end('Internal error')
-				}
-
+			if(err !== null && err instanceof errors.InternalError) {
+				res.statusCode = statusCodes.INTERNAL_ERROR;
+				res.end(err.message);
+				return;
 			}
 
-		}.bind(this));
+			// try to save object
+			obj.save( function(err, obj) {
+
+				this._postCreate(err, obj, req, function() {
+					if(err === null) {
+						res.statusCode = statusCodes.CREATED;
+						res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+					} else {
+
+						if( err instanceof errors.ObjectAlreadyExists) {
+							res.statusCode = statusCodes.DUPLICATE_ENTRY;
+							res.end(err.message);
+
+						} else if( err instanceof errors.ValidationError) {
+							res.statusCode = statusCodes.BAD_REQUEST;
+							res.end(this._renderJson(req, res, obj.validationErrors));
+
+						} else {
+							res.statusCode = statusCodes.INTERNAL_ERROR;
+							res.end('Internal error')
+						}
+					}
+				}.bind(this));
+
+			}.bind(this));
+
+		}.bind(this))
+
 	}
 }
 
