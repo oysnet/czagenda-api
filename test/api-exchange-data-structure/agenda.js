@@ -13,6 +13,9 @@ var number_re = new RegExp("^[0-9]+$");
 var data_keys = ['title', 'description', 'writeUsers', 'writeGroups', 'id',  'createDate', 'updateDate'].sort();
 
 // CREATION
+
+var created_obj = null;
+
 var create_test_data = {
 	title : 'TITLE_AGENDA_1',
 	description : 'DESCRIPTION_AGENDA_1'
@@ -95,6 +98,87 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 			delete data.updateDate;
 				
 			assert.deepEqual(data, create_test_data_expected);
+		},
+		
+		'check default perms' : {
+			
+			'write groups' : {
+			
+				topic : function (res, data) {
+					
+					setTimeout(function (data) {
+						var data = JSON.parse(data);					
+						rest = new Rest();
+						rest.get('/api' + data.writeGroups,  this.callback);
+					}.bind(this, data), 2000);
+					
+				},
+				
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				
+				'check total_rows value is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 0);
+				},
+				
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				
+				'check rows length is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 0);
+				}
+			},
+			'write users' : {
+			
+				topic : function (res, data) {
+					setTimeout(function (data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.writeUsers,  this.callback);
+					}.bind(this, data),2000);
+				},
+				
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				
+				'check total_rows value is 1' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 1);
+				},
+				
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				
+				'check rows length is 1' : function(err, res, data) {
+					
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 1);
+				},
+				
+				'check rows first item ' : function(err, res, data) {
+					var data = JSON.parse(data);
+					
+					assert.equal(data.rows[0].grantTo, "/user/test");
+				}
+			}
 		}
 	},
 	

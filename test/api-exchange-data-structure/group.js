@@ -33,21 +33,21 @@ var create_invalid_test_data = {
 var create_invalid_test_data_expected = { items : {title: [ 'a string is required' ]}, errors : []};	
 
 // UPDATE
-var update_test_data_in_database = tests_data.group_2;
+var update_test_data_in_database = tests_data.group_6;
 
 var update_test_data = {
-	title : 'MODIFIED_TITLE_GROUP_2',
-	description : 'MODIFIED_DESCRIPTION_GROUP_2'
+	title : 'MODIFIED_TITLE_GROUP_6',
+	description : 'MODIFIED_DESCRIPTION_GROUP_6'
 }
 
 var update_test_data_expected = {
-	title : 'MODIFIED_TITLE_GROUP_2',
-	description : 'MODIFIED_DESCRIPTION_GROUP_2',
-	id : '/group/title-group-2',
-	users : '/group/title-group-2/users',
-	createDate : tests_data.group_2.createDate,
-	writeUsers : '/group/title-group-2/perms/wu',
-	writeGroups : '/group/title-group-2/perms/wg'
+	title : 'MODIFIED_TITLE_GROUP_6',
+	description : 'MODIFIED_DESCRIPTION_GROUP_6',
+	id : '/group/title-group-6',
+	users : '/group/title-group-6/users',
+	createDate : tests_data.group_6.createDate,
+	writeUsers : '/group/title-group-6/perms/wu',
+	writeGroups : '/group/title-group-6/perms/wg'
 }
 
 // GET
@@ -85,6 +85,86 @@ vows.describe('Group API exchanged data structure').addBatch({
 			delete data.updateDate;
 						
 			assert.deepEqual(data, create_test_data_expected);
+		},
+		'check default perms' : {
+			
+			'write groups' : {
+			
+				topic : function (res, data) {
+					
+					setTimeout(function (data) {
+						var data = JSON.parse(data);					
+						rest = new Rest();
+						rest.get('/api' + data.writeGroups,  this.callback);
+					}.bind(this, data), 2000);
+					
+				},
+				
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				
+				'check total_rows value is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 0);
+				},
+				
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				
+				'check rows length is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 0);
+				}
+			},
+			'write users' : {
+			
+				topic : function (res, data) {
+					setTimeout(function (data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.writeUsers,  this.callback);
+					}.bind(this, data),2000);
+				},
+				
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				
+				'check total_rows value is 1' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 1);
+				},
+				
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				
+				'check rows length is 1' : function(err, res, data) {
+					
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 1);
+				},
+				
+				'check rows first item ' : function(err, res, data) {
+					var data = JSON.parse(data);
+					
+					assert.equal(data.rows[0].grantTo, "/user/test");
+				}
+			}
 		}
 		
 	},

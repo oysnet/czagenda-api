@@ -104,6 +104,8 @@ exports.group_2 = {
 	writeGroups : '/group/title-group-2/perms/wg'
 }
 
+
+
 exports.group_3 = {
 	title : 'TITLE_GROUP_3',
 	description : 'DESCRIPTION_GROUP_3',
@@ -137,7 +139,16 @@ exports.group_5 = {
 	writeGroups : '/group/title-group-5/perms/wg'
 }
 
-
+exports.group_6 = {
+  "description": "DESCRIPTION_GROUP_6", 
+  "title": "TITLE_GROUP_6", 
+  "createDate": "2011-10-17T09:01:18.853Z", 
+  "writeGroups": "/group/title-group-6/perms/wg", 
+  "updateDate": "2011-10-17T09:01:18.853Z", 
+  "users": "/group/title-group-6/users", 
+  "id": "/group/title-group-6", 
+  "writeUsers": "/group/title-group-6/perms/wu"
+}
 
 // ###############################################################################
 // 		SCHEMA
