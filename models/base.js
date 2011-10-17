@@ -103,13 +103,43 @@ Base.prototype._preDel = function(callback) {
 Base.prototype._postDel = function(err, next) {
 	next();
 }
+
 /**
  * This method is responsible of data validation.
- * Must be override or not.
+ * Must be override or not to implement validation on subclasses
  */
 Base.prototype._validate = function(callback) {
 	callback(null);
 }
+
+
+
+Base.prototype.__validationDone = false;
+/**
+ * This method is the external way to invoke validation
+ */
+Base.prototype.validate = function(callback) {
+	
+	this._validate(callback);
+	this.__validationDone = true;
+	
+}
+
+/**
+ * This method is a wrapper that invoke validation only if it was not already invoked
+ */
+Base.prototype.__validate = function(callback) {
+	
+	if (this.__validationDone === false) {
+		this.__validationDone = true;
+		this._validate(callback);
+	}	else {
+		callback(null);
+	}
+	
+}
+
+
 /**
  * Instance hash computing must be done here.
  */
@@ -264,7 +294,7 @@ Base.prototype.save = function(callback, transparent) {
 	log.debug('data prepared', this._data);
 
 	// validate datas
-	this._validate( function(err) {
+	this.__validate( function(err) {
 
 		if(err !== null) {
 			log.critical('error during validation', this._type, this._data.id, err);
@@ -472,8 +502,8 @@ Base.prototype._getMessageFromJSVError = function(error) {
 }
 
 Base.prototype.validateString = function(attr, nullable, min, max) {
-
-	var value = this._data[attr];
+			
+	var value = this[attr];
 	if( typeof (value) !== 'string') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'a string is required');
@@ -492,7 +522,7 @@ Base.prototype.validateString = function(attr, nullable, min, max) {
 
 Base.prototype.validateBoolean = function(attr, nullable) {
 
-	var value = this._data[attr];
+	var value = this[attr];
 	if( typeof (value) !== 'boolean') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'a boolean is required');
@@ -503,7 +533,7 @@ Base.prototype.validateBoolean = function(attr, nullable) {
 
 Base.prototype.validateChoice = function(attr, choices) {
 
-	var value = this._data[attr];
+	var value = this[attr];
 	if(choices.indexOf(value) === -1) {
 		this.addValidationError(attr, 'choices are: ' + choices.join(' ,'));
 		return;
@@ -512,7 +542,7 @@ Base.prototype.validateChoice = function(attr, choices) {
 
 Base.prototype.validateNotEmptyObject = function(attr) {
 
-	var value = this._data[attr];
+	var value = this[attr];
 
 	console.log(value, attr)
 
@@ -531,7 +561,7 @@ Base.prototype.validateNotEmptyObject = function(attr) {
 }
 
 Base.prototype.validateEmail = function(attr) {
-	var value = this._data[attr];
+	var value = this[attr];
 
 	if( typeof (value) !== 'string' || !(new RegExp('^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', 'i')).test(value)) {
 		this.addValidationError(attr, 'an email is required');
@@ -540,7 +570,7 @@ Base.prototype.validateEmail = function(attr) {
 }
 
 Base.prototype.validateRegexp = function(attr, regexp, nullable) {
-	var value = this._data[attr];
+	var value = this[attr];
 	if( typeof (value) !== 'string') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'must match regexp: ' + regexp);

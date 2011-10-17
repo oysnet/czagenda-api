@@ -3,17 +3,34 @@ var statusCodes = require('../statusCodes');
 var errors = require('../../models').errors;
 var async = require('async');
 
-exports.populateModelUrls = function () {
-	this._urls.get[this._urlPrefix] = { middleware : [], fn : this.list};
-	this._urls.get[this._urlPrefix + '/_count'] =  { middleware : [],  fn :this.count};
-	this._urls.get[this._urlPrefix + '/:id'] =  { middleware : [], fn :this.read};
+exports.populateModelUrls = function() {
+	this._urls.get[this._urlPrefix] = {
+		middleware : [],
+		fn : this.list
+	};
+	this._urls.get[this._urlPrefix + '/_count'] = {
+		middleware : [],
+		fn : this.count
+	};
+	this._urls.get[this._urlPrefix + '/:id'] = {
+		middleware : [],
+		fn : this.read
+	};
 
-	this._urls.post[this._urlPrefix] =  { middleware : [], fn :this.create};
+	this._urls.post[this._urlPrefix] = {
+		middleware : [],
+		fn : this.create
+	};
 
-	this._urls.put[this._urlPrefix + '/:id'] =  { middleware : [], fn :this.update};
-	this._urls.del[this._urlPrefix + '/:id'] =  { middleware : [], fn :this.del};
+	this._urls.put[this._urlPrefix + '/:id'] = {
+		middleware : [],
+		fn : this.update
+	};
+	this._urls.del[this._urlPrefix + '/:id'] = {
+		middleware : [],
+		fn : this.del
+	};
 }
-
 /**
  * populate an object with other object attributes
  */
@@ -22,14 +39,13 @@ exports._populateObject = function(obj, data, req, res) {
 	log.notice("[TODO] exports._populateObject Supprimer oauthKeys");
 
 	var oauthKeys = ['oauth_nonce', 'oauth_timestamp', 'oauth_consumer_key', 'oauth_signature_method', 'oauth_version', 'oauth_token', 'oauth_signature'];
-	
+
 	var allowedKeys = obj.constructor.publicWriteAttributes;
-	
-	if (req.user.isStaff || req.user.isSuperuser) {
+
+	if(req.user.isStaff || req.user.isSuperuser) {
 		allowedKeys = obj.constructor.staffWriteAttributes;
-	} 
-	
-	
+	}
+
 	var wrongKeys = [];
 
 	for(k in data) {
@@ -44,30 +60,28 @@ exports._populateObject = function(obj, data, req, res) {
 		return true;
 	} else {
 		res.statusCode = statusCodes.BAD_REQUEST;
-		
+
 		res.end(this._renderJson(req, res, {
-			errors : ["Bad attributes: " + wrongKeys.join(' ,') ]
-			
+			errors : ["Bad attributes: " + wrongKeys.join(' ,')]
+
 		}));
 		return false;
 	}
 }
-
 /**
  * Return a serializable object that contains only attributes listed in keys
  */
 exports._serializeObject = function(obj, req) {
-	
-	if (typeof(req.user) === 'undefined') {
+
+	if( typeof (req.user) === 'undefined') {
 		log.warning('_serializeObject : req is undefined ')
 	}
-	
+
 	var keys = obj.constructor.publicAttributes;
-	if (req.user.isStaff || req.user.isSuperuser) {
-		keys =obj.constructor.staffAttributes;
-	} 
-	
-	
+	if(req.user.isStaff || req.user.isSuperuser) {
+		keys = obj.constructor.staffAttributes;
+	}
+
 	return obj.serialize(keys);
 }
 
@@ -79,9 +93,7 @@ exports._getQueryFromRequest = function(req, callback) {
 	});
 }
 
-
 exports.list = function(req, res) {
-
 
 	this._getQueryFromRequest(req, function(err, query) {
 
@@ -114,7 +126,7 @@ exports.count = function(req, res) {
 exports.read = function(req, res) {
 
 	this._clazz.get({
-		id : this._urlPrefix + "/" + req.params.id 
+		id : this._urlPrefix + "/" + req.params.id
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -132,8 +144,6 @@ exports.read = function(req, res) {
 
 	}.bind(this));
 }
-
-
 /**
  * this methods is called before save object
  * obj is the prepared obj to save
@@ -143,7 +153,6 @@ exports.read = function(req, res) {
 exports._preCreate = function(obj, req, callback) {
 	callback(null)
 }
-
 /**
  * this methods is called before save object
  * err is an error instance or null
@@ -163,39 +172,53 @@ exports.create = function(req, res) {
 
 	if(this._populateObject(obj, data, req, res) === true) {
 
-		this._preCreate(obj, req, function(err) {
-
-			if(err !== null && err instanceof errors.InternalError) {
+		obj.validate( function(err) {
+			
+			if (err !== null) {
 				res.statusCode = statusCodes.INTERNAL_ERROR;
-				res.end(err.message);
+				res.end('Internal error');
+				return;
+			} else if (obj.validationErrors !== null) {
+				res.statusCode = statusCodes.BAD_REQUEST;
+				res.end(this._renderJson(req, res, obj.validationErrors));
 				return;
 			}
+			
+			this._preCreate(obj, req, function(err) {
 
-			// try to save object
-			obj.save( function(err, obj) {
+				if(err !== null && err instanceof errors.InternalError) {
+					res.statusCode = statusCodes.INTERNAL_ERROR;
+					res.end(err.message);
+					return;
+				}
 
-				this._postCreate(err, obj, req, function() {
-					if(err === null) {
-						res.statusCode = statusCodes.CREATED;
-						res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
-					} else {
+				// try to save object
+				obj.save( function(err, obj) {
 
-						if( err instanceof errors.ObjectAlreadyExists) {
-							res.statusCode = statusCodes.DUPLICATE_ENTRY;
-							res.end(err.message);
-
-						} else if( err instanceof errors.ValidationError) {
-							res.statusCode = statusCodes.BAD_REQUEST;
-							res.end(this._renderJson(req, res, obj.validationErrors));
-
+					this._postCreate(err, obj, req, function() {
+						if(err === null) {
+							res.statusCode = statusCodes.CREATED;
+							res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 						} else {
-							res.statusCode = statusCodes.INTERNAL_ERROR;
-							res.end('Internal error')
+
+							if( err instanceof errors.ObjectAlreadyExists) {
+								res.statusCode = statusCodes.DUPLICATE_ENTRY;
+								res.end(err.message);
+
+							} else if( err instanceof errors.ValidationError) {
+								res.statusCode = statusCodes.BAD_REQUEST;
+								res.end(this._renderJson(req, res, obj.validationErrors));
+
+							} else {
+								res.statusCode = statusCodes.INTERNAL_ERROR;
+								res.end('Internal error')
+							}
 						}
-					}
+					}.bind(this));
+
 				}.bind(this));
 
-			}.bind(this));
+			}.bind(this))
 
 		}.bind(this))
 
@@ -204,9 +227,9 @@ exports.create = function(req, res) {
 
 exports.update = function(req, res) {
 	// load object...
-	
+
 	this._clazz.get({
-		id : this._urlPrefix + "/" + req.params.id 
+		id : this._urlPrefix + "/" + req.params.id
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -225,27 +248,40 @@ exports.update = function(req, res) {
 
 		} else {
 			if(this._populateObject(obj, req.body, req, res) === true) {
-
-				obj.save( function(err, obj) {
-
-					if(err !== null) {
-						if( err instanceof errors.ObjectDoesNotExist) {
-							res.statusCode = statusCodes.NOT_FOUND;
-							res.end('Not found')
-						} else if( err instanceof errors.ValidationError) {
-							res.statusCode = statusCodes.BAD_REQUEST;
-							res.end(this._renderJson(req, res, obj.validationErrors));
-
-						} else {
-							res.statusCode = statusCodes.INTERNAL_ERROR;
-							res.end('Internal error')
-						}
-
-					} else {
-						res.statusCode = statusCodes.ALL_OK;
-						res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+				
+				obj.validate( function(err) {
+			
+					if (err !== null) {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error');
+						return;
+					} else if (obj.validationErrors !== null) {
+						res.statusCode = statusCodes.BAD_REQUEST;
+						res.end(this._renderJson(req, res, obj.validationErrors));
+						return;
 					}
-
+				
+					obj.save( function(err, obj) {
+	
+						if(err !== null) {
+							if( err instanceof errors.ObjectDoesNotExist) {
+								res.statusCode = statusCodes.NOT_FOUND;
+								res.end('Not found')
+							} else if( err instanceof errors.ValidationError) {
+								res.statusCode = statusCodes.BAD_REQUEST;
+								res.end(this._renderJson(req, res, obj.validationErrors));
+	
+							} else {
+								res.statusCode = statusCodes.INTERNAL_ERROR;
+								res.end('Internal error')
+							}
+	
+						} else {
+							res.statusCode = statusCodes.ALL_OK;
+							res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+						}
+	
+					}.bind(this));
 				}.bind(this));
 			}
 
@@ -258,7 +294,7 @@ exports.del = function(req, res) {
 
 	// load object...
 	this._clazz.get({
-		id : this._urlPrefix + "/" + req.params.id 
+		id : this._urlPrefix + "/" + req.params.id
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -312,10 +348,10 @@ exports._search = function(req, res, query) {
 	}
 
 	var attrs = this._clazz.publicAttributes;
-	if (req.user.isStaff || req.user.isSuperuser) {
+	if(req.user.isStaff || req.user.isSuperuser) {
 		attrs = this._clazz.staffAttributes;
-	} 
-	
+	}
+
 	this._clazz.search(query, attrs, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {
@@ -349,7 +385,6 @@ exports._count = function(req, res, query) {
 
 	}.bind(this));
 }
-
 
 exports._perms = function(req, res, permClass, grantToClass) {
 
@@ -394,12 +429,12 @@ exports._perms = function(req, res, permClass, grantToClass) {
 					}
 				}
 			}
-			
+
 			var attrs = grantToClass.publicAttributes;
-			if (req.user.isStaff || req.user.isSuperuser) {
+			if(req.user.isStaff || req.user.isSuperuser) {
 				attrs = grantToClass.staffAttributes;
-			} 
-			
+			}
+
 			grantToClass.search(q, attrs, function(err, objects) {
 
 				if(err !== null) {
