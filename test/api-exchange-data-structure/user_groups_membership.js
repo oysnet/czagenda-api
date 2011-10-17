@@ -143,6 +143,10 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
+			
+			delete data.rows[0].group.updateDate;
+			delete group_5_user_5_include_docs.group.updateDate
+			
 			assert.deepEqual(data.rows[0], group_5_user_5_include_docs);
 		}
 	},
