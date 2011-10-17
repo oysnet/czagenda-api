@@ -41,7 +41,10 @@ var create_invalid_test_data = {
 	email : 'EMAIL_USER_1@domain.com'
 }
 
-var create_invalid_test_data_expected = {items:{ login: [ 'a string is required' ]}, errors:[]};
+
+
+
+var create_invalid_test_data_expected = {items:{ login: [ 'must match regexp: ^[-_.0-9a-zA-Z]{2,30}$' ]}, errors:[]};
 
 var create_invalid_test_data_2 = {
 	firstName : 'F',
