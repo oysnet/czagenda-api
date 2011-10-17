@@ -21,7 +21,7 @@ exports.getUserPermsAndGroups = function (req, res, next) {
 		}
 		
 		req.user = user.serialize(['id', 'isStaff', 'isSuperuser', 'isActive']);
-		
+		req.user.groups = [];
 		next();
 	})
 	

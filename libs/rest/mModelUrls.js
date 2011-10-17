@@ -138,8 +138,24 @@ exports.read = function(req, res) {
 				res.end('Internal error')
 			}
 		} else {
-			res.statusCode = statusCodes.ALL_OK;
-			res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+
+			// check permissions
+			obj.hasPerm('read', req.user, function(err, hasPerm) {
+
+				if(err !== null) {
+					res.statusCode = statusCodes.INTERNAL_ERROR;
+					res.end('Internal error');
+					return;
+				} else if(hasPerm === false) {
+					res.statusCode = statusCodes.FORBIDDEN;
+					res.end('Insufficient privileges');
+					return;
+				}
+
+				res.statusCode = statusCodes.ALL_OK;
+				res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+
+			}.bind(this));
 		}
 
 	}.bind(this));
@@ -171,56 +187,72 @@ exports.create = function(req, res) {
 	var obj = new this._clazz;
 
 	if(this._populateObject(obj, data, req, res) === true) {
+		
+		// check permissions
+		obj.hasPerm('create', req.user, function(err, hasPerm) {
 
-		obj.validate( function(err) {
-			
-			if (err !== null) {
+			if(err !== null) {
 				res.statusCode = statusCodes.INTERNAL_ERROR;
 				res.end('Internal error');
 				return;
-			} else if (obj.validationErrors !== null) {
-				res.statusCode = statusCodes.BAD_REQUEST;
-				res.end(this._renderJson(req, res, obj.validationErrors));
+			} else if(hasPerm === false) {
+				
+				res.statusCode = statusCodes.FORBIDDEN;
+				res.end('Insufficient privileges');
 				return;
 			}
-			
-			this._preCreate(obj, req, function(err) {
-
-				if(err !== null && err instanceof errors.InternalError) {
+		
+			obj.validate( function(err) {
+	
+				if(err !== null) {
 					res.statusCode = statusCodes.INTERNAL_ERROR;
-					res.end(err.message);
+					res.end('Internal error');
+					return;
+				} else if(obj.validationErrors !== null) {
+					res.statusCode = statusCodes.BAD_REQUEST;
+					res.end(this._renderJson(req, res, obj.validationErrors));
 					return;
 				}
-
-				// try to save object
-				obj.save( function(err, obj) {
-
-					this._postCreate(err, obj, req, function() {
-						if(err === null) {
-							res.statusCode = statusCodes.CREATED;
-							res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
-						} else {
-
-							if( err instanceof errors.ObjectAlreadyExists) {
-								res.statusCode = statusCodes.DUPLICATE_ENTRY;
-								res.end(err.message);
-
-							} else if( err instanceof errors.ValidationError) {
-								res.statusCode = statusCodes.BAD_REQUEST;
-								res.end(this._renderJson(req, res, obj.validationErrors));
-
+	
+				this._preCreate(obj, req, function(err) {
+	
+					if(err !== null && err instanceof errors.InternalError) {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end(err.message);
+						return;
+					}
+	
+					// try to save object
+					obj.save( function(err, obj) {
+	
+						this._postCreate(err, obj, req, function() {
+							if(err === null) {
+								res.statusCode = statusCodes.CREATED;
+								res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 							} else {
-								res.statusCode = statusCodes.INTERNAL_ERROR;
-								res.end('Internal error')
+	
+								if( err instanceof errors.ObjectAlreadyExists) {
+									res.statusCode = statusCodes.DUPLICATE_ENTRY;
+									res.end(err.message);
+	
+								} else if( err instanceof errors.ValidationError) {
+									res.statusCode = statusCodes.BAD_REQUEST;
+									res.end(this._renderJson(req, res, obj.validationErrors));
+	
+								} else {
+									res.statusCode = statusCodes.INTERNAL_ERROR;
+									res.end('Internal error')
+								}
 							}
-						}
+						}.bind(this));
+	
 					}.bind(this));
-
+	
 				}.bind(this));
-
-			}.bind(this))
-
-		}.bind(this))
+	
+			}.bind(this));
+			
+		}.bind(this));
 
 	}
 }
@@ -240,51 +272,65 @@ exports.update = function(req, res) {
 			} else if( err instanceof errors.ValidationError) {
 				res.statusCode = statusCodes.BAD_REQUEST;
 				res.end(this._renderJson(req, res, obj.validationErrors));
-
 			} else {
 				res.statusCode = statusCodes.INTERNAL_ERROR;
 				res.end('Internal error')
 			}
 
 		} else {
-			if(this._populateObject(obj, req.body, req, res) === true) {
-				
-				obj.validate( function(err) {
-			
-					if (err !== null) {
-						res.statusCode = statusCodes.INTERNAL_ERROR;
-						res.end('Internal error');
-						return;
-					} else if (obj.validationErrors !== null) {
-						res.statusCode = statusCodes.BAD_REQUEST;
-						res.end(this._renderJson(req, res, obj.validationErrors));
-						return;
-					}
-				
-					obj.save( function(err, obj) {
-	
-						if(err !== null) {
-							if( err instanceof errors.ObjectDoesNotExist) {
-								res.statusCode = statusCodes.NOT_FOUND;
-								res.end('Not found')
-							} else if( err instanceof errors.ValidationError) {
-								res.statusCode = statusCodes.BAD_REQUEST;
-								res.end(this._renderJson(req, res, obj.validationErrors));
-	
-							} else {
-								res.statusCode = statusCodes.INTERNAL_ERROR;
-								res.end('Internal error')
-							}
-	
-						} else {
-							res.statusCode = statusCodes.ALL_OK;
-							res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
-						}
-	
-					}.bind(this));
-				}.bind(this));
-			}
 
+			// check permissions
+			obj.hasPerm('write', req.user, function(err, hasPerm) {
+
+				if(err !== null) {
+					res.statusCode = statusCodes.INTERNAL_ERROR;
+					res.end('Internal error');
+					return;
+				} else if(hasPerm === false) {
+					res.statusCode = statusCodes.FORBIDDEN;
+					res.end('Insufficient privileges');
+					return;
+				}
+
+				// populate object and save it
+				if(this._populateObject(obj, req.body, req, res) === true) {
+
+					obj.validate( function(err) {
+
+						if(err !== null) {
+							res.statusCode = statusCodes.INTERNAL_ERROR;
+							res.end('Internal error');
+							return;
+						} else if(obj.validationErrors !== null) {
+							res.statusCode = statusCodes.BAD_REQUEST;
+							res.end(this._renderJson(req, res, obj.validationErrors));
+							return;
+						}
+
+						obj.save( function(err, obj) {
+
+							if(err !== null) {
+								if( err instanceof errors.ObjectDoesNotExist) {
+									res.statusCode = statusCodes.NOT_FOUND;
+									res.end('Not found')
+								} else if( err instanceof errors.ValidationError) {
+									res.statusCode = statusCodes.BAD_REQUEST;
+									res.end(this._renderJson(req, res, obj.validationErrors));
+
+								} else {
+									res.statusCode = statusCodes.INTERNAL_ERROR;
+									res.end('Internal error')
+								}
+
+							} else {
+								res.statusCode = statusCodes.ALL_OK;
+								res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+							}
+
+						}.bind(this));
+					}.bind(this));
+				}
+			}.bind(this));
 		}
 
 	}.bind(this))
@@ -308,19 +354,33 @@ exports.del = function(req, res) {
 
 		} else {
 
-			// and delete it...
-			obj.del( function(err, obj) {
+			// check permissions
+			obj.hasPerm('del', req.user, function(err, hasPerm) {
 
 				if(err !== null) {
 					res.statusCode = statusCodes.INTERNAL_ERROR;
-					res.end('Internal error')
-				} else {
-
-					res.statusCode = statusCodes.DELETED;
-					res.end()
+					res.end('Internal error');
+					return;
+				} else if(hasPerm === false) {
+					res.statusCode = statusCodes.FORBIDDEN;
+					res.end('Insufficient privileges');
+					return;
 				}
 
-			}.bind(this))
+				// and delete it...
+				obj.del( function(err, obj) {
+
+					if(err !== null) {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error')
+					} else {
+
+						res.statusCode = statusCodes.DELETED;
+						res.end()
+					}
+
+				}.bind(this));
+			}.bind(this));
 		}
 
 	}.bind(this))

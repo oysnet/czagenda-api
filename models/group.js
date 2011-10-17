@@ -22,6 +22,25 @@ Group.prototype._validate = function (callback) {
 	callback(null);
 }
 
+Group.prototype.hasPerm = function (perm, user, callback) {
+	
+	switch (perm) {
+		case 'read':
+		case 'create':
+			callback(null, true);
+			break;
+					
+		case 'write':
+		case 'del':
+			callback(null, this.hasWritePerm(user));
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
+
 Group.prototype._generateHash = function () {
 	
 	c = require('crypto')

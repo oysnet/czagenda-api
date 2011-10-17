@@ -17,6 +17,26 @@ Agenda.staffAttributes = Agenda.publicAttributes.concat(Base.staffAttributes);
 Agenda.publicWriteAttributes = ['title', 'description'];
 Agenda.staffWriteAttributes = Agenda.publicWriteAttributes;
 
+
+Agenda.prototype.hasPerm = function (perm, user, callback) {
+	
+	switch (perm) {
+		case 'read':
+		case 'create':
+			callback(null, true);
+			break;
+					
+		case 'write':
+		case 'del':
+			callback(null, this.hasWritePerm(user));
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
+
 Agenda.prototype._validate = function (callback) {
 	this.validateString('title', false, 5, 128);
 	this.validateString('description', true, null, 1024);

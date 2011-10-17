@@ -4,7 +4,7 @@ var errors = require('./errors.js');
 var ElasticSearchClient = require('elasticsearchclient');
 var elasticSearchClient = new ElasticSearchClient(settings.elasticsearch);
 var log = require('czagenda-log').from(__filename);
-
+var utils = require('../libs/utils.js');
 var redis = require('../libs/redis-client');
 
 var readStats = require('../libs/stats.js').readStats;
@@ -36,6 +36,30 @@ function Base(type) {
 
 Base.publicAttributes = ['id', 'createDate', 'updateDate']
 Base.staffAttributes = []
+
+
+/**
+ * Verifiy permissions
+ * perms : create, read, write or del
+ * user : an object containing 'id', 'isStaff', 'isSuperuser', 'isActive' and 'groups'
+ */
+Base.prototype.hasPerm = function (perm, user, callback) {
+	callback(null, true);
+}
+
+Base.prototype.hasWritePerm = function (user) {
+	return 	user.isStaff === true ||
+			user.isSuperuser === true ||
+			this.computedWriteUsers.indexOf(user.id) !== -1 ||
+			utils.haveOneCommonValue(this.computedWriteGroups, user.groups) === true
+}
+
+Base.prototype.hasReadPerm = function (user) {
+	return 	user.isStaff === true ||
+			user.isSuperuser === true ||
+			this.computedReadUsers.indexOf(user.id) !== -1 ||
+			utils.haveOneCommonValue(this.computedReadGroups, user.groups) === true
+}
 
 Base.prototype.getIndex = function() {
 	return this._index;

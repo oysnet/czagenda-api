@@ -2,6 +2,7 @@ var Base = require('./base.js').Base;
 var util = require("util"), crypto = require('crypto');
 var settings = require('../settings.js');
 var validator = require('../libs/schemas/validator');
+var models = require('../models');
 
 function Event () {
 	this._attributs = {approved : [], disapproved:[], agenda : null, event : null, author : null, writeGroups : null, readGroups : null, writeUsers : null, readUsers : null, computedWriteUsers : [], computedWriteGroups : [], computedReadUsers : [], computedReadGroups : []};
@@ -16,6 +17,58 @@ Event.metaAttributes = ['event'];
 
 Event.publicWriteAttributes = ['event', 'agenda'];
 Event.staffWriteAttributes = Event.publicWriteAttributes;
+
+
+Event.prototype.hasPerm = function (perm, user, callback) {
+		
+	switch (perm) {
+		case 'read':		
+			callback(null, this.hasReadPerm(user));
+			break;
+					
+		case 'create':
+			if (this.agenda === null) {
+				callback(null, true);
+			} else {
+				models.Agenda.get({id:this.agenda}, function (err, obj) {
+					if (err !== null) {
+						callback(err);
+					} else {
+						callback(null, obj.hasPerm('write', user));
+					}
+				}.bind(this));
+			}
+			
+			break;
+			
+		case 'write':
+		case 'del':
+			if (this.hasWritePerm(user) === true) {
+				
+				if (this.agenda === null) {
+					callback(null, true);
+				} else {
+					models.Agenda.get({id:this.agenda}, function (err, obj) {
+						
+						if (err !== null) {
+							callback(err);
+						} else {
+							callback(null, obj.hasPerm('write', user));
+						}
+						
+					}.bind(this));
+				}
+				
+			} else {
+				callback(null, false);
+			}
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
 
 Event.prototype._validate = function (callback) {
 	
