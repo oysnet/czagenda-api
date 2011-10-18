@@ -336,15 +336,15 @@ exports.perms_agenda_3_write_group_2 = '/perms/agenda/wg/ed916a5c649389e1ce26182
 exports.perms_agenda_3_write_user_2 = '/perms/agenda/wu/a0b0ed1b9e71727aa122b9128c92f060'
 
 exports.perms_group_3_write_group_2 = '/perms/group/wg/88e0d2e1a98eaf4bf1fee2e845bbc1a2'
-exports.perms_group_3_write_user_2 = '/perms/group/wu/04148c5b74052f609c1751beff379e5e'
+exports.perms_group_3_write_user_test = '/perms/group/wu/04148c5b74052f609c1751beff379e5e'
 
 exports.perms_group_5_write_group_2 = '/perms/group/wg/186971137cf9faa08817bd4d6a8f1b88'
 exports.perms_group_5_write_user_2 = '/perms/group/wu/27a116182057a8be34749e55c02b1e52'
 
 exports.perms_event_1_write_group_2 = '/perms/event/wg/b5c3e304a201d0c67c43b9e9611fb4f0'
-exports.perms_event_1_write_user_2 = '/perms/event/wu/644cb75010646396521d359be8026c64'
+exports.perms_event_1_write_user_test = '/perms/event/wu/af92daa4e829e98376e422fdd196370d'
 exports.perms_event_1_read_group_2 = '/perms/event/rg/ef822b475a692b42cab1188a015a1b13'
-exports.perms_event_1_read_user_2 = '/perms/event/ru/937aad23c7364c01359f22af4eb396af'
+exports.perms_event_1_read_user_test = '/perms/event/ru/6657c5dc3d95167b58abc8af2be24284'
 
 exports.perms_event_2_write_group_2 = '/perms/event/wg/d9df03cef399b0518e8409b102badb84'
 exports.perms_event_2_write_user_2 = '/perms/event/wu/72606c3ffbf91ff903a0ee1ac0ff47ec'

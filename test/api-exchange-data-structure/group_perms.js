@@ -16,7 +16,7 @@ var write_group = tests_data.group_2;
 var write_user = tests_data.user_test;
 
 var write_group_perm = tests_data.perms_group_3_write_group_2
-var write_user_perm = tests_data.perms_group_3_write_user_2
+var write_user_perm = tests_data.perms_group_3_write_user_test
 
 var create_object = tests_data.group_5;
 

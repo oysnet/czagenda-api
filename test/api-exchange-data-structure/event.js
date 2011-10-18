@@ -28,11 +28,11 @@ var create_test_data_expected = {
 }
 
 var create_invalid_test_data = {
-	event : {title : "even title"},	
-	agenda : '/test/aaaaaa'
+	event : {title : "even title"},
+	
 }
 
-var create_invalid_test_data_expected = { items : {agenda: [ 'must match regexp: ^/agenda/[-_.0-9a-z]+$' ], 'event.links': [ 'required' ] }, errors : []};
+var create_invalid_test_data_expected = { items : {'event.links': [ 'required' ] }, errors : []};
 
 
 var create_invalid_test_data_2 = {

@@ -13,12 +13,12 @@ var number_re = new RegExp("^[0-9]+$");
 // ##### GET
 var get_object = tests_data.event_1;
 var write_group = tests_data.group_2;
-var write_user = tests_data.user_2;
+var write_user = tests_data.user_test;
 
 var write_group_perm = tests_data.perms_event_1_write_group_2
-var write_user_perm = tests_data.perms_event_1_write_user_2
+var write_user_perm = tests_data.perms_event_1_write_user_test
 var read_group_perm = tests_data.perms_event_1_read_group_2
-var read_user_perm = tests_data.perms_event_1_read_user_2
+var read_user_perm = tests_data.perms_event_1_read_user_test
 
 var create_object = tests_data.event_2;
 
