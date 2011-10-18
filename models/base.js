@@ -658,7 +658,7 @@ Base.count = function(query, index, type, callback) {
 			match_all : {}
 		};
 	}
-
+	
 	var q = elasticSearchClient.count(index, type, query);
 	q.on('data', function(data) {
 
@@ -668,6 +668,9 @@ Base.count = function(query, index, type, callback) {
 			callback(new errors.IndexDoesNotExist(index))
 			return;
 		} else if( typeof (data.error) !== 'undefined') {
+			
+			log.warning('Base.count', index, type, query, data)
+			
 			callback(new errors.UnknowError(this.id));
 			return;
 		}
