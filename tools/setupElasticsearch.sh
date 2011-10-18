@@ -19,6 +19,10 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 	"event": {
 		"properties" : {
 			"author" :  {"type" : "string", "index" : "not_analyzed"},
+			"computedWriteGroups" : {"type" : "string", "index" : "not_analyzed"},
+			"computedWriteUsers" : {"type" : "string", "index" : "not_analyzed"},
+			"computedReadGroups" : {"type" : "string", "index" : "not_analyzed"},
+			"computedReadUsers" : {"type" : "string", "index" : "not_analyzed"},
 			"event" : {
 				"properties": {
 					"where": {				
@@ -35,6 +39,23 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 	}
 }';
 
+curl -XPUT "http://10.7.50.110:9200/$1/agenda/_mapping" -d '{
+	"agenda": {
+		"properties" : {
+			"computedWriteGroups" : {"type" : "string", "index" : "not_analyzed"},
+			"computedWriteUsers" : {"type" : "string", "index" : "not_analyzed"}
+		}
+	}
+}';
+
+curl -XPUT "http://10.7.50.110:9200/$1/group/_mapping" -d '{
+	"group": {
+		"properties" : {
+			"computedWriteGroups" : {"type" : "string", "index" : "not_analyzed"},
+			"computedWriteUsers" : {"type" : "string", "index" : "not_analyzed"}
+		}
+	}
+}';
 
 curl -XPUT "http://10.7.50.110:9200/$1/membership/_mapping" -d '{
 	"membership": {
@@ -46,7 +67,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/membership/_mapping" -d '{
 }';
 
 curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-user/_mapping" -d '{
-	"membership": {
+	"agenda-write-user": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -54,7 +75,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-user/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-group/_mapping" -d '{
-	"membership": {
+	"agenda-write-group": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -62,7 +83,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-group/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/group-write-user/_mapping" -d '{
-	"membership": {
+	"group-write-user": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -70,7 +91,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/group-write-user/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/group-write-group/_mapping" -d '{
-	"membership": {
+	"group-write-group": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -78,7 +99,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/group-write-group/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/event-write-user/_mapping" -d '{
-	"membership": {
+	"event-write-user": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -86,7 +107,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-write-user/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/event-write-group/_mapping" -d '{
-	"membership": {
+	"event-write-group": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -94,7 +115,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-write-group/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/event-read-user/_mapping" -d '{
-	"membership": {
+	"event-read-user": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
@@ -102,7 +123,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-read-user/_mapping" -d '{
 	}
 }';
 curl -XPUT "http://10.7.50.110:9200/$1/event-read-group/_mapping" -d '{
-	"membership": {
+	"event-read-group": {
 		"properties" : {
 			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
 			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
