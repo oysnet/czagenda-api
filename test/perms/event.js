@@ -110,16 +110,19 @@ vows.describe('Event API permissions').addBatch({
 				rest.post('/api/perms/event/wu', JSON.stringify({"applyOn" : group_access_1, "grantTo" : "/user/test2"}), this.callback);
 			},
 			
-			'check statusCode is 200' : function(err, res, data) {
+			'check statusCode is 201' : function(err, res, data) {
 				
-				assert.equal(res.statusCode, statusCode.ALL_OK);
+				assert.equal(res.statusCode, statusCode.CREATED);
 			}
 		},
 		
 		'update' : {
 			topic : function() {
 				rest = new Rest();
-				rest.put('/api' + group_access_1, '{"description":"any words"}' , this.callback);
+				rest.put('/api' + group_access_1, JSON.stringify({agenda : agenda_forbidden, event : {title : "event title" + Math.random(),
+																	links : [{rel:"describedby", href:"/schema/event"}],
+																	where : [{valueString:"Pau"}]}
+															}) , this.callback);
 			},
 			
 			'check statusCode is 200' : function(err, res, data) {
@@ -134,8 +137,8 @@ vows.describe('Event API permissions').addBatch({
 				rest.del('/api' + group_access_2, this.callback);
 			},
 			
-			'check statusCode is 200' : function(err, res, data) {
-				assert.equal(res.statusCode, statusCode.ALL_OK);
+			'check statusCode is 204' : function(err, res, data) {
+				assert.equal(res.statusCode, statusCode.DELETED);
 			}
 		},
 	},
@@ -166,9 +169,9 @@ vows.describe('Event API permissions').addBatch({
 															}) , this.callback);
 			},
 			
-			'check statusCode is 200' : function(err, res, data) {
+			'check statusCode is 201' : function(err, res, data) {
 				
-				assert.equal(res.statusCode, statusCode.ALL_OK);
+				assert.equal(res.statusCode, statusCode.CREATED);
 			}
 		},
 	}
