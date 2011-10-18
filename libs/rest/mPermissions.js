@@ -35,7 +35,6 @@ exports.getUserPermsAndGroups = function (req, res, next) {
 			groups : replies[1]
 		}
 		
-		console.log(req.user)
 		
 		if (req.user.isActive === false) {
 			res.statusCode = statusCodes.FORBIDDEN;
