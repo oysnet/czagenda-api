@@ -33,7 +33,10 @@ exports.agenda_4 = {
 	writeGroups : '/agenda/title-agenda-4/perms/wg'
 }
 
-
+exports.agenda_forbidden_1 = "/agenda/agenda-perms-forbidden-1";
+exports.agenda_forbidden_2 = "/agenda/agenda-perms-forbidden-2";
+exports.agenda_group_access_1 = "/agenda/agenda-perms-group-access-1";
+exports.agenda_group_access_2 = "/agenda/agenda-perms-group-access-2";
 
 // ###############################################################################
 // 		EVENT
