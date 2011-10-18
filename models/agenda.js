@@ -57,7 +57,7 @@ Agenda.prototype._generateId = function () {
 	return '/agenda/' + utils.slugify(this.title);
 }
 
-
+/*
 Agenda.prototype.save = function (callback) {
 	
 	if (typeof(this.title) !== 'string') {
@@ -69,7 +69,7 @@ Agenda.prototype.save = function (callback) {
 	Base.prototype.save.call(this, callback);
 	
 }
-
+*/
 Agenda.prototype._preSave = function (callback) {
 	if (this.id === null) {
 		this._data.writeGroups = this._data.id + '/perms/wg';

@@ -51,7 +51,7 @@ User.prototype._generateHash = function() {
 User.prototype._generateId = function () {
 	return '/user/' + this.login;
 }
-
+/*
 User.prototype.save = function (callback) {
 	
 	if (typeof(this.login) !== 'string') {
@@ -63,7 +63,7 @@ User.prototype.save = function (callback) {
 	Base.prototype.save.call(this, callback);
 	
 }
-
+*/
 User.prototype._preSave = function (callback) {
 	if (this.id === null) {
 		this._data.groups = this._data.id + '/groups';

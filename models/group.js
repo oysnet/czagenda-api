@@ -56,7 +56,7 @@ Group.prototype._generateId = function () {
 	return '/group/' + utils.slugify(this.title);
 }
 
-
+/*
 Group.prototype.save = function (callback) {
 	
 	if (typeof(this.title) !== 'string') {
@@ -68,7 +68,7 @@ Group.prototype.save = function (callback) {
 	Base.prototype.save.call(this, callback);
 	
 }
-
+*/
 Group.prototype._preSave = function (callback) {
 	
 	if (this.id === null) {

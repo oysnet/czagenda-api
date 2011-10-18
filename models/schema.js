@@ -140,7 +140,7 @@ Schema.prototype._generateHash = function() {
 Schema.prototype._generateId = function() {
 	return '/schema/' + utils.slugify(this.name + " " + (this['final'] === true ? "" : "abstract"));
 }
-
+/*
 Schema.prototype.save = function(callback) {
 
 	if( typeof (this.name) !== 'string') {
@@ -152,7 +152,7 @@ Schema.prototype.save = function(callback) {
 	Base.prototype.save.call(this, callback);
 
 }
-
+*/
 Schema.prototype.__deleteKey = function(key, broadcast, callback) {
 
 	redis.redisClient.srem(key, this.id, function(err, res) {
