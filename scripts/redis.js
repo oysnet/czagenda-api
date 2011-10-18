@@ -1,11 +1,9 @@
-var settings = require('../settings.js');
-var redis = require("redis"), redisClient = redis.createClient(settings.redis.port, settings.redis.host);
+var redis = require('../libs/redis-client'), redisClient = redis.redisClient;
 
 redisClient.on('ready', function () {
-	console.log('ready');
+	redisClient.multi().hmset('test', "bool", true).hgetall('test').exec(function (err, replies) {
+    console.log(replies); // 102, 3
+    redisClient.quit();
 });
-
-
-redisClient.on('error', function () {
-	console.log('error');
+	
 });

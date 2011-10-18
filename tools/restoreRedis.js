@@ -11,7 +11,7 @@ var populateAsync = function(cb) {
 
 	log.notice('populateAsync start', settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port, settings.elasticsearch.index)
 
-	var rest = new Rest(settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port), urls = [];
+	var rest = new Rest(settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port), urls = [], users = {};
 
 	rest.post('/' + settings.elasticsearch.index + '/_search', JSON.stringify({
 		size : 1000000
@@ -29,7 +29,30 @@ var populateAsync = function(cb) {
 			urls.push(d._id);
 			urls.push(null);
 
-			if(d._type === 'schema') {
+			if(d._type === 'user') {
+
+				methods.push( function(d, callback) {
+
+					redisClient.hmset(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser, function(err, nb) {
+						
+						if (err !== null) {
+							log.critical(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser)
+						}
+						
+						log.debug('added to ' + redis.USER_PREFIX + d._id )
+	
+						callback(err);
+					});
+				}.bind(this, d))
+			
+			} else if (d._type === 'membership') {
+			
+				if (typeof(users[d._source.user]) === 'undefined') {
+					users[d._source.user] = [];
+				}
+				users[d._source.user].push(d._source.group);
+			
+			} else if(d._type === 'schema') {
 
 				log.debug('found schema url')
 
@@ -43,7 +66,7 @@ var populateAsync = function(cb) {
 							callback(err);
 						});
 					}.bind(this, d._id))
-				} else if (d._source.status === 'PROPOSAL') {
+				} else if(d._source.status === 'PROPOSAL') {
 					methods.push( function(id, author, callback) {
 
 						redisClient.sadd(redis.PREFIX_SCHEMA_PROPOSAL + author, id, function(err, nb) {
@@ -57,11 +80,39 @@ var populateAsync = function(cb) {
 
 			}
 		}
-
+		
+		// Add user groups
+		for (k in users) {
+			
+			methods.push( function(user, groups, callback) {
+				
+				var tmp = []
+				tmp.push(redis.USER_GROUP_PREFIX + user)
+				
+				groups.forEach(function (v) {
+					tmp.push(v);
+				});
+				
+				tmp.push(function(err) {
+					
+					if (err !== null) {
+						log.critical.apply(log, tmp);
+					}
+					log.debug.apply(log, tmp);
+					callback(err);
+				})
+				
+				console.log(tmp);
+				
+				redisClient.sadd.apply(redisClient, tmp);
+				
+			}.bind(this, k, users[k]))
+		}
+		
 		methods.push(function(callback) {
 
 			urls.push(function(err, nb) {
-				
+
 				if( typeof (err) !== 'undefined') {
 					callback(err);
 					return;
@@ -75,7 +126,7 @@ var populateAsync = function(cb) {
 				log.debug('urls added', nb)
 				callback(null);
 			});
-			
+
 			log.debug('add urls', urls.length)
 			redisClient.msetnx.apply(redisClient, urls);
 		})

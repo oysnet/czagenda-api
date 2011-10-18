@@ -2,6 +2,9 @@ var Base = require('./base.js').Base;
 var util = require("util");
 var utils = require('../libs/utils.js');
 var settings = require('../settings.js');
+var log = require('czagenda-log').from(__filename);
+
+
 function Membership () {
 	this._attributs = {user : null, group : null};
 	Base.call(this, 'membership');	
@@ -31,6 +34,48 @@ Membership.prototype._generateHash = function () {
 	h.update(this.group);
 	this._data['hash'] = h.digest('hex')
 }
+
+
+Membership.prototype._postSave = function(err, next) {
+
+	if(err === null) {
+
+		redis.redisClient.sadd(redis.USER_GROUP_PREFIX + this.user, this.group ,function(err, res) {
+
+			if(err !== null) {
+				log.critical('REDIS USER GROUP: error on sadd ', redis.USER_GROUP_PREFIX + this.user, this.group)
+			} 
+
+			next();
+
+		}.bind(this))
+
+	} else {
+		next();
+	}
+}
+
+
+Membership.prototype._postDel = function(err, next) {
+	if (err === null || err instanceof errors.ObjectDoesNotExist) {
+		
+		redis.redisClient.srem(redis.USER_GROUP_PREFIX + this.user, this.group ,function(err, res) {
+
+			if(err !== null) {
+				log.critical('REDIS USER GROUP: error on srem ', redis.USER_GROUP_PREFIX + this.user, this.group)
+			} 
+
+			next();
+
+		}.bind(this))
+		
+	} else {
+		next();
+	}
+	
+}
+
+
 
 Membership.get = function(options, callback) {
 	Base.get(options,Membership, callback)
