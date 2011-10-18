@@ -3,7 +3,7 @@ var util = require("util");
 var utils = require('../libs/utils.js');
 var settings = require('../settings.js');
 var log = require('czagenda-log').from(__filename);
-
+var redis = require('../libs/redis-client');
 
 function Membership () {
 	this._attributs = {user : null, group : null};

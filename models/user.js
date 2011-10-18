@@ -93,6 +93,8 @@ User.prototype._postDel = function(err, next) {
 				log.critical('REDIS USER: error on del ', redis.USER_PREFIX + this.id);
 			}
 			
+			next();
+			
 		}.bind(this))
 		
 	} else {
