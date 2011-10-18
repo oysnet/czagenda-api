@@ -11,6 +11,8 @@ function GroupWriteUser () {
 
 util.inherits(GroupWriteUser, BasePermission);
 
+GroupWriteUser.applyOnClass = models.Group;
+
 GroupWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 GroupWriteUser.staffAttributes = GroupWriteUser.publicAttributes.concat(Base.staffAttributes);
 
@@ -47,9 +49,6 @@ GroupWriteUser.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Group, 'computedWriteUsers', false, next);
 }
 
-GroupWriteUser.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Group, perm, user, callback);
-}
 
 
 GroupWriteUser.get = function(options, callback) {

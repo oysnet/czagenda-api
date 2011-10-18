@@ -12,6 +12,8 @@ function AgendaWriteUser () {
 
 util.inherits(AgendaWriteUser, BasePermission);
 
+AgendaWriteUser.applyOnClass = models.Agenda;
+
 AgendaWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 AgendaWriteUser.staffAttributes = AgendaWriteUser.publicAttributes.concat(Base.staffAttributes);
 
@@ -46,10 +48,6 @@ AgendaWriteUser.prototype._postDel = function (err, next) {
 	}
 	
 	this.updateComputedValue(models.Agenda, 'computedWriteUsers', false, next);
-}
-
-AgendaWriteUser.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Agenda, perm, user, callback);
 }
 
 AgendaWriteUser.get = function(options, callback) {

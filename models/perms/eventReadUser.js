@@ -11,6 +11,8 @@ function EventReadUser () {
 
 util.inherits(EventReadUser, BasePermission);
 
+EventReadUser.applyOnClass = models.Event;
+
 EventReadUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 EventReadUser.staffAttributes = EventReadUser.publicAttributes.concat(Base.staffAttributes);
 
@@ -48,9 +50,6 @@ EventReadUser.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedReadUsers', false, next);
 }
 
-EventReadUser.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
-}
 
 EventReadUser.get = function(options, callback) {
 	Base.get(options, EventReadUser, callback)

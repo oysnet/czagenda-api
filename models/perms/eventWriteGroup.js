@@ -11,6 +11,8 @@ function EventWriteGroup () {
 
 util.inherits(EventWriteGroup, BasePermission);
 
+EventWriteGroup.applyOnClass = models.Event;
+
 EventWriteGroup.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 EventWriteGroup.staffAttributes = EventWriteGroup.publicAttributes.concat(Base.staffAttributes);
 
@@ -47,9 +49,6 @@ EventWriteGroup.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedWriteGroups', false, next);
 }
 
-EventWriteGroup.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
-}
 
 EventWriteGroup.get = function(options, callback) {
 	Base.get(options, EventWriteGroup, callback)

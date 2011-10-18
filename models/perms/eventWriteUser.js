@@ -11,6 +11,8 @@ function EventWriteUser () {
 
 util.inherits(EventWriteUser, BasePermission);
 
+EventWriteUser.applyOnClass = models.Event;
+
 EventWriteUser.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 EventWriteUser.staffAttributes = EventWriteUser.publicAttributes.concat(Base.staffAttributes);
 
@@ -48,10 +50,6 @@ EventWriteUser.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedWriteUsers', false, next);
 }
 
-
-EventWriteUser.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
-}
 
 EventWriteUser.get = function(options, callback) {
 	Base.get(options, EventWriteUser, callback)

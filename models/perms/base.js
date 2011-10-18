@@ -67,8 +67,8 @@ BasePermission.prototype.updateComputedValue = function(clazz, attr, add, callba
 	}.bind(this));
 }
 
-BasePermission.prototype.hasPerm = function(clazz, perm, user, callback) {
-
+BasePermission.prototype.hasPerm = function(perm, user, callback) {
+	
 	switch (perm) {
 		case 'read':
 			callback(null, true);
@@ -78,7 +78,7 @@ BasePermission.prototype.hasPerm = function(clazz, perm, user, callback) {
 		case 'write':
 		case 'del':
 
-			clazz.get({
+			this.constructor.applyOnClass.get({
 				id : this.applyOn
 			}, function(err, obj) {
 				if(err !== null) {

@@ -13,6 +13,8 @@ function AgendaWriteGroup () {
 
 util.inherits(AgendaWriteGroup, BasePermission);
 
+AgendaWriteGroup.applyOnClass = models.Agenda;
+
 AgendaWriteGroup.publicAttributes = Base.publicAttributes.concat(['grantTo', 'applyOn']);
 AgendaWriteGroup.staffAttributes = AgendaWriteGroup.publicAttributes.concat(Base.staffAttributes);
 
@@ -50,9 +52,6 @@ AgendaWriteGroup.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Agenda, 'computedWriteGroups', false, next);
 }
 
-AgendaWriteGroup.prototype.hasPerm = function(perm, user, callback) {
-	BasePermission.prototype.hasPerm.call(this, models.Agenda, perm, user, callback);
-}
 
 
 
