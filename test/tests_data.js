@@ -336,7 +336,7 @@ exports.perms_agenda_3_write_group_2 = '/perms/agenda/wg/ed916a5c649389e1ce26182
 exports.perms_agenda_3_write_user_2 = '/perms/agenda/wu/a0b0ed1b9e71727aa122b9128c92f060'
 
 exports.perms_group_3_write_group_2 = '/perms/group/wg/88e0d2e1a98eaf4bf1fee2e845bbc1a2'
-exports.perms_group_3_write_user_2 = '/perms/group/wu/1159b211426ad8c530ff9f3755de95b3'
+exports.perms_group_3_write_user_2 = '/perms/group/wu/04148c5b74052f609c1751beff379e5e'
 
 exports.perms_group_5_write_group_2 = '/perms/group/wg/186971137cf9faa08817bd4d6a8f1b88'
 exports.perms_group_5_write_user_2 = '/perms/group/wu/27a116182057a8be34749e55c02b1e52'

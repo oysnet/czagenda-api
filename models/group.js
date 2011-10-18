@@ -23,7 +23,7 @@ Group.prototype._validate = function (callback) {
 }
 
 Group.prototype.hasPerm = function (perm, user, callback) {
-	
+		
 	switch (perm) {
 		case 'read':
 		case 'create':

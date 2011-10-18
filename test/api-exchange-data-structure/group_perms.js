@@ -13,7 +13,7 @@ var number_re = new RegExp("^[0-9]+$");
 // ##### GET
 var get_object = tests_data.group_3;
 var write_group = tests_data.group_2;
-var write_user = tests_data.user_2;
+var write_user = tests_data.user_test;
 
 var write_group_perm = tests_data.perms_group_3_write_group_2
 var write_user_perm = tests_data.perms_group_3_write_user_2
