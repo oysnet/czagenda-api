@@ -187,7 +187,7 @@ exports.create = function(req, res) {
 	var obj = new this._clazz;
 
 	if(this._populateObject(obj, data, req, res) === true) {
-		
+
 		// check permissions
 		obj.hasPerm('create', req.user, function(err, hasPerm) {
 
@@ -196,14 +196,14 @@ exports.create = function(req, res) {
 				res.end('Internal error');
 				return;
 			} else if(hasPerm === false) {
-				
+
 				res.statusCode = statusCodes.FORBIDDEN;
 				res.end('Insufficient privileges');
 				return;
 			}
-		
+
 			obj.validate( function(err) {
-	
+
 				if(err !== null) {
 					res.statusCode = statusCodes.INTERNAL_ERROR;
 					res.end('Internal error');
@@ -213,45 +213,45 @@ exports.create = function(req, res) {
 					res.end(this._renderJson(req, res, obj.validationErrors));
 					return;
 				}
-	
+
 				this._preCreate(obj, req, function(err) {
-	
+
 					if(err !== null && err instanceof errors.InternalError) {
 						res.statusCode = statusCodes.INTERNAL_ERROR;
 						res.end(err.message);
 						return;
 					}
-	
+
 					// try to save object
 					obj.save( function(err, obj) {
-	
+
 						this._postCreate(err, obj, req, function() {
 							if(err === null) {
 								res.statusCode = statusCodes.CREATED;
 								res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
 							} else {
-	
+
 								if( err instanceof errors.ObjectAlreadyExists) {
 									res.statusCode = statusCodes.DUPLICATE_ENTRY;
 									res.end(err.message);
-	
+
 								} else if( err instanceof errors.ValidationError) {
 									res.statusCode = statusCodes.BAD_REQUEST;
 									res.end(this._renderJson(req, res, obj.validationErrors));
-	
+
 								} else {
 									res.statusCode = statusCodes.INTERNAL_ERROR;
 									res.end('Internal error')
 								}
 							}
 						}.bind(this));
-	
+
 					}.bind(this));
-	
+
 				}.bind(this));
-	
+
 			}.bind(this));
-			
+
 		}.bind(this));
 
 	}
@@ -448,79 +448,117 @@ exports._count = function(req, res, query) {
 
 exports._perms = function(req, res, permClass, grantToClass) {
 
-	var q = {
-		query : {
-			term : {
-				applyOn : '/' + this._type + '/' + req.params.id
-			}
-		}
-	};
+	var applyOnId = '/' + this._type + '/' + req.params.id;
 
-	var tasks = [
+	// load object
+	permClass.applyOnClass.get({
+		id : applyOnId
+	}, function(err, obj) {
 
-	function(callback) {
-		permClass.search(q, ["grantTo", "createDate", "updateDate"], function(err, result) {
-
-			if(err !== null) {
-				callback(err)
-			} else {
-				callback(null, result);
-			}
-
-		});
-	}];
-
-	if(req.query.include_docs == true || ( typeof (req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
-		tasks.push(function(result, callback) {
-
-			var ids = [];
-			var byGrantTo = {};
-
-			for(var i = 0, l = result.rows.length; i < l; i++) {
-				ids.push(result.rows[i].grantTo)
-				byGrantTo[result.rows[i].grantTo] = result.rows[i];
-			}
-
-			var q = {
-				size : 10000,
-				query : {
-					ids : {
-						values : ids
-					}
-				}
-			}
-
-			var attrs = grantToClass.publicAttributes;
-			if(req.user.isStaff || req.user.isSuperuser) {
-				attrs = grantToClass.staffAttributes;
-			}
-
-			grantToClass.search(q, attrs, function(err, objects) {
-
-				if(err !== null) {
-					callback(err);
-				} else {
-
-					for(var i = 0, l = objects.rows.length; i < l; i++) {
-						byGrantTo[objects.rows[i].id].grantTo = objects.rows[i];
-					}
-					callback(null, result);
-				}
-			});
-		});
-	}
-
-	async.waterfall(tasks, function(err, result) {
 		if(err !== null) {
-			if( err instanceof errors.IndexDoesNotExist) {
+			if( err instanceof errors.ObjectDoesNotExist) {
 				res.statusCode = statusCodes.NOT_FOUND;
-				res.end('Not found');
+				res.end('Not found')
 			} else {
 				res.statusCode = statusCodes.INTERNAL_ERROR;
 				res.end('Internal error')
 			}
-		} else {
-			res.end(this._renderJson(req, res, result));
+			return;
 		}
-	}.bind(this));
+
+		// check read perm
+		obj.hasPerm('read', req.user, function(err, hasPerm) {
+
+			if(err !== null) {
+				res.statusCode = statusCodes.INTERNAL_ERROR;
+				res.end('Internal error');
+				return;
+			} else if(hasPerm === false) {
+				res.statusCode = statusCodes.FORBIDDEN;
+				res.end('Insufficient privileges');
+				return;
+			}
+
+			// retrieve perms
+
+			var q = {
+				query : {
+					term : {
+						applyOn : applyOnId
+					}
+				}
+			};
+
+			var tasks = [
+
+			function(callback) {
+				permClass.search(q, ["grantTo", "createDate", "updateDate"], function(err, result) {
+
+					if(err !== null) {
+						callback(err)
+					} else {
+						callback(null, result);
+					}
+
+				});
+			}];
+
+			if(req.query.include_docs == true || ( typeof (req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
+				tasks.push(function(result, callback) {
+
+					var ids = [];
+					var byGrantTo = {};
+
+					for(var i = 0, l = result.rows.length; i < l; i++) {
+						ids.push(result.rows[i].grantTo)
+						byGrantTo[result.rows[i].grantTo] = result.rows[i];
+					}
+
+					var q = {
+						size : 10000,
+						query : {
+							ids : {
+								values : ids
+							}
+						}
+					}
+
+					var attrs = grantToClass.publicAttributes;
+					if(req.user.isStaff || req.user.isSuperuser) {
+						attrs = grantToClass.staffAttributes;
+					}
+
+					grantToClass.search(q, attrs, function(err, objects) {
+
+						if(err !== null) {
+							callback(err);
+						} else {
+
+							for(var i = 0, l = objects.rows.length; i < l; i++) {
+								byGrantTo[objects.rows[i].id].grantTo = objects.rows[i];
+							}
+							callback(null, result);
+						}
+					});
+				});
+			}
+
+			async.waterfall(tasks, function(err, result) {
+				if(err !== null) {
+					if( err instanceof errors.IndexDoesNotExist) {
+						res.statusCode = statusCodes.NOT_FOUND;
+						res.end('Not found');
+					} else {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error')
+					}
+				} else {
+					res.end(this._renderJson(req, res, result));
+				}
+			}.bind(this));
+
+		}.bind(this))
+
+	}.bind(this))
+
 }
