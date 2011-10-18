@@ -64,14 +64,14 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 		p.save(function(err, p) {
 
-			if (err !== null) {
+			if(err !== null) {
 				req.preCreateObjects.push(p);
 			}
 
 			// trivial but it's what we want...
 			if( err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
-			} 
+			}
 
 			if(err !== null) {
 				log.warning('RestAgenda.prototype.create: unable to create permission EventWriteUser on ', req.user.id, obj.getId(), err)
@@ -91,12 +91,11 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.grantTo = req.user.id;
 
 		p.save(function(err, p) {
-			
-			if (err !== null) {
+
+			if(err !== null) {
 				req.preCreateObjects.push(p);
 			}
 
-			
 			// trivial but it's what we want...
 			if( err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
@@ -120,12 +119,11 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.grantTo = '/user/all';
 
 		p.save(function(err, p) {
-			
-			if (err !== null) {
+
+			if(err !== null) {
 				req.preCreateObjects.push(p);
 			}
 
-			
 			// trivial but it's what we want...
 			if( err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
@@ -149,11 +147,11 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.grantTo = '/group/all';
 
 		p.save(function(err, p) {
-			
-			if (err !== null) {
+
+			if(err !== null) {
 				req.preCreateObjects.push(p);
 			}
-			
+
 			// trivial but it's what we want...
 			if( err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
@@ -170,7 +168,7 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 	});
 
 	async.parallel(methods, function(err) {
-				
+
 		if( typeof (err) === 'undefined') {
 			err = null;
 		}
@@ -199,18 +197,16 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 			callback(err);
 		}
 
-		
 	});
 }
 
 RestEvent.prototype._postCreate = function(err, obj, req, callback) {
-	
-	if(err === null || typeof(req.preCreateObjects) === 'undefined') {
+
+	if(err === null || typeof (req.preCreateObjects) === 'undefined') {
 		callback();
 		return;
 	}
-	
-	
+
 	// rolling back
 	var rollbackMethods = [];
 	req.preCreateObjects.forEach(function(toDelObj) {
@@ -251,6 +247,67 @@ RestEvent.prototype.permsGroupRead = function(req, res) {
 	this._perms(req, res, permClass, grantToClass);
 }
 
+RestEvent.prototype._setPermsOnQuery = function(req, q) {
+	
+	var hasQueryAttribute = typeof(q.query) !== 'undefined';
+	
+	if (hasQueryAttribute === true) {
+		q = q.query;
+	}
+	
+	var query = {};
+	
+	if( typeof (query.filtered) === 'undefined') {
+
+		// assume that query is something like {match_all : {}}
+		
+		query.filtered = {
+			query : q,
+			filter : {
+				"or" : [{
+					terms : {
+						computedReadGroups : req.user.groups.concat(["/group/all"]),
+						"minimum_match" : 1
+					}
+				}, {
+					terms : {
+						computedReadUsers : ["/user/all", req.user.id],
+						"minimum_match" : 1
+					}
+				}]
+			}
+		}
+
+	} else {
+
+		query.filtered = {
+			query : q.filtered.query,
+			filter : {
+				and : [{
+					"or" : [{
+						terms : {
+							computedReadGroups : req.user.groups.concat(["/group/all"]),
+							"minimum_match" : 1
+						}
+					}, {
+						terms : {
+							computedReadUsers : ["/user/all", req.user.id],
+							"minimum_match" : 1
+						}
+					}]
+				}, q.filtered.query.filter]
+			}
+		}
+	}
+	
+	if (hasQueryAttribute === true) {
+		query = {query : query};
+	}
+	console.log(JSON.stringify(query))
+	return query;
+
+}
+
 RestEvent.prototype._getQueryFromRequest = function(req, callback) {
 
 	var qs = req.query;
@@ -261,7 +318,8 @@ RestEvent.prototype._getQueryFromRequest = function(req, callback) {
 	if( typeof (qs.fulltext) !== 'undefined') {
 		query = {
 			"query_string" : {
-				"query" : qs.fulltext
+				"query" : qs.fulltext,
+				default_operator : "AND"
 			}
 		}
 	}

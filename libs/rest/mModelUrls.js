@@ -88,7 +88,7 @@ exports._serializeObject = function(obj, req) {
 exports._getQueryFromRequest = function(req, callback) {
 	callback(null, {
 		query : {
-			match_all : {}
+		match_all : {}
 		}
 	});
 }
@@ -108,40 +108,36 @@ exports.list = function(req, res) {
 			}
 
 		} else {
-			this._search(req, res, query);
+			this._search(req, res, this._setPermsOnQuery(req, query));
 		}
 	}.bind(this));
+}
+/**
+ * restrict query with permissions
+ * return a new query object
+ */
+exports._setPermsOnQuery = function(req, q) {
+	return q;
 }
 
 exports.count = function(req, res) {
 	
-	var query = {
-		match_all : { }
-	}
-	/*
-	var query = {
-		terms : {computedReadGroups : req.user.groups.concat(["/group/all"]), "minimum_match" : 1}
-	}
-	
-	var query = {
-    "filtered" : {
-        "query" : {
-            match_all : {}
-        },
-        "filter" : {
-            "or" : [
-                {
-                    terms : {computedReadGroups : req.user.groups.concat(["/group/all"]), "minimum_match" : 1}
-                },
-                {
-                    terms : {computedReadUsers : ["/user/all", req.user.id], "minimum_match" : 1}
-                }
-            ]
-        }
-    }
-}
-	*/
-	this._count(req, res, query);
+	this._getQueryFromRequest(req, function(err, query) {
+		
+		if(err !== null) {
+
+			if( err instanceof restError.BadRequest) {
+				res.statusCode = statusCodes.BAD_REQUEST;
+				res.end(err.message)
+			} else {
+				res.statusCode = statusCodes.INTERNAL_ERROR;
+				res.end('Internal error')
+			}
+
+		} else {
+			this._count(req, res, this._setPermsOnQuery(req, query));
+		}
+	}.bind(this));
 
 }
 
@@ -411,7 +407,7 @@ exports.del = function(req, res) {
 exports._search = function(req, res, query) {
 
 	var qs = req.query;
-
+	
 	if( typeof (qs.limit) !== 'undefined') {
 		query.size = qs.limit;
 	} else {
@@ -451,7 +447,11 @@ exports._search = function(req, res, query) {
 }
 
 exports._count = function(req, res, query) {
-
+	
+	if (typeof(query.query) !== 'undefined') {
+		query = query.query;
+	}
+	
 	this._clazz.count(query, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {

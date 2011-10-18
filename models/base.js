@@ -719,6 +719,9 @@ Base.search = function(query, index, type, attrs, clazz, callback) {
 			callback(new errors.IndexDoesNotExist(index))
 			return;
 		} else if( typeof (data.error) !== 'undefined') {
+			
+			log.warning("Search failed",index, type, JSON.stringify(query), JSON.stringify(data) )
+			
 			callback(new errors.UnknowError(this.id));
 			return;
 		}
