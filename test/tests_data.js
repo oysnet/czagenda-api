@@ -35,8 +35,10 @@ exports.agenda_4 = {
 
 exports.agenda_forbidden_1 = "/agenda/agenda-perms-forbidden-1";
 exports.agenda_forbidden_2 = "/agenda/agenda-perms-forbidden-2";
+exports.agenda_forbidden_3 = "/agenda/agenda-forbidden-3";
 exports.agenda_group_access_1 = "/agenda/agenda-perms-group-access-1";
 exports.agenda_group_access_2 = "/agenda/agenda-perms-group-access-2";
+exports.agenda_group_access_3 = "/agenda/agenda-perms-group-access-3";
 
 // ###############################################################################
 // 		EVENT
@@ -91,6 +93,11 @@ exports.event_3 = {
 	},
 	agenda : null
 }
+
+exports.event_forbidden_1 = "/event/7fcd6c1756deb3d5e0d853fcc3d7adab";
+exports.event_forbidden_2 = "/event/b7344ee057a39399a94827a8338c0c23";
+exports.event_group_access_1 = "/event/b5737c7b02fb4c027ee5fbfde0274051";
+exports.event_group_access_2 = "/event/6891dad3d922b0c01b1330ab0138c6b2";
 
 // ###############################################################################
 // 		GROUP
