@@ -56,7 +56,7 @@ RestGroup.prototype._preCreate = function(obj, req, callback) {
 
 RestGroup.prototype._postCreate = function(err, obj, req, callback) {
 
-	if (err === null) {
+	if (err === null || typeof(req.preCreateObjects) === 'undefined') {
 		callback();
 		return;
 	}

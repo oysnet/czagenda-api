@@ -205,11 +205,12 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 RestEvent.prototype._postCreate = function(err, obj, req, callback) {
 	
-	if(err === null) {
+	if(err === null || typeof(req.preCreateObjects) === 'undefined') {
 		callback();
 		return;
 	}
-
+	
+	
 	// rolling back
 	var rollbackMethods = [];
 	req.preCreateObjects.forEach(function(toDelObj) {

@@ -302,6 +302,21 @@ exports.user_7 = {
 	groups : '/user/login-user-7/groups'
 }
 
+exports.user_test = {
+        isActive: true,
+        lastName: 'test',
+        lastLogin: null,
+        isSuperuser: false,
+        login: 'test',
+        dateJoined: null,
+        firstName: 'test',
+        createDate: '2011-10-06T14:52:56.382Z',
+        isStaff: false,
+        groups: '/user/test/groups',
+        updateDate: '2011-10-06T14:52:56.382Z',
+        id: '/user/test'
+    }
+
 // ###############################################################################
 // 		MEMBERSHIP
 // ###############################################################################
@@ -315,7 +330,7 @@ exports.membership_user_7_group_5 = '/membership/391e1344d06661e7cf087d00d8cbace
 // ###############################################################################
 
 exports.perms_agenda_2_write_group_2 = '/perms/agenda/wg/4f2cc8435412530726af48d8cbf3c60a'
-exports.perms_agenda_2_write_user_2 = '/perms/agenda/wu/0d57289e63d389489e8228ec0fe815de'
+exports.perms_agenda_2_write_user_test = '/perms/agenda/wu/181f732cd8553a6f844cf19f53cfae67'
 
 exports.perms_agenda_3_write_group_2 = '/perms/agenda/wg/ed916a5c649389e1ce261823437ef32e'
 exports.perms_agenda_3_write_user_2 = '/perms/agenda/wu/a0b0ed1b9e71727aa122b9128c92f060'
