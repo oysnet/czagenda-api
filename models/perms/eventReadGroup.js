@@ -46,6 +46,10 @@ EventReadGroup.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedReadGroups', false, next);
 }
 
+EventReadGroup.prototype.hasPerm = function(perm, user, callback) {
+	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
+}
+
 EventReadGroup.get = function(options, callback) {
 	Base.get(options, EventReadGroup, callback)
 }

@@ -47,6 +47,9 @@ EventWriteGroup.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedWriteGroups', false, next);
 }
 
+EventWriteGroup.prototype.hasPerm = function(perm, user, callback) {
+	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
+}
 
 EventWriteGroup.get = function(options, callback) {
 	Base.get(options, EventWriteGroup, callback)

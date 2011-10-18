@@ -34,7 +34,7 @@ Event.prototype.hasPerm = function (perm, user, callback) {
 					if (err !== null) {
 						callback(err);
 					} else {
-						callback(null, obj.hasPerm('write', user));
+						callback(null, obj.hasWritePerm(user));
 					}
 				}.bind(this));
 			}

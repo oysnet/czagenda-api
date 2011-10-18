@@ -50,6 +50,10 @@ AgendaWriteGroup.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Agenda, 'computedWriteGroups', false, next);
 }
 
+AgendaWriteGroup.prototype.hasPerm = function(perm, user, callback) {
+	BasePermission.prototype.hasPerm.call(this, models.Agenda, perm, user, callback);
+}
+
 
 
 AgendaWriteGroup.get = function(options, callback) {

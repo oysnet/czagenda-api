@@ -47,6 +47,11 @@ GroupWriteUser.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Group, 'computedWriteUsers', false, next);
 }
 
+GroupWriteUser.prototype.hasPerm = function(perm, user, callback) {
+	BasePermission.prototype.hasPerm.call(this, models.Group, perm, user, callback);
+}
+
+
 GroupWriteUser.get = function(options, callback) {
 	Base.get(options, GroupWriteUser, callback)
 }

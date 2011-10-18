@@ -48,6 +48,11 @@ EventWriteUser.prototype._postDel = function (err, next) {
 	this.updateComputedValue(models.Event, 'computedWriteUsers', false, next);
 }
 
+
+EventWriteUser.prototype.hasPerm = function(perm, user, callback) {
+	BasePermission.prototype.hasPerm.call(this, models.Event, perm, user, callback);
+}
+
 EventWriteUser.get = function(options, callback) {
 	Base.get(options, EventWriteUser, callback)
 }
