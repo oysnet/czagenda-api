@@ -153,6 +153,11 @@ exports.group_6 = {
   "writeUsers": "/group/title-group-6/perms/wu"
 }
 
+exports.group_forbidden_1 = "/group/group-perms-forbidden-1";
+exports.group_forbidden_2 = "/group/group-perms-forbidden-2";
+exports.group_group_access_1 = "/group/group-perms-group-access-1";
+exports.group_group_access_2 = "/group/group-perms-group-access-2";
+
 // ###############################################################################
 // 		SCHEMA
 // ###############################################################################
