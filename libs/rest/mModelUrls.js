@@ -114,11 +114,33 @@ exports.list = function(req, res) {
 }
 
 exports.count = function(req, res) {
-
+	
 	var query = {
 		match_all : { }
 	}
-
+	/*
+	var query = {
+		terms : {computedReadGroups : req.user.groups.concat(["/group/all"]), "minimum_match" : 1}
+	}
+	
+	var query = {
+    "filtered" : {
+        "query" : {
+            match_all : {}
+        },
+        "filter" : {
+            "or" : [
+                {
+                    terms : {computedReadGroups : req.user.groups.concat(["/group/all"]), "minimum_match" : 1}
+                },
+                {
+                    terms : {computedReadUsers : ["/user/all", req.user.id], "minimum_match" : 1}
+                }
+            ]
+        }
+    }
+}
+	*/
 	this._count(req, res, query);
 
 }
