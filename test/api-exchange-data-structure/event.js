@@ -29,7 +29,6 @@ var create_test_data_expected = {
 
 var create_invalid_test_data = {
 	event : {title : "even title"},
-	
 }
 
 var create_invalid_test_data_expected = { items : {'event.links': [ 'required' ] }, errors : []};

@@ -119,7 +119,7 @@ vows.describe('Event API permissions').addBatch({
 		'update' : {
 			topic : function() {
 				rest = new Rest();
-				rest.put('/api' + group_access_1, JSON.stringify({agenda : agenda_forbidden, event : {title : "event title" + Math.random(),
+				rest.put('/api' + group_access_1, JSON.stringify({event : {title : "event title" + Math.random(),
 																	links : [{rel:"describedby", href:"/schema/event"}],
 																	where : [{valueString:"Pau"}]}
 															}) , this.callback);
