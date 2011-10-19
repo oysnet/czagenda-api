@@ -88,7 +88,7 @@ exports._serializeObject = function(obj, req) {
 exports._getQueryFromRequest = function(req, callback) {
 	callback(null, {
 		query : {
-		match_all : {}
+			match_all : {}
 		}
 	});
 }
@@ -121,9 +121,9 @@ exports._setPermsOnQuery = function(req, q) {
 }
 
 exports.count = function(req, res) {
-	
+
 	this._getQueryFromRequest(req, function(err, query) {
-		
+
 		if(err !== null) {
 
 			if( err instanceof restError.BadRequest) {
@@ -206,29 +206,29 @@ exports.create = function(req, res) {
 
 	if(this._populateObject(obj, data, req, res) === true) {
 
-		// check permissions
-		obj.hasPerm('create', req.user, function(err, hasPerm) {
+		obj.validate( function(err) {
 
 			if(err !== null) {
 				res.statusCode = statusCodes.INTERNAL_ERROR;
 				res.end('Internal error');
 				return;
-			} else if(hasPerm === false) {
-
-				res.statusCode = statusCodes.FORBIDDEN;
-				res.end('Insufficient privileges');
+			} else if(obj.validationErrors !== null) {
+				res.statusCode = statusCodes.BAD_REQUEST;
+				res.end(this._renderJson(req, res, obj.validationErrors));
 				return;
 			}
 
-			obj.validate( function(err) {
+			// check permissions
+			obj.hasPerm('create', req.user, function(err, hasPerm) {
 
 				if(err !== null) {
 					res.statusCode = statusCodes.INTERNAL_ERROR;
 					res.end('Internal error');
 					return;
-				} else if(obj.validationErrors !== null) {
-					res.statusCode = statusCodes.BAD_REQUEST;
-					res.end(this._renderJson(req, res, obj.validationErrors));
+				} else if(hasPerm === false) {
+
+					res.statusCode = statusCodes.FORBIDDEN;
+					res.end('Insufficient privileges');
 					return;
 				}
 
@@ -297,31 +297,31 @@ exports.update = function(req, res) {
 
 		} else {
 
-			// check permissions
-			obj.hasPerm('write', req.user, function(err, hasPerm) {
+			// populate object and save it
+			if(this._populateObject(obj, req.body, req, res) === true) {
 
-				if(err !== null) {
-					res.statusCode = statusCodes.INTERNAL_ERROR;
-					res.end('Internal error');
-					return;
-				} else if(hasPerm === false) {
-					res.statusCode = statusCodes.FORBIDDEN;
-					res.end('Insufficient privileges');
-					return;
-				}
+				obj.validate( function(err) {
 
-				// populate object and save it
-				if(this._populateObject(obj, req.body, req, res) === true) {
+					if(err !== null) {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error');
+						return;
+					} else if(obj.validationErrors !== null) {
+						res.statusCode = statusCodes.BAD_REQUEST;
+						res.end(this._renderJson(req, res, obj.validationErrors));
+						return;
+					}
 
-					obj.validate( function(err) {
+					// check permissions
+					obj.hasPerm('write', req.user, function(err, hasPerm) {
 
 						if(err !== null) {
 							res.statusCode = statusCodes.INTERNAL_ERROR;
 							res.end('Internal error');
 							return;
-						} else if(obj.validationErrors !== null) {
-							res.statusCode = statusCodes.BAD_REQUEST;
-							res.end(this._renderJson(req, res, obj.validationErrors));
+						} else if(hasPerm === false) {
+							res.statusCode = statusCodes.FORBIDDEN;
+							res.end('Insufficient privileges');
 							return;
 						}
 
@@ -347,8 +347,9 @@ exports.update = function(req, res) {
 
 						}.bind(this));
 					}.bind(this));
-				}
-			}.bind(this));
+				}.bind(this));
+			}
+
 		}
 
 	}.bind(this))
@@ -407,7 +408,7 @@ exports.del = function(req, res) {
 exports._search = function(req, res, query) {
 
 	var qs = req.query;
-	
+
 	if( typeof (qs.limit) !== 'undefined') {
 		query.size = qs.limit;
 	} else {
@@ -447,11 +448,11 @@ exports._search = function(req, res, query) {
 }
 
 exports._count = function(req, res, query) {
-	
-	if (typeof(query.query) !== 'undefined') {
+
+	if( typeof (query.query) !== 'undefined') {
 		query = query.query;
 	}
-	
+
 	this._clazz.count(query, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {
