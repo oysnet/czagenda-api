@@ -647,7 +647,7 @@ Base.prototype.validateExists = function(keys, callback) {
 		
 		for (var i = 0, l = replies.length; i<l;i++) {
 			if (replies[i] === 0) {
-				this.addValidationError(keys[i], 'Object does not exist');
+				this.addValidationError(keys[i], 'Object doesn\'t exist');
 			}
 		}
 		
