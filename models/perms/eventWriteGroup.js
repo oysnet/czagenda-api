@@ -24,9 +24,18 @@ EventWriteGroup.prototype._generateId = function(doc) {
 }
 
 EventWriteGroup.prototype._validate = function (callback) {
-	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
-	this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false);
-	callback(null);
+	
+	var keys = [];
+	
+	if (this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false) === true) {
+		keys.push('applyOn');
+	}
+	if (this.validateRegexp('grantTo', '^/group/[\-_\.0-9a-z]+$', false) === true) {
+		keys.push('grantTo');
+	}
+	
+	this.validateExists(keys, callback);
+	
 }
 
 EventWriteGroup.prototype._postSave = function (err, next) {

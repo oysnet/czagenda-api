@@ -20,9 +20,18 @@ Membership.publicWriteAttributes = ['user', 'group'];
 Membership.staffWriteAttributes = Membership.publicWriteAttributes;
 
 Membership.prototype._validate = function (callback) {
-	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false);
-	this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false);
-	callback(null);
+	
+	var keys = [];
+	
+	if (this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false) === true) {
+		keys.push('group');
+	}
+	if (this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
+		keys.push('user');
+	}
+	
+	this.validateExists(keys, callback);
+	
 }
 
 Membership.prototype._generateHash = function () {

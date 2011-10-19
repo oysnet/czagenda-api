@@ -61,7 +61,8 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		var p = new models.perms.EventWriteUser();
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
-
+		p.setValidationDone();
+		
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -89,7 +90,8 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		var p = new models.perms.EventReadUser();
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
-
+		p.setValidationDone();
+		
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -117,7 +119,8 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		var p = new models.perms.EventReadUser();
 		p.applyOn = obj.getId();
 		p.grantTo = '/user/all';
-
+		p.setValidationDone();
+		
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -145,7 +148,8 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		var p = new models.perms.EventReadGroup();
 		p.applyOn = obj.getId();
 		p.grantTo = '/group/all';
-
+		p.setValidationDone();
+		
 		p.save(function(err, p) {
 
 			if(err !== null) {

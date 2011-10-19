@@ -72,8 +72,17 @@ Event.prototype.hasPerm = function (perm, user, callback) {
 
 Event.prototype._validate = function (callback) {
 	
-	this.validateRegexp('author', '^/user/[\-_\.0-9a-zA-Z]+$', false);
-	this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
+	//this.validateRegexp('author', '^/user/[\-_\.0-9a-zA-Z]+$', false);
+	//this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
+	
+	
+	var keys = [];	
+	
+	if (this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true) === true && this.agenda !== null) {
+		keys.push('agenda');
+	}
+	
+	
 	
 	var schema = null;
 	
@@ -108,17 +117,7 @@ Event.prototype._validate = function (callback) {
 		
 	}
 	
-	
-	/*
-	if (this.event === null || this.event == {}) {
-		throw Error('Empty schema');
-	}
-	*/
-	
-	
-	
-	
-	callback(null);
+	this.validateExists(keys, callback);
 }
 
 Event.prototype._generateHash = function () {

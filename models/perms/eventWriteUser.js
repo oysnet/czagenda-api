@@ -24,9 +24,18 @@ EventWriteUser.prototype._generateId = function(doc) {
 }
 
 EventWriteUser.prototype._validate = function (callback) {
-	this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false);
-	this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false);
-	callback(null);
+	
+	var keys = [];
+	
+	if (this.validateRegexp('applyOn', '^/event/[\-_\.0-9a-z]+$', false) === true) {
+		keys.push('applyOn');
+	}
+	if (this.validateRegexp('grantTo', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
+		keys.push('grantTo');
+	}
+	
+	this.validateExists(keys, callback);
+	
 }
 
 

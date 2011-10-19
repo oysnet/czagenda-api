@@ -136,7 +136,12 @@ Base.prototype._validate = function(callback) {
 	callback(null);
 }
 
-
+/**
+ * To ignore the validation process at save time
+ */
+Base.prototype.setValidationDone = function () {
+	this.__validationDone = true;
+}
 
 Base.prototype.__validationDone = false;
 /**
@@ -531,17 +536,21 @@ Base.prototype.validateString = function(attr, nullable, min, max) {
 	if( typeof (value) !== 'string') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'a string is required');
-			return;
+			return false;
 		}
 	}
 
 	if(value !== null) {
 		if(min !== null && value.length < min) {
 			this.addValidationError(attr, 'string length must be greater than ' + min);
+			return false;
 		} else if(max !== null && value.length > max) {
 			this.addValidationError(attr, 'string length must be lower than ' + max);
+			return false;
 		}
 	}
+	
+	return true;
 }
 
 Base.prototype.validateBoolean = function(attr, nullable) {
@@ -550,9 +559,10 @@ Base.prototype.validateBoolean = function(attr, nullable) {
 	if( typeof (value) !== 'boolean') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'a boolean is required');
-			return;
+			return false;
 		}
 	}
+	return true;
 }
 
 Base.prototype.validateChoice = function(attr, choices) {
@@ -560,8 +570,9 @@ Base.prototype.validateChoice = function(attr, choices) {
 	var value = this[attr];
 	if(choices.indexOf(value) === -1) {
 		this.addValidationError(attr, 'choices are: ' + choices.join(' ,'));
-		return;
+		return false;
 	}
+	return true;
 }
 
 Base.prototype.validateNotEmptyObject = function(attr) {
@@ -576,11 +587,12 @@ Base.prototype.validateNotEmptyObject = function(attr) {
 		keys.push(k)
 	}
 
-	console.log(keys, value)
-
 	if(value === null || keys.length === 0) {
 		this.addValidationError(attr, 'empty object not allowed');
+		return false;
 	}
+	
+	return true;
 
 }
 
@@ -589,8 +601,10 @@ Base.prototype.validateEmail = function(attr) {
 
 	if( typeof (value) !== 'string' || !(new RegExp('^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$', 'i')).test(value)) {
 		this.addValidationError(attr, 'an email is required');
-		return;
+		return false;
 	}
+	
+	return true;
 }
 
 Base.prototype.validateRegexp = function(attr, regexp, nullable) {
@@ -598,16 +612,46 @@ Base.prototype.validateRegexp = function(attr, regexp, nullable) {
 	if( typeof (value) !== 'string') {
 		if(!(nullable === true && value === null)) {
 			this.addValidationError(attr, 'must match regexp: ' + regexp);
-			return;
+			return false;
 		}
 	}
 
 	if(value !== null) {
 		if(!(new RegExp(regexp)).test(value)) {
 			this.addValidationError(attr, 'must match regexp: ' + regexp);
-			return;
+			return false;
 		}
 	}
+	
+	return true;
+}
+
+
+Base.prototype.validateExists = function(keys, callback) {
+	
+	var multi = redis.redisClient.multi();
+	
+	keys.forEach(function (k) {
+		multi.exists(this[k]);
+	}.bind(this));
+	
+	multi.exec(function (err, replies) {
+		
+		if (err !== null) {
+			callback(err);
+			log.critical("Base.prototype.validateExists", keys.join(', '), JSON.stringify(err));
+			return;
+		}
+		
+		for (var i = 0, l = replies.length; i<l;i++) {
+			if (replies[i] === 0) {
+				this.addValidationError(keys[i], 'Object does not exist');
+			}
+		}
+		
+		callback(null);
+				
+	}.bind(this));
 }
 
 Base.loadObject = function(options, obj, callback) {

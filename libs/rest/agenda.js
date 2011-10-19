@@ -30,7 +30,8 @@ RestAgenda.prototype._preCreate = function(obj, req, callback) {
 	var p = new models.perms.AgendaWriteUser();
 	p.applyOn = obj.getId();
 	p.grantTo = req.user.id;
-
+	p.setValidationDone();
+	
 	p.save(function(err, p) {
 		
 		if (err !== null) {

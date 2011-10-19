@@ -26,7 +26,16 @@ OAuthConsumer.prototype._validate = function (callback) {
 	this.validateString('secret', false, null, 32);
 	this.validateChoice('status', ['PENDING', 'ACCEPTED', 'CANCELED', 'REJECTED']);
 	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false);	
-	callback(null);
+	
+	
+	var keys = [];
+		
+	if (this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
+		keys.push('user');
+	}
+	
+	this.validateExists(keys, callback);
+	
 }
 
 OAuthConsumer.prototype._generateHash = function () {
