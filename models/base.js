@@ -19,7 +19,9 @@ function Base(type) {
 	this._type = type;
 	this._index = settings.elasticsearch.index;
 	this._hash = null;
-
+	
+	this.initialData = null;
+	
 	this.id = null;
 
 	// will contain validations errors
