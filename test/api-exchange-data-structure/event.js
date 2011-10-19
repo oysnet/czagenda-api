@@ -41,6 +41,15 @@ var create_invalid_test_data_2 = {
 
 var create_invalid_test_data_expected_2 = { items : { '/event/where/0/valueString': [ 'a string is required' ] }, errors : []};
 
+var create_invalid_test_data_3 = {
+	agenda : "/agenda/ditnotexists",
+	event : {title : "event title",
+			links : [{rel:"describedby", href:"/schema/event"}],
+			where : [{valueString:"Pau"}]}
+}
+
+var create_invalid_test_data_expected_3 = { items : { 'agenda': [ 'Object doesn\'t exist' ] }, errors : []};
+
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
 
@@ -337,6 +346,22 @@ vows.describe('Event API exchanged data structure').addBatch({
 		'check validation errors' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.deepEqual(data, create_invalid_test_data_expected_2)
+		}
+	},
+	
+	'CREATE INVALID 3' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_invalid_test_data_3), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_3)
 		}
 	},
 	

@@ -5,13 +5,13 @@ var errors = require('./errors.js');
 var settings = require('../settings.js');
 
 function Agenda () {
-	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, computedWriteUsers : [], computedWriteGroups : []};
+	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, computedWriteUsers : [], computedWriteGroups : [], author:null};
 	Base.call(this, 'agenda');	
 }
 
 util.inherits(Agenda, Base);
 
-Agenda.publicAttributes = Base.publicAttributes.concat(['title', 'description', 'writeGroups', 'writeUsers']);
+Agenda.publicAttributes = Base.publicAttributes.concat(['title', 'description', 'writeGroups', 'writeUsers', 'author']);
 Agenda.staffAttributes = Agenda.publicAttributes.concat(Base.staffAttributes);
 
 Agenda.publicWriteAttributes = ['title', 'description'];

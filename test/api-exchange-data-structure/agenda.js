@@ -10,7 +10,7 @@ var tests_data = require('../tests_data');
 var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$");
 var number_re = new RegExp("^[0-9]+$");
 
-var data_keys = ['title', 'description', 'writeUsers', 'writeGroups', 'id',  'createDate', 'updateDate'].sort();
+var data_keys = ['author', 'title', 'description', 'writeUsers', 'writeGroups', 'id',  'createDate', 'updateDate'].sort();
 
 // CREATION
 
@@ -26,7 +26,8 @@ var create_test_data_expected = {
 	description : 'DESCRIPTION_AGENDA_1',
 	id : '/agenda/title-agenda-1',
 	writeUsers : '/agenda/title-agenda-1/perms/wu',
-	writeGroups : '/agenda/title-agenda-1/perms/wg'
+	writeGroups : '/agenda/title-agenda-1/perms/wg',
+	author:"/user/test"
 }
 
 var description = '';
@@ -60,7 +61,8 @@ var update_test_data_expected = {
 	id : '/agenda/title-agenda-2',
 	createDate : update_test_data_in_database.createDate,
 	writeUsers : '/agenda/title-agenda-2/perms/wu',
-	writeGroups : '/agenda/title-agenda-2/perms/wg'
+	writeGroups : '/agenda/title-agenda-2/perms/wg',
+	author:"/user/test"
 }
 
 // GET

@@ -10,7 +10,8 @@ exports.agenda_2 = {
 	updateDate : '2011-09-21T12:47:31.116Z',
 	createDate : '2011-09-21T12:47:31.116Z',
 	writeUsers : '/agenda/title-agenda-2/perms/wu',
-	writeGroups : '/agenda/title-agenda-2/perms/wg'
+	writeGroups : '/agenda/title-agenda-2/perms/wg',
+	author:"/user/test"
 }
 
 exports.agenda_3 = {
@@ -20,7 +21,8 @@ exports.agenda_3 = {
 	updateDate : '2011-09-21T12:47:31.117Z',
 	id : '/agenda/title-agenda-3',
 	writeUsers : '/agenda/title-agenda-3/perms/wu',
-	writeGroups : '/agenda/title-agenda-3/perms/wg'
+	writeGroups : '/agenda/title-agenda-3/perms/wg',
+	author:"/user/test"
 }
 
 exports.agenda_4 = {
@@ -30,7 +32,8 @@ exports.agenda_4 = {
 	updateDate : '2011-09-21T12:47:31.115Z',
 	id : '/agenda/title-agenda-4',
 	writeUsers : '/agenda/title-agenda-4/perms/wu',
-	writeGroups : '/agenda/title-agenda-4/perms/wg'
+	writeGroups : '/agenda/title-agenda-4/perms/wg',
+	author:"/user/test"
 }
 
 exports.agenda_forbidden_1 = "/agenda/agenda-perms-forbidden-1";

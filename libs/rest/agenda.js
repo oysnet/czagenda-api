@@ -21,6 +21,16 @@ function RestAgenda(server) {
 
 util.inherits(RestAgenda, RestOAuthModel);
 
+RestAgenda.prototype._populateObject = function(obj, data, req, res) {
+
+	if(obj.author === null) {
+		obj.author = req.user.id;
+	}
+
+	return RestOAuthModel.prototype._populateObject.call(this, obj, data, req, res);
+
+}
+
 RestAgenda.prototype._preCreate = function(obj, req, callback) {
 	
 	// add write permission to obj
