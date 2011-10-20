@@ -113,7 +113,6 @@ ValidatorEnvironment.prototype._addSchemasToEnv = function(schemas, env) {
 	var tmp = []
 	for(var i = 0, l = schemas.length; i < l; i++) {
 		try {
-			console.log(schemas[i].id)
 			env.createSchema(schemas[i].schema, undefined, schemas[i].id)
 		} catch (e) {
 			
