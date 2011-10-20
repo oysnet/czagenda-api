@@ -18,7 +18,7 @@ var RestBase = exports.RestBase = function(type, clazz, server) {
 	
 	this._urlPrefix = this._urlPrefix === null ? '/' + this._type : this._urlPrefix;
 	
-	this._idRegexp = '([^_]?[^\/]+)'
+	this._idRegexp = '([^_][^\/]+)'
 	
 	this.__initialized = false;
 
