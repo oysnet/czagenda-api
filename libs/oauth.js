@@ -5,6 +5,12 @@ var crypto = require('crypto'),
     url = require('url');
 
 
+var specialEscape = function (str) {
+	
+	return encodeURIComponent(str).replace('*', "%252A");
+	
+}
+
 exports.OAuthError = function (message) {
 	this.name = 'OAuthError';
 	this.message = message;
@@ -162,8 +168,8 @@ exports.verifySignature = function (lookup, redisClient) {
 			// Construct the base string for signature generation
 			var baseStringURI = oauthBaseStringURI(req);
 			var requestParameterString = oauthRequestParameterString(req);
-			var baseString = req.method.toUpperCase() + "&" + qs.escape(baseStringURI) + "&" + qs.escape(requestParameterString);
-
+			var baseString = req.method.toUpperCase() + "&" + qs.escape(baseStringURI) + "&" + specialEscape(requestParameterString);
+			
 			// Construct key from returned tokens		
 			var key = qs.escape(clientSecret ? clientSecret : '') + '&' + qs.escape(tokenSecret ? tokenSecret : '');
 	
@@ -190,11 +196,15 @@ exports.verifySignature = function (lookup, redisClient) {
 
 exports.verifyBody = function () {
 	return function (req, res, next) {
+		// signature verification fail with utf8, so we do't verify signature for json	
+		if (req.is('application/json')) {
+			return next();
+		}
+		
 		if (!req.oauthParams['oauth_signature_method'])
 			return next();
 		if (req.oauthParams['oauth_signature_method'] == 'PLAINTEXT')
 			return next();
-		
 		
 		// Verify the body hash if given
 		if (req.oauthParams['oauth_body_hash'] != undefined) {

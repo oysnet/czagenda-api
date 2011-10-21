@@ -1,6 +1,7 @@
 var log = require('czagenda-log').from(__filename);
 var statusCodes = require('../statusCodes');
 var errors = require('../../models').errors;
+var restError = require('./errors');
 var async = require('async');
 
 exports.populateModelUrls = function() {
@@ -9,6 +10,10 @@ exports.populateModelUrls = function() {
 		fn : this.list
 	};
 	this._urls.get[this._urlPrefix + '/_count'] = {
+		middleware : [],
+		fn : this.count
+	};
+	this._urls.post[this._urlPrefix + '/_count'] = {
 		middleware : [],
 		fn : this.count
 	};
@@ -95,6 +100,17 @@ exports._getQueryFromRequest = function(req, callback) {
 
 exports.list = function(req, res) {
 
+	var query = {
+		query : {
+			match_all : {}
+		}
+	};
+	
+	this._search(req, res, this._setPermsOnQuery(req, query));
+}
+
+exports.search = function(req, res) {
+
 	this._getQueryFromRequest(req, function(err, query) {
 
 		if(err !== null) {
@@ -109,6 +125,7 @@ exports.list = function(req, res) {
 
 		} else {
 			this._search(req, res, this._setPermsOnQuery(req, query));
+			//this._search(req, res, query);
 		}
 	}.bind(this));
 }

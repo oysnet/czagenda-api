@@ -11,14 +11,11 @@ var app = module.exports = express.createServer();
 // Configuration
 
 app.configure(function() {
-	
 	app.use(cors);
 	app.use(express.bodyParser());
 	app.use(express.methodOverride());
 	app.use(oauth.parseHeader());
 	app.use(app.router);
-	
-	
 });
 app.configure('development', function() {
 	app.use(express.errorHandler({

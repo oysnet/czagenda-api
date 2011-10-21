@@ -51,8 +51,6 @@ exports.getUserPermsAndGroups = function (req, res, next) {
 
 exports.staffOnly = function (req, res, next) {
 	
-	
-	
 	if (req.user.isStaff === true || req.user.isSuperuser) {
 		log.debug('check staffOnly, granted');
 		next();

@@ -28,6 +28,14 @@ var RestEvent = exports.RestEvent = function(server) {
 		fn : this.permsGroupRead
 	};
 
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+
 	this._initServer();
 }
 util.inherits(RestEvent, RestOAuthModel);
@@ -62,7 +70,7 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-		
+
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -91,7 +99,7 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-		
+
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -120,7 +128,7 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/user/all';
 		p.setValidationDone();
-		
+
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -149,7 +157,7 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/group/all';
 		p.setValidationDone();
-		
+
 		p.save(function(err, p) {
 
 			if(err !== null) {
@@ -252,19 +260,19 @@ RestEvent.prototype.permsGroupRead = function(req, res) {
 }
 
 RestEvent.prototype._setPermsOnQuery = function(req, q) {
-	
-	var hasQueryAttribute = typeof(q.query) !== 'undefined';
-	
-	if (hasQueryAttribute === true) {
+
+	var hasQueryAttribute = typeof (q.query) !== 'undefined';
+
+	if(hasQueryAttribute === true) {
 		q = q.query;
 	}
-	
+
 	var query = {};
-	
-	if( typeof (query.filtered) === 'undefined') {
+
+	if( typeof (q.filtered) === 'undefined') {
 
 		// assume that query is something like {match_all : {}}
-		
+
 		query.filtered = {
 			query : q,
 			filter : {
@@ -299,21 +307,349 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 							"minimum_match" : 1
 						}
 					}]
-				}, q.filtered.query.filter]
+				}, q.filtered.filter]
 			}
 		}
 	}
-	
-	if (hasQueryAttribute === true) {
-		query = {query : query};
+
+	if(hasQueryAttribute === true) {
+		query = {
+			query : query
+		};
 	}
-	console.log(JSON.stringify(query))
 	return query;
 
 }
 
+RestEvent.prototype.unescape = function(str) {
+
+	var re = /\\([\+\-\&\|\!\(\)\{\}\[\]\^\"\~\*\?\:\\])/
+
+	return str.replace(re, '\1')
+
+}
+
+RestEvent.prototype.parseSearchQuery = function(req) {
+
+	var qString = null;
+	var sortString = null;
+	var rawData = null;
+
+	if(req.method === 'POST') {
+		rawData = req.body;
+	} else {
+		rawData = req.query;
+	}
+
+	if( typeof (rawData.q) !== 'undefined') {
+		qString = rawData.q.trim();
+	}
+
+	if( typeof (rawData.sort) !== 'undefined') {
+		sortString = rawData.sort.trim();
+	}
+
+	// parse query : text field:.. field:...
+	var q = {};
+
+	var re = new RegExp(/[a-z0-9\.]+:/gi);
+	var fields = [];
+
+	if(re.test(qString) === true) {
+		qString.match(re).forEach(function(v) {
+			fields.push(v.substr(0, v.length - 1))
+		});
+		var qArray = qString.split(re);
+
+		// first element is fulltext query
+		if(qString.search(re) !== 0) {
+			q.fulltext = qArray[0].trim();
+			qArray = qArray.splice(1);
+		} else {
+			qArray = qArray.splice(1);
+		}
+
+		for(var i = 0, l = qArray.length; i < l; i++) {
+			if(fields.length !== qArray.length) {
+				log.warning('RestEvent.prototype.parseSearchQuery error ' + qString, JSON.stringify(fields), JSON.stringify(qArray))
+				req.res.statusCode = statusCodes.BAD_REQUEST;
+				req.res.end(qString);
+				return;
+			}
+
+			if( typeof (q[fields[i]]) === 'undefined') {
+				q[fields[i]] = [];
+			}
+
+			q[fields[i]].push(qArray[i].trim());
+		}
+
+	} else {
+		q.fulltext = qString;
+	}
+
+	var sort = [];
+	if(sortString !== null) {
+		sortString.split(' ').forEach(function(v) {
+			sort.push(v.trim());
+		});
+	}
+
+	return {
+		query : q,
+		sort : sort
+	}
+
+}
+
+RestEvent.prototype.getDatetimeSearchPart = function(field, args) {
+
+	var q = null;
+	if(args.length > 1) {
+		q = {
+			"or" : []
+		}
+		args.forEach( function(arg) {
+			q.or.push(this.getDatetimeSearchPart(field, [arg]));
+		}.bind(this))
+
+	} else {
+		var dateRe = '[0-9]{4}-[0-9]{2}-[0-9]{2}';
+		var dateReExact = new RegExp('^' + dateRe + '$');
+		var dateReRange = /^\[[ ]*([^ ]+)[ ]+TO[ ]+([^ ]+)[ ]*\]$/g
+		var range = null;
+
+		if(( range = dateReRange.exec(args[0])) !== null) {
+
+			var from = range[1];
+			var to = range[2];
+
+			if(to == 'NOW') {
+				to = (new Date()).toISOString();
+			}
+
+			if(from == 'NOW') {
+				from = (new Date()).toISOString();
+			}
+			q = {
+				range : {}
+			};
+
+			if(to == '*') {
+				q.range[field] = {
+					"gte" : from.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T00:00:00.000Z')
+				}
+			} else if(from == '*') {
+				q.range[field] = {
+					"lte" : to.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T23:59:59.999Z')
+				}
+			} else {
+				q.range[field] = {
+					"include_lower" : true,
+					"include_upper" : true,
+					"from" : from.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T00:00:00.000Z'),
+					"to" : to.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T23:59:59.999Z')
+				}
+			}
+
+		} else if(dateReExact.test(args[0])) {
+			q = {
+				term : {}
+			};
+			q.term[field] = args[0];
+		} else {
+			throw new restError.BadRequest(field + ':' + args[0])
+		}
+
+	}
+
+	return q;
+
+}
+
+RestEvent.prototype.getTermSearchPart = function(field, args) {
+
+	var q = null;
+	if(args.length > 1) {
+		q = {
+			terms : {}
+		};
+		q.terms[field] = args;
+	} else {
+		q = {
+			term : {}
+		};
+		q.term[field] = args[0];
+	}
+
+	return q;
+
+}
+
+RestEvent.prototype.getTextSearchPart = function(field, args) {
+	var q = null;
+
+	if(args.length > 1) {
+		q = {
+			"or" : []
+		}
+		args.forEach( function(arg) {
+			q.or.push(this.getTextSearchPart(field, [arg]));
+		}.bind(this))
+	} else {
+		q = {
+			"query" : {
+				"field" : {}
+			}
+		}
+		q.query.field[field] = {
+			"query" : args[0],
+			"analyze_wildcard" : true,
+			"auto_generate_phrase_queries" : true
+		}
+	}
+
+	return q;
+}
+
+RestEvent.prototype.getGeoSearchPart = function(field, args) {
+	var q = null;
+
+	if(args.length > 1) {
+		q = {
+			"or" : []
+		}
+		args.forEach( function(arg) {
+			q.or.push(this.getGeoSearchPart(field, [arg]));
+		}.bind(this))
+	} else {
+		
+		if ((bbox = args[0].match(/\[([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*)\]/)) !== null) {
+			q = {"geo_bounding_box" : {}}
+			q.geo_bounding_box[field] = {
+				"top_left" : [parseFloat(bbox[2]), parseFloat(bbox[2])],
+				"bottom_right" : [parseFloat(bbox[3]), parseFloat(bbox[4])]
+			}
+		} else if ((distance = args[0].match(/\[([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
+			console.log(distance[3])
+			q = {"geo_distance" : {"distance" : distance[3]}}
+			q.geo_distance[field] = [parseFloat(distance[1]), parseFloat(distance[2])]
+		}
+		
+	}
+
+	return q;
+}
+
+RestEvent.prototype.searchFields = {
+	'agenda' : 'term',
+	'author' : 'term',
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'event.title' : 'text',
+	'event.content' : 'text',
+	'event.eventStatus' : 'term',
+	'event.when.startTime' : 'datetime',
+	'event.when.endTime' : 'datetime',
+	'event.where.city' : 'text',
+	'event.where.country' : 'text',
+	'event.where.admin_level_2' : 'text',
+	'event.where.admin_level_3' : 'text',
+	'event.where.geoPt' : 'geo'
+}
+
 RestEvent.prototype._getQueryFromRequest = function(req, callback) {
 
+	var search = this.parseSearchQuery(req);
+
+	var query = null;
+	var filter = null;
+
+	// create full text search
+	if( typeof (search.query.fulltext) !== 'undefined') {
+		query = {
+			"query_string" : {
+				"query" : search.query.fulltext,
+				"analyze_wildcard" : true,
+				"auto_generate_phrase_queries" : true
+			}
+		}
+		delete search.query.fulltext;
+	}
+
+	try {
+
+		// create filter search
+		for(field in search.query) {
+
+			if( typeof (this.searchFields[field]) === 'undefined') {
+				req.res.statusCode = statusCodes.BAD_REQUEST;
+				req.res.end(field);
+				return;
+			}
+
+			if(filter === null) {
+				filter = {
+					"and" : []
+				}
+			}
+
+			switch (this.searchFields[field]) {
+
+				case 'term':
+					filter.and.push(this.getTermSearchPart(field, search.query[field]))
+					break;
+
+				case 'text':
+					filter.and.push(this.getTextSearchPart(field, search.query[field]))
+					break;
+
+				case 'datetime':
+					filter.and.push(this.getDatetimeSearchPart(field, search.query[field]))
+					break;
+					
+				case 'geo':
+					filter.and.push(this.getGeoSearchPart(field, search.query[field]))
+					break;
+
+			}
+		}
+
+	} catch (e) {
+		callback(e);
+		return;
+	}
+
+	if(query === null) {
+		query = {
+			"match_all" : {}
+		}
+	}
+
+	if(filter === null) {
+		query = {
+			"query" : query
+		};
+	} else {
+
+		if(filter.and.length === 1) {
+			filter = filter.and[0];
+		}
+		query = {
+			"query" : {
+				"filtered" : {
+					"query" : query,
+					"filter" : filter
+				}
+			}
+		}
+	}
+
+	callback(null, query);
+
+	console.log(JSON.stringify(query))
+
+	return;
 	var qs = req.query;
 
 	var filter = null;
