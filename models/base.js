@@ -705,6 +705,8 @@ Base.count = function(query, index, type, callback) {
 		};
 	}
 	
+	log.debug('Base.count', index, type, JSON.stringify(query));
+	
 	var q = elasticSearchClient.count(index, type, query);
 	q.on('data', function(data) {
 
@@ -755,7 +757,9 @@ Base.search = function(query, index, type, attrs, clazz, callback) {
 	if( typeof (query.size) === 'undefined') {
 		query.size = 10;
 	}
-
+	
+	log.debug('Base.search', index, type, JSON.stringify(query));
+	
 	var q = elasticSearchClient.search(index, type, query);
 	q.on('data', function(data) {
 

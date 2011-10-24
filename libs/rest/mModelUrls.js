@@ -105,30 +105,11 @@ exports.list = function(req, res) {
 			match_all : {}
 		}
 	};
-	
+
 	this._search(req, res, this._setPermsOnQuery(req, query));
 }
 
-exports.search = function(req, res) {
 
-	this._getQueryFromRequest(req, function(err, query) {
-
-		if(err !== null) {
-
-			if( err instanceof restError.BadRequest) {
-				res.statusCode = statusCodes.BAD_REQUEST;
-				res.end(err.message)
-			} else {
-				res.statusCode = statusCodes.INTERNAL_ERROR;
-				res.end('Internal error')
-			}
-
-		} else {
-			this._search(req, res, this._setPermsOnQuery(req, query));
-			//this._search(req, res, query);
-		}
-	}.bind(this));
-}
 /**
  * restrict query with permissions
  * return a new query object
@@ -424,30 +405,57 @@ exports.del = function(req, res) {
 
 exports._search = function(req, res, query) {
 
-	var qs = req.query;
+	var sortString = null;
+	var from = 0;
+	var size = 10;
 
-	if( typeof (qs.limit) !== 'undefined') {
-		query.size = qs.limit;
+	if(req.method === 'POST') {
+		rawData = req.body;
 	} else {
-		query.size = 10;
+		rawData = req.query;
 	}
 
-	if( typeof (qs.skip) !== 'undefined') {
-		query.from = qs.skip;
-	} else {
-		query.from = 0;
+	if( typeof (rawData.sort) !== 'undefined') {
+		sortString = rawData.sort.trim();		
+		query.sort = [];
+		sortString.split(/[ ]+/).forEach(function(sort) {
+			var s = {};
+			if(sort.substr(0, 1) == '-') {
+				s[sort.substr(1)] = 'desc';
+
+			} else {
+
+				if(sort.substr(0, 1) == '+') {
+					s[sort.substr(1)] = 'asc';
+				} else {
+					s[sort] = 'asc';
+				}
+			}
+
+			query.sort.push(s)
+		});
+
+		query.sort.push('_score');
+
 	}
 
-	if( typeof (qs['sort']) !== 'undefined') {
-		query['sort'] = [{}];
-		query['sort'][0][qs['sort']] = {};
+	if( typeof (rawData.from) !== 'undefined') {
+		from = parseInt(rawData.from);
 	}
 
+	if( typeof (rawData.size) !== 'undefined') {
+		size = parseInt(rawData.size);
+	}
+
+	query.size = size;
+	query.from = from;
+		
 	var attrs = this._clazz.publicAttributes;
 	if(req.user.isStaff || req.user.isSuperuser) {
 		attrs = this._clazz.staffAttributes;
 	}
-
+	
+	
 	this._clazz.search(query, attrs, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {

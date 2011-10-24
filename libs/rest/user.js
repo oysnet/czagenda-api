@@ -7,7 +7,7 @@ var errors = require('../../models/errors.js');
 var statusCode = require('../statusCodes.js');
 var settings = require('../../settings.js');
 var async = require('async');
-
+var mModelSearch = require('./mModelSearch');
 
 var RestUser = exports.RestUser = function (server) {
 	
@@ -17,10 +17,35 @@ var RestUser = exports.RestUser = function (server) {
 	this._urls.get[this._urlPrefix + '/:id/groups'] = {fn :  this.memberships};
 	this._urls.post[this._urlPrefix + '/:id/_checkpassword'] = {fn :  this.checkpassword};
 	
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+	
 	this._initServer();
 }
 util.inherits(RestUser, RestOAuthModel);
 
+for(k in mModelSearch) {
+	RestUser.prototype[k] = mModelSearch[k];
+}
+
+RestUser.prototype.searchFields = {	
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'lastLogin' : 'datetime',
+	'dateJoined' : 'datetime',
+	'login' : 'text',
+	'lastName' : 'text',
+	'firstName' : 'text',
+	'isActive' : 'bool',
+	'isStaff' : 'bool',
+	'isSuperuser' : 'bool'
+	
+}
 
 RestUser.prototype.memberships = function(req, res) {
 	
