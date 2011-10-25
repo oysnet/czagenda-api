@@ -20,7 +20,6 @@ exports.search = function(req, res) {
 
 		} else {
 			this._search(req, res, this._setPermsOnQuery(req, query));
-			//this._search(req, res, query);
 		}
 	}.bind(this));
 }
@@ -263,13 +262,7 @@ exports._getQueryFromRequest = function(req, callback) {
 
 		// create filter search
 		for(field in searchQuery) {
-			/*
-			if( typeof (this.searchFields[field]) === 'undefined') {
-				req.res.statusCode = statusCodes.BAD_REQUEST;
-				req.res.end(field);
-				return;
-			}
-			*/
+			
 			if(filter === null) {
 				filter = {
 					"and" : []
