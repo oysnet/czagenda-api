@@ -204,7 +204,7 @@ exports.getTextSearchPart = function(field, args) {
 	return q;
 }
 
-exports.getGeoSearchPart = function(field, args) {
+exports.getGeoSearchPart = function(field, args, req) {
 	var q = null;
 
 	if(args.length > 1) {
@@ -215,8 +215,8 @@ exports.getGeoSearchPart = function(field, args) {
 			q.or.push(this.getGeoSearchPart(field, [arg]));
 		}.bind(this))
 	} else {
-
-		if(( bbox = args[0].match(/\[([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*)\]/)) !== null) {
+		
+		if(( bbox = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*)\]/)) !== null) {
 			q = {
 				"geo_bounding_box" : {}
 			}
@@ -224,14 +224,18 @@ exports.getGeoSearchPart = function(field, args) {
 				"top_left" : [parseFloat(bbox[2]), parseFloat(bbox[2])],
 				"bottom_right" : [parseFloat(bbox[3]), parseFloat(bbox[4])]
 			}
-		} else if(( distance = args[0].match(/\[([0-9]{1,2}[\.0-9]*) ([0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
-			console.log(distance[3])
+		} else if(( distance = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
+			
+			req.geoDistanceQuery = {field : field, point:[parseFloat(distance[1]), parseFloat(distance[2])]};
+			
 			q = {
 				"geo_distance" : {
 					"distance" : distance[3]
 				}
 			}
-			q.geo_distance[field] = [parseFloat(distance[1]), parseFloat(distance[2])]
+			q.geo_distance[field] = req.geoDistanceQuery.point
+		} else {
+			throw new restError.BadRequest(field + ':' + args[0])
 		}
 
 	}
@@ -302,7 +306,7 @@ exports._getQueryFromRequest = function(req, callback) {
 					break;
 
 				case 'geo':
-					filter.and.push(this.getGeoSearchPart(field, searchQuery[field]))
+					filter.and.push(this.getGeoSearchPart(field, searchQuery[field], req))
 					break;
 					
 				case 'boolean':

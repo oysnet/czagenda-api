@@ -108,8 +108,6 @@ exports.list = function(req, res) {
 
 	this._search(req, res, this._setPermsOnQuery(req, query));
 }
-
-
 /**
  * restrict query with permissions
  * return a new query object
@@ -416,27 +414,62 @@ exports._search = function(req, res, query) {
 	}
 
 	if( typeof (rawData.sort) !== 'undefined') {
-		sortString = rawData.sort.trim();		
+		sortString = rawData.sort.trim();
 		query.sort = [];
+		
+		var wellDone = true;
+		
 		sortString.split(/[ ]+/).forEach(function(sort) {
 			var s = {};
-			if(sort.substr(0, 1) == '-') {
-				s[sort.substr(1)] = 'desc';
+			
+			// temporary limitation
+			if(sort.match(/^[\+\-]?(distance|createDate)$/) === null) {
+				res.statusCode = statusCodes.BAD_REQUEST;
+				res.end("Sort by " + sort + " is not allowed");
+				wellDone = false;
+				return;
+			}
+			
+			if(sort.match(/distance/) !== null) {
+				if( typeof (req.geoDistanceQuery) === 'undefined') {
+					res.statusCode = statusCodes.BAD_REQUEST;
+					res.end("Sort by distance is only availlable when a distance search is performed");
+					wellDone = false;
+					return;
+				}
+
+				s._geo_distance = {
+					"order" : sort.substr(0, 1) == '-' ? 'desc' : 'asc', 
+					"unit" : "km"
+				}
+				
+				s._geo_distance[req.geoDistanceQuery.field] = req.geoDistanceQuery.point;
+				
 
 			} else {
 
-				if(sort.substr(0, 1) == '+') {
-					s[sort.substr(1)] = 'asc';
+				if(sort.substr(0, 1) == '-') {
+					s[sort.substr(1)] = 'desc';
+
 				} else {
-					s[sort] = 'asc';
+
+					if(sort.substr(0, 1) == '+') {
+						s[sort.substr(1)] = 'asc';
+					} else {
+						s[sort] = 'asc';
+					}
 				}
 			}
-
-			query.sort.push(s)
+			query.sort.push(s);
 		});
-
-		query.sort.push('_score');
-
+		//query.sort.push('_score');
+		
+		if (wellDone === false) {
+			return;
+		}
+		
+	} else {
+		query.sort = [{"createDate" : {"order" : "desc"}}];
 	}
 
 	if( typeof (rawData.from) !== 'undefined') {
@@ -449,13 +482,12 @@ exports._search = function(req, res, query) {
 
 	query.size = size;
 	query.from = from;
-		
+
 	var attrs = this._clazz.publicAttributes;
 	if(req.user.isStaff || req.user.isSuperuser) {
 		attrs = this._clazz.staffAttributes;
 	}
-	
-	
+
 	this._clazz.search(query, attrs, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {
