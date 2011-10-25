@@ -7,9 +7,9 @@ var crypto = require('crypto'),
 
 var specialEscape = function (str) {
 	
-	return encodeURIComponent(str).replace('*', "%252A");
+	return encodeURIComponent(str).replace(/\*/g, "%252A").replace(/\(/g, "%2528").replace(/\)/g, "%2529");
 	
-}
+} 
 
 exports.OAuthError = function (message) {
 	this.name = 'OAuthError';
@@ -169,7 +169,7 @@ exports.verifySignature = function (lookup, redisClient) {
 			var baseStringURI = oauthBaseStringURI(req);
 			var requestParameterString = oauthRequestParameterString(req);
 			var baseString = req.method.toUpperCase() + "&" + qs.escape(baseStringURI) + "&" + specialEscape(requestParameterString);
-			
+
 			// Construct key from returned tokens		
 			var key = qs.escape(clientSecret ? clientSecret : '') + '&' + qs.escape(tokenSecret ? tokenSecret : '');
 	
