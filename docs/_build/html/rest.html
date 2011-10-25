@@ -127,15 +127,6 @@
 <li>rows contains the documents, see data structure for more explanations.</li>
 <li>offset is the amount of documents that are skipped when request is paginated.</li>
 </ul>
-<p>1.1. Pagination</p>
-<blockquote>
-<div><p>Pagination is implemented by passing extra parameters in query string. These parameters are from and size.</p>
-<p>from define the amount of document to skip, size define the amount of document to fetch.</p>
-<p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?from=10&amp;size=5</pre>
-</div>
-<p>This query will return documents from 10th to 15th</p>
-</div></blockquote>
 </div></blockquote>
 </li>
 <li><p class="first">Get document&#8217;s count</p>
@@ -444,7 +435,7 @@
 <ol class="arabic">
 <li><p class="first">Create</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">event</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                &quot;event&quot; : {</span>
 <span class="go">                        &quot;title&quot; : &quot;My first event&quot;,</span>
 <span class="go">                        &quot;where&quot; : [{&quot;valueString&quot; : &quot;Somewhere on earth planet !&quot;}],</span>
@@ -685,15 +676,15 @@
 <li><p class="first">In bounding box searches</p>
 <blockquote>
 <div><p>Use this query to search documents that take place in a bounding box</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">=</span><span class="n">geoField</span><span class="p">:[</span><span class="n">TOPLEFT_LAT</span> <span class="n">TOPLEFT_LON</span> <span class="n">BOTTOM_RIGHT_LAT</span> <span class="n">BOTTOM_RIGHT_LON</span><span class="p">]</span>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">=</span><span class="n">geoField</span><span class="p">:[</span><span class="n">TOPLEFT_LON</span> <span class="n">TOPLEFT_LAT</span> <span class="n">BOTTOM_RIGHT_LON</span> <span class="n">BOTTOM_RIGHT_LAT</span><span class="p">]</span>
 </pre></div>
 </div>
 </div></blockquote>
 </li>
 <li><p class="first">Distance searches</p>
 <blockquote>
-<div><p>Use this query to search document that take place at 30 km from the point 43.3017, -0.3686</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">=</span><span class="n">geoField</span><span class="p">:[</span><span class="mf">43.3017</span> <span class="o">-</span><span class="mf">0.3686</span> <span class="n">DISTANCE</span> <span class="mi">30</span><span class="n">km</span><span class="p">]</span>
+<div><p>Use this query to search document that take place at 30 km from the point -0.3686 (lon), 43.3017 (lat)</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">=</span><span class="n">geoField</span><span class="p">:[</span><span class="o">-</span><span class="mf">0.3686</span> <span class="mf">43.3017</span> <span class="n">DISTANCE</span> <span class="mi">30</span><span class="n">km</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>Units supported for distance value are kilometers (km), or miles (mi)</p>
@@ -714,6 +705,26 @@
 <h3>Special characters<a class="headerlink" href="#special-characters" title="Permalink to this headline">¶</a></h3>
 <p>The current list special characters are: + - &amp;&amp; || ! ( ) { } [ ] ^ &#8221; ~ * ? : </p>
 <p>To escape these character use the before the character.</p>
+</div>
+</div>
+<div class="section" id="pagination">
+<h2>Pagination<a class="headerlink" href="#pagination" title="Permalink to this headline">¶</a></h2>
+<p>Pagination is done by passing extra parameters in query string or body according to http method. These parameters are from and size.</p>
+<p>from define the amount of documents to skip, size define the amount of documents to fetch.</p>
+<p>For example</p>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?from=10&amp;size=5</pre>
+</div>
+<p>This query will return documents from 10th to 15th</p>
+<p>Defaults are size=10 and from=0.</p>
+</div>
+<div class="section" id="sorting">
+<h2>Sorting<a class="headerlink" href="#sorting" title="Permalink to this headline">¶</a></h2>
+<p>Sort is done by passing a sort parameter in query string or body according to http method.</p>
+<p>Allowed sort are by createDate and distance if current search contains a distance query. By default sort is ascendant. To reverse it prefix the sort field by &#8220;-&#8221;.</p>
+<p>For example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="o">=-</span><span class="n">createDate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="o">=</span><span class="n">createDate</span> <span class="n">distance</span>
+</pre></div>
 </div>
 </div>
 </div>
@@ -757,6 +768,8 @@
 <li><a class="reference internal" href="#special-characters">Special characters</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#pagination">Pagination</a></li>
+<li><a class="reference internal" href="#sorting">Sorting</a></li>
 </ul>
 </li>
 </ul>

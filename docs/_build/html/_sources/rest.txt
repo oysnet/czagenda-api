@@ -82,18 +82,6 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	* rows contains the documents, see data structure for more explanations.
 	* offset is the amount of documents that are skipped when request is paginated.
 	
-	1.1. Pagination
-	
-		Pagination is implemented by passing extra parameters in query string. These parameters are from and size. 
-		
-		from define the amount of document to skip, size define the amount of document to fetch.
-		
-		For example
-		
-		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?from=10&size=5
-		
-		This query will return documents from 10th to 15th 
-		
 		
 2. Get document's count
 
@@ -399,7 +387,7 @@ Event base uri is /event
 	
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/event  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/event  -d '{
 			"event" : {
 				"title" : "My first event",
 				"where" : [{"valueString" : "Somewhere on earth planet !"}],
@@ -626,13 +614,13 @@ Geographic searches
 
 	Use this query to search documents that take place in a bounding box
 	
-	>>> q=geoField:[TOPLEFT_LAT TOPLEFT_LON BOTTOM_RIGHT_LAT BOTTOM_RIGHT_LON]
+	>>> q=geoField:[TOPLEFT_LON TOPLEFT_LAT BOTTOM_RIGHT_LON BOTTOM_RIGHT_LAT]
 	
 2. Distance searches
 
-	Use this query to search document that take place at 30 km from the point 43.3017, -0.3686
+	Use this query to search document that take place at 30 km from the point -0.3686 (lon), 43.3017 (lat)
 	
-	>>> q=geoField:[43.3017 -0.3686 DISTANCE 30km]
+	>>> q=geoField:[-0.3686 43.3017 DISTANCE 30km]
 	
 	Units supported for distance value are kilometers (km), or miles (mi)
 	
@@ -649,3 +637,32 @@ Special characters
 The current list special characters are: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
 
 To escape these character use the \ before the character.
+
+**********
+Pagination
+**********
+	
+Pagination is done by passing extra parameters in query string or body according to http method. These parameters are from and size. 
+
+from define the amount of documents to skip, size define the amount of documents to fetch.
+
+For example
+
+>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?from=10&size=5
+
+This query will return documents from 10th to 15th 
+
+Defaults are size=10 and from=0.
+
+*******
+Sorting
+*******
+
+Sort is done by passing a sort parameter in query string or body according to http method.
+
+Allowed sort are by createDate and distance if current search contains a distance query. By default sort is ascendant. To reverse it prefix the sort field by "-".
+
+For example:
+
+>>> sort=-createDate
+>>> sort=createDate distance
