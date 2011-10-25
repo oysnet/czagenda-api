@@ -263,13 +263,13 @@ exports._getQueryFromRequest = function(req, callback) {
 
 		// create filter search
 		for(field in searchQuery) {
-
+			/*
 			if( typeof (this.searchFields[field]) === 'undefined') {
 				req.res.statusCode = statusCodes.BAD_REQUEST;
 				req.res.end(field);
 				return;
 			}
-
+			*/
 			if(filter === null) {
 				filter = {
 					"and" : []
@@ -292,6 +292,10 @@ exports._getQueryFromRequest = function(req, callback) {
 
 				case 'geo':
 					filter.and.push(this.getGeoSearchPart(field, searchQuery[field]))
+					break;
+					
+				default:
+					filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
 					break;
 
 			}
