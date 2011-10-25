@@ -78,33 +78,22 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	 	   }]
 	    }
 	
-	* total_row is the document count of the specified type in the database, not in the response.
+	* total_rows is the document count of the specified type in the database, not in the response.
 	* rows contains the documents, see data structure for more explanations.
 	* offset is the amount of documents that are skipped when request is paginated.
 	
 	1.1. Pagination
 	
-		Pagination is implemented by passing extra parameters in query string. These parameters are skip and limit. 
+		Pagination is implemented by passing extra parameters in query string. These parameters are from and size. 
+		
+		from define the amount of document to skip, size define the amount of document to fetch.
 		
 		For example
 		
-		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?skip=10&limit=5
+		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?from=10&size=5
 		
 		This query will return documents from 10th to 15th 
 		
-	1.2. Fulltext search
-	
-		Fulltext search is done by passing a fulltext parameter.
-		
-		For example
-		
-		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?fulltext=<SEARCH_STRING>
-		
-		The search string can contain boolean operators such as AND and OR
-		
-		For example
-		
-		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?fulltext="search_string OR another_search_string"
 		
 2. Get a document
 	

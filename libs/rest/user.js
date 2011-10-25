@@ -41,9 +41,9 @@ RestUser.prototype.searchFields = {
 	'login' : 'text',
 	'lastName' : 'text',
 	'firstName' : 'text',
-	'isActive' : 'bool',
-	'isStaff' : 'bool',
-	'isSuperuser' : 'bool'
+	'isActive' : 'boolean',
+	'isStaff' : 'boolean',
+	'isSuperuser' : 'boolean'
 	
 }
 

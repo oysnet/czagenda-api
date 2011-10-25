@@ -239,6 +239,24 @@ exports.getGeoSearchPart = function(field, args) {
 	return q;
 }
 
+
+exports.getBooleanSearchPart = function(field, args) {
+	var q = null;
+	if(args.length > 1) {
+		q = {
+			terms : {}
+		};
+		q.terms[field] = args;
+	} else {
+		q = {
+			term : {}
+		};
+		q.term[field] = args[0].toLowerCase() === 'true' ? true : false;
+	}
+
+	return q;
+}
+
 exports._getQueryFromRequest = function(req, callback) {
 
 	var searchQuery = this.getSearchQuery(req);
@@ -285,6 +303,10 @@ exports._getQueryFromRequest = function(req, callback) {
 
 				case 'geo':
 					filter.and.push(this.getGeoSearchPart(field, searchQuery[field]))
+					break;
+					
+				case 'boolean':
+					filter.and.push(this.getBooleanSearchPart(field, searchQuery[field]))
 					break;
 					
 				default:

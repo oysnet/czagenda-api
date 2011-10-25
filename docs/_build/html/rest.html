@@ -123,28 +123,18 @@
 </pre></div>
 </div>
 <ul class="simple">
-<li>total_row is the document count of the specified type in the database, not in the response.</li>
+<li>total_rows is the document count of the specified type in the database, not in the response.</li>
 <li>rows contains the documents, see data structure for more explanations.</li>
 <li>offset is the amount of documents that are skipped when request is paginated.</li>
 </ul>
 <p>1.1. Pagination</p>
 <blockquote>
-<div><p>Pagination is implemented by passing extra parameters in query string. These parameters are skip and limit.</p>
+<div><p>Pagination is implemented by passing extra parameters in query string. These parameters are from and size.</p>
+<p>from define the amount of document to skip, size define the amount of document to fetch.</p>
 <p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?skip=10&amp;limit=5</pre>
+<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?from=10&amp;size=5</pre>
 </div>
 <p>This query will return documents from 10th to 15th</p>
-</div></blockquote>
-<p>1.2. Fulltext search</p>
-<blockquote>
-<div><p>Fulltext search is done by passing a fulltext parameter.</p>
-<p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?fulltext=&lt;SEARCH_STRING&gt;</pre>
-</div>
-<p>The search string can contain boolean operators such as AND and OR</p>
-<p>For example</p>
-<div class="highlight-python"><pre>&gt;&gt;&gt; curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/&lt;DOCUMENT_TYPE&gt;/?fulltext="search_string OR another_search_string"</pre>
-</div>
 </div></blockquote>
 </div></blockquote>
 </li>
