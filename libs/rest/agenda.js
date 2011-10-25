@@ -4,6 +4,7 @@ var log = require('czagenda-log').from(__filename);
 var models = require('../../models');
 var async = require('async');
 var statusCodes = require('../statusCodes');
+var mModelSearch = require('./mModelSearch');
 
 function RestAgenda(server) {
 
@@ -15,11 +16,33 @@ function RestAgenda(server) {
 	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {
 		fn : this.permsGroupWrite
 	};
+	
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
 
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+	
 	this._initServer();
 }
 
 util.inherits(RestAgenda, RestOAuthModel);
+
+
+for(k in mModelSearch) {
+	RestAgenda.prototype[k] = mModelSearch[k];
+}
+
+RestAgenda.prototype.searchFields = {
+	'author' : 'term',
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'title' : 'text',
+	'description' : 'text'
+}
+
 
 RestAgenda.prototype._populateObject = function(obj, data, req, res) {
 

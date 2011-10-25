@@ -4,6 +4,7 @@ var log = require('czagenda-log').from(__filename);
 var models = require('../../models');
 var async = require('async');
 var statusCodes = require('../statusCodes');
+var mModelSearch = require('./mModelSearch');
 
 var Membership = require('../../models/membership.js').Membership;
 var async = require('async');
@@ -16,12 +17,29 @@ var RestGroup = exports.RestGroup = function (server) {
 	this._urls.get[this._urlPrefix + '/:id/perms/wu'] = {fn :  this.permsUserWrite};
 	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {fn :  this.permsGroupWrite};
 	
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
+
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search
+	};
 	
 	this._initServer();
 }
 util.inherits(RestGroup, RestOAuthModel);
 
 
+for(k in mModelSearch) {
+	RestGroup.prototype[k] = mModelSearch[k];
+}
+
+RestGroup.prototype.searchFields = {
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'title' : 'text',
+	'description' : 'text'
+}
 
 RestGroup.prototype._preCreate = function(obj, req, callback) {
 	
