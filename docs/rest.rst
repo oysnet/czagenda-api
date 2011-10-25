@@ -95,7 +95,16 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 		This query will return documents from 10th to 15th 
 		
 		
-2. Get a document
+2. Get document's count
+
+	To get only the amount of documents, use
+	
+	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/_count
+	
+	Methods allowed are GET and POST. Search query syntax can also be applied on these urls.
+	
+		
+3. Get a document
 	
 	It's done by invoking the  GET HTTP method on an URI like /api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
 	
@@ -109,7 +118,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	>>> { Document data... }
 
-3. Create a document
+4. Create a document
 
 	It's done by invoking the POST HTTP method on an URI like /api/<DOCUMENT_TYPE>/
 	
@@ -126,7 +135,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	The server returns the newly created document with some system attributes such as _id or _rev. Systems attributes are described HERE
 	
 
-4. Update a document
+5. Update a document
 
 	It's done by invoking the PUT HTTP method on an URI like /api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
 	
@@ -143,7 +152,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	The server returns the updated document.
 	
 	
-5. Delete a document
+6. Delete a document
 
 	It's done by invoking the DEL HTTP method on an URI like /api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
 	
@@ -155,6 +164,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	The server returns nothing
 		
+
 	
 *************************************
 Specifics of the API by document type
@@ -389,7 +399,7 @@ Event base uri is /event
 	
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/event/?pretty=true  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/event  -d '{
 			"event" : {
 				"title" : "My first event",
 				"where" : [{"valueString" : "Somewhere on earth planet !"}],
@@ -419,27 +429,7 @@ Event base uri is /event
 		}
 	
 	Note that author was automatically added according to your oauth domain
-	
-2. Search
 
-	Geographic and date time searchs are implemented.
-
-	2.1. Geographic search
-	
-		Geographic search is a search that limits events contained in a bounding box.
-	
-		For example
-		
-		>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/event/?bbox=<TOP_LEFT_LATITUDE>,<TOP_LEFT_LONGITUDE>,<RIGHT_BOTTOM_LATITUDE>,<RIGHT_BOTTOM_LONGITUDE>
-		
-	2.2. Date time search
-		
-		Two parameters are availlable: start_time and end_time (optionnal)
-				
-		Lorsque seul le paramètre start_time est fourni, les évènements retournés sont ceux pour lesquels la date fournie est comprise entre les dates de début et de fin de l'évènement.
-		
-		Lorsque les deux paramètres start_time et end_time sont fournies, les évènements retournés sont ceux pour lesquels l'intersection des deux intervales de date n'est pas nul. 
-		
 		
 Permission
 ^^^^^^^^^^
@@ -469,4 +459,193 @@ All documents types don't have all permissions types.
 		To create a group permission
 
 
+
+*************************************
+Searches
+*************************************
+
+Documents searches are restricted to types event, agenda, group and user.
+
+Searches urls are:
+	* http://api-master.czagenda.oxys.net/api/event/_search
+	* http://api-master.czagenda.oxys.net/api/agenda/_search
+	* http://api-master.czagenda.oxys.net/api/group/_search
+	* http://api-master.czagenda.oxys.net/api/user/_search
+	
+Methods allowed are POST and GET.
+
+Search query is contained in the q attribute:
+
+	>>> q=fulltext search field1:... field2:...>
+	
+Field syntax
+^^^^^^^^^^^^
+
+	To query a field that is not on top of the field hierarchy, use a single point to chain fields. For example, a document such as below
+	
+	>>> {
+		"field1" : {"field2" : "value"}
+		}
 		
+	can be queried with
+	
+	>>> q=field1.field2:value
+
+Text searches
+^^^^^^^^^^^^^
+
+This kind of search is applied on fulltext searches and text field searches. So searches examples below can be rewrite as:
+
+	>>> q=field:<search sample>
+
+1. Phrase searches
+	
+	A Phrase is a group of words surrounded by double quotes such as "hello dolly".
+	
+	>>> q="event title"
+	
+
+2. Wildcards searches
+
+	Single and multiple characters wildcard search are supported. 
+	
+	For single character wildcard use : "?"
+	
+	>>> q=some?hing
+		
+	For multiple characters wildcard use : "*"
+	
+	>>> q=some*ng
+		
+	Wildcards can be placed at the beginning, end or in the middle of the search string.
+	
+	Wildcards are not useable with phrase search.
+	
+3. Fuzzy searches
+	
+	Fuzzy searches are based on the Levenshtein Distance. To do a fuzzy search use the tilde, "~", symbol at the end of a Single word Term.
+	
+	>>> q= somethink~
+	
+	This search will find terms like something.
+	
+	Fuzzy searches are not useable inside a phrase search.
+	
+4. Boolean operators
+
+	Boolean operators allow terms to be combined through logic operators. Operators supported are AND, "+", OR, NOT and "-" (Boolean operators must be ALL CAPS).
+	
+	You can use boolean operator to combine term and phrase query.
+	
+	The OR operator is the default conjuncton operator.
+	
+	>>> q=event title
+	
+	is exactly the same as
+	
+	>>> q=event OR title
+	
+	The plus operator define a term as required.
+	
+	>>> q=+event title
+	
+	means that documents MUST contain event and MAY contain title.
+	
+	The NOT operator excludes documents that contain the term after NOT.
+	
+	To search document that contain "first stage" but not "second stage" use the query:
+	
+	>>> q="first stage" NOT "second stage"
+	
+	The NOT operator cannot be used with just one term. For example, the following search will return no results:
+	
+	>>> q=NOT "second stage"
+	
+	The "-" or prohibit operator excludes documents that contain the term after the "-" symbol.
+	
+	>>> q=-"second stage"
+	
+5. Grouping
+	
+	Use parentheses to group clauses to form sub queries. This can be very useful if you want to control the boolean logic for a query.
+	
+	>>> q=(second OR first) AND stage
+	
+	
+Date searches
+^^^^^^^^^^^^^
+	
+	Date are formated as:
+	
+	>>> YYYY-MM-DD
+	
+	Datetime are formated as:
+	
+	>>> YYYY-MM-DDThh:mm:ssZ
+	
+1. Exact date searches
+
+	>>> q=dateField:2011-12-31
+	>>> q=dateField:2012-01-01
+	
+2. Date range searches
+
+	Date range syntax is [from TO to]. The range operator "TO" must be CAPS.
+	
+	From and to can be a date, datetime, NOW or *.
+	
+	To search for documents that were created last year use this query:
+	
+	>>> q=createDate:[2010-01-01 TO 2010-12-31]
+	
+	To search for documents that were created this year use this query:
+	
+	>>> q=createDate:[2011-01-01 TO NOW]
+	
+	NOW will be replaced  by current date
+	
+	To search for documents that were created before now use this query:
+	
+	>>> q=createDate:[* TO NOW]
+	
+	
+Boolean searches
+^^^^^^^^^^^^^^^^
+
+	Boolean values are TRUE or FALSE. They must be CAPS.
+	
+	>>> q="isActive:TRUE"
+	
+
+Geographic searches
+^^^^^^^^^^^^^^^^^^^
+
+	In bounding box and distance searches are supported.
+	
+1. In bounding box searches
+
+	Use this query to search documents that take place in a bounding box
+	
+	>>> q=geoField:[TOPLEFT_LAT TOPLEFT_LON BOTTOM_RIGHT_LAT BOTTOM_RIGHT_LON]
+	
+2. Distance searches
+
+	Use this query to search document that take place at 30 km from the point 43.3017, -0.3686
+	
+	>>> q=geoField:[43.3017 -0.3686 DISTANCE 30km]
+	
+	Units supported for distance value are kilometers (km), or miles (mi)
+	
+Multiple searches for a same field
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+	To apply multiple search query on a same field, just define the query more than one
+	
+	>>> q=dateField:2011-12-03 dateField:2011-12-05
+	
+Special characters
+^^^^^^^^^^^^^^^^^^
+
+The current list special characters are: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+
+To escape these character use the \ before the character.
