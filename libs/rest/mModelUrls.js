@@ -401,9 +401,61 @@ exports.del = function(req, res) {
 	}.bind(this))
 }
 
+exports._getSort =  function(sort, req) {
+
+	var formatedSort = [];
+
+
+	sort.forEach(function(sort) {
+		var s = {};
+		
+		var way = sort.substr(0, 1), sortField = null;
+		if(way == '-' || way == '+') {
+			sortField = sort.substr(1);
+		} else {
+			way = '+';
+			sortField = sort;
+		}
+		
+		if (typeof(this.sortFields[sortField]) === 'undefined') {
+			throw new restError.BadRequest("Sort by " + sortField + " is not allowed");
+		}
+		
+		sortField = this.sortFields[sortField];
+		
+		if(sortField == 'distance') {
+			if( typeof (req.geoDistanceQuery) === 'undefined') {
+				throw new restError.BadRequest("Sort by distance is only availlable when a distance search is performed");
+			}
+
+			s._geo_distance = {
+				"order" : sort.substr(0, 1) == '-' ? 'desc' : 'asc',
+				"unit" : "km"
+			}
+
+			s._geo_distance[req.geoDistanceQuery.field] = req.geoDistanceQuery.point;
+
+		} else {
+			
+			s[sortField] = {"order" : way == '+' ? "asc" : "desc"}
+			
+		}
+		formatedSort.push(s);
+	}.bind(this));
+	return formatedSort;
+
+}
+
+exports._getDefaultSort = function() {
+	return [{
+		"createDate" : {
+			"order" : "desc"
+		}
+	}]
+}
+
 exports._search = function(req, res, query) {
 
-	var sortString = null;
 	var from = 0;
 	var size = 10;
 
@@ -413,63 +465,27 @@ exports._search = function(req, res, query) {
 		rawData = req.query;
 	}
 
-	if( typeof (rawData.sort) !== 'undefined') {
-		sortString = rawData.sort.trim();
-		query.sort = [];
-		
-		var wellDone = true;
-		
-		sortString.split(/[ ]+/).forEach(function(sort) {
-			var s = {};
-			
-			// temporary limitation
-			if(sort.match(/^[\+\-]?(distance|createDate)$/) === null) {
-				res.statusCode = statusCodes.BAD_REQUEST;
-				res.end("Sort by " + sort + " is not allowed");
-				wellDone = false;
-				return;
-			}
-			
-			if(sort.match(/distance/) !== null) {
-				if( typeof (req.geoDistanceQuery) === 'undefined') {
-					res.statusCode = statusCodes.BAD_REQUEST;
-					res.end("Sort by distance is only availlable when a distance search is performed");
-					wellDone = false;
-					return;
-				}
-
-				s._geo_distance = {
-					"order" : sort.substr(0, 1) == '-' ? 'desc' : 'asc', 
-					"unit" : "km"
-				}
-				
-				s._geo_distance[req.geoDistanceQuery.field] = req.geoDistanceQuery.point;
-				
-
-			} else {
-
-				if(sort.substr(0, 1) == '-') {
-					s[sort.substr(1)] = 'desc';
-
-				} else {
-
-					if(sort.substr(0, 1) == '+') {
-						s[sort.substr(1)] = 'asc';
-					} else {
-						s[sort] = 'asc';
-					}
-				}
-			}
-			query.sort.push(s);
-		});
-		//query.sort.push('_score');
-		
-		if (wellDone === false) {
-			return;
+	try {
+		if( typeof (rawData.sort) !== 'undefined') {
+			query.sort = this._getSort(rawData.sort.trim().split(/[ ]+/), req);
+		} else {
+			query.sort = this._getDefaultSort();
 		}
+
+	} catch (e) {
 		
-	} else {
-		query.sort = [{"createDate" : {"order" : "desc"}}];
+		console.log(e);
+		
+		if( e instanceof restError.BadRequest) {
+			res.statusCode = statusCodes.BAD_REQUEST;
+			res.end(e.message);
+		} else {
+			res.statusCode = statusCodes.INTERNAL_ERROR;
+			res.end('Internal error');
+		}
+
+		return;
+
 	}
 
 	if( typeof (rawData.from) !== 'undefined') {

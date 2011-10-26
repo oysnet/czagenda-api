@@ -44,6 +44,12 @@ RestAgenda.prototype.searchFields = {
 }
 
 
+RestAgenda.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'title' : 'title.untouched'	
+}
+
 RestAgenda.prototype._populateObject = function(obj, data, req, res) {
 
 	if(obj.author === null) {

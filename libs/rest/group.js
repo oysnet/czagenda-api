@@ -41,6 +41,12 @@ RestGroup.prototype.searchFields = {
 	'description' : 'text'
 }
 
+RestGroup.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'title' : 'title.untouched'	
+}
+
 RestGroup.prototype._preCreate = function(obj, req, callback) {
 	
 	// add write permission to obj

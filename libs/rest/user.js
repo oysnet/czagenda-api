@@ -47,6 +47,17 @@ RestUser.prototype.searchFields = {
 	
 }
 
+
+RestUser.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'login' : 'login.untouched',
+	'firstName' : 'firstName.untouched',
+	'lastName' : 'lastName.untouched',
+	'lastLogin' : 'lastLogin',
+	'joinedDate' : 'joinedDate'
+}
+
 RestUser.prototype.memberships = function(req, res) {
 	
 	var q = {

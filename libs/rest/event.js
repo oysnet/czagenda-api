@@ -41,7 +41,6 @@ var RestEvent = exports.RestEvent = function(server) {
 }
 util.inherits(RestEvent, RestOAuthModel);
 
-
 for(k in mModelSearch) {
 	RestEvent.prototype[k] = mModelSearch[k];
 }
@@ -61,6 +60,29 @@ RestEvent.prototype.searchFields = {
 	'event.where.admin_level_2' : 'text',
 	'event.where.admin_level_3' : 'text',
 	'event.where.geoPt' : 'geo'
+}
+
+RestEvent.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'event.title' : 'event.title.untouched',
+	'event.when.startTime' : 'datetime',
+	'event.when.endTime' : 'datetime',
+	'distance' : 'distance'
+
+}
+
+RestEvent.prototype._getDefaultSort = function() {
+	return [{
+		"event.when.startTime" : {
+			"order" : "desc",
+			"missing" : "_last"
+		}
+	}, {
+		"createDate" : {
+			"order" : "desc"
+		}
+	}]
 }
 
 
@@ -344,4 +366,3 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 	return query;
 
 }
-
