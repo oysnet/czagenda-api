@@ -658,11 +658,54 @@ Defaults are size=10 and from=0.
 Sorting
 *******
 
-Sort is done by passing a sort parameter in query string or body according to http method.
+Sort is done by passing a "sort" parameter in query string or body according to http method.
 
-Allowed sort are by createDate and distance if current search contains a distance query. By default sort is ascendant. To reverse it prefix the sort field by "-".
+Sort fields depends on document types.
 
-For example:
+For event:
 
->>> sort=-createDate
->>> sort=createDate distance
+	* createDate
+	* updateDate
+	* event.title
+	* event.when.startTime
+	* event.when.endTime
+	* distance (only if a distance query was done)
+	
+For agenda and group:
+	* createDate
+	* updateDate
+	* title
+	
+For user:
+	* createDate
+	* updateDate
+	* lastLogin
+	* joinedDate
+	* login
+	* firstName
+	* lastName
+	
+For example, to sort events by distance ascendant and start date descendant, use the query below
+
+>>> sort=distance -event.when.startTime
+	
+*************
+Sample usages
+*************
+
+Query that retrieve events that took place in 2010 and contain "foundation", ordered by start date, paginated by 20 documents
+
+>>> curl-oauth --domain cz-api -X GET 'http://api-master.czagenda.oxys.net/api/event/?from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
+
+or
+
+>>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/ -d 'from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
+
+or 
+
+>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/event/ -d '{
+		"from":0, 
+		"size":20, 
+		"q":"foundation event.when.startTime:[2010-01-01 TO 2010-12-31]", 
+		"sort":"event.when.startTime"
+	}'

@@ -719,11 +719,61 @@
 </div>
 <div class="section" id="sorting">
 <h2>Sorting<a class="headerlink" href="#sorting" title="Permalink to this headline">¶</a></h2>
-<p>Sort is done by passing a sort parameter in query string or body according to http method.</p>
-<p>Allowed sort are by createDate and distance if current search contains a distance query. By default sort is ascendant. To reverse it prefix the sort field by &#8220;-&#8221;.</p>
-<p>For example:</p>
-<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="o">=-</span><span class="n">createDate</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="o">=</span><span class="n">createDate</span> <span class="n">distance</span>
+<p>Sort is done by passing a &#8220;sort&#8221; parameter in query string or body according to http method.</p>
+<p>Sort fields depends on document types.</p>
+<p>For event:</p>
+<blockquote>
+<div><ul class="simple">
+<li>createDate</li>
+<li>updateDate</li>
+<li>event.title</li>
+<li>event.when.startTime</li>
+<li>event.when.endTime</li>
+<li>distance (only if a distance query was done)</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
+<dt>For agenda and group:</dt>
+<dd><ul class="first last simple">
+<li>createDate</li>
+<li>updateDate</li>
+<li>title</li>
+</ul>
+</dd>
+<dt>For user:</dt>
+<dd><ul class="first last simple">
+<li>createDate</li>
+<li>updateDate</li>
+<li>lastLogin</li>
+<li>joinedDate</li>
+<li>login</li>
+<li>firstName</li>
+<li>lastName</li>
+</ul>
+</dd>
+</dl>
+<p>For example, to sort events by distance ascendant and start date descendant, use the query below</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">sort</span><span class="o">=</span><span class="n">distance</span> <span class="o">-</span><span class="n">event</span><span class="o">.</span><span class="n">when</span><span class="o">.</span><span class="n">startTime</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sample-usages">
+<h2>Sample usages<a class="headerlink" href="#sample-usages" title="Permalink to this headline">¶</a></h2>
+<p>Query that retrieve events that took place in 2010 and contain &#8220;foundation&#8221;, ordered by start date, paginated by 20 documents</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">GET</span> <span class="s">&#39;http://api-master.czagenda.oxys.net/api/event/?from=0&amp;size=20&amp;q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&amp;sort=event.when.startTime&#39;</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;from=0&amp;size=20&amp;q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&amp;sort=event.when.startTime&#39;</span>
+</pre></div>
+</div>
+<p>or</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                &quot;from&quot;:0,</span>
+<span class="go">                &quot;size&quot;:20,</span>
+<span class="go">                &quot;q&quot;:&quot;foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&quot;,</span>
+<span class="go">                &quot;sort&quot;:&quot;event.when.startTime&quot;</span>
+<span class="go">        }&#39;</span>
 </pre></div>
 </div>
 </div>
@@ -770,6 +820,7 @@
 </li>
 <li><a class="reference internal" href="#pagination">Pagination</a></li>
 <li><a class="reference internal" href="#sorting">Sorting</a></li>
+<li><a class="reference internal" href="#sample-usages">Sample usages</a></li>
 </ul>
 </li>
 </ul>
