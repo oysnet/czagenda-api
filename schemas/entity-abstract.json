@@ -1,0 +1,23 @@
+{
+	"description": "Abstract Entity",
+	"type": "object",
+	"extends": {"$ref" : "/schema/base-abstract" },	
+	"properties": {
+		
+		"type": {
+			"description": "Extensible enum",
+			"type": "string",
+			"required" : true,
+			"enum" : ["person", "organization"]
+		},
+		"where": {
+			"description": "Location of the event",
+			"type": "array",
+			"required": true,
+			"minItems": 1,
+			"items": {
+				"$ref": "/schema/localization"
+			}
+		}
+	}
+}

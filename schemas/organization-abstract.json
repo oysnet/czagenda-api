@@ -1,0 +1,19 @@
+{
+	"description": "Organization",
+	"type": "object",
+	"extends": {"$ref" : "/schema/entity-abstract" },
+	"properties": {
+	
+		"type": {
+			"description": "Extensible enum",
+			"type": "string",
+			"enum" : ["organization"]
+		},
+	
+		"name": {
+			"description": "Name of the organization.",
+			"type": "string",
+			"required": true			
+		}		
+	}
+}

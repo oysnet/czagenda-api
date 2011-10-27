@@ -1,0 +1,25 @@
+{
+	"description": "Base schema",
+	"type": "object",
+	"properties": {
+
+		"links": {
+			"type": "array",
+			"minLength": 1,
+			"items": [
+				{
+					"description": "Link to the schema that describe the instance",
+					"href" : {
+						"type" : "string",
+						"required" : true
+					},
+					"rel": {
+						"value" : "describedby",
+						"required" : true
+					},
+					"required" : true
+				}
+			]
+		}
+	}
+}

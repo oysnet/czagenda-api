@@ -1,0 +1,6 @@
+{
+	"description": "Organization",
+	"type": "object",
+	"extends": {"$ref" : "/schema/organization-abstract" },
+	"additionalProperties": false
+}

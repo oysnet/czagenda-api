@@ -1,0 +1,31 @@
+{
+	"description": "Abstract Person",
+	"type": "object",
+	"extends": {"$ref" : "/schema/entity-abstract" },
+	"properties": {
+		
+		"type": {
+			"description": "Extensible enum",
+			"type": "string",
+			"enum" : ["person"]
+		},
+		
+		"title" : {
+			"description": "Courtesy",
+			"type": "string",
+			"enum" : ["Mr.", "Ms.", "Miss", "Mrs."]
+		},
+		
+		"firstName": {
+			"description": "Firstname.",
+			"type": "string",
+			"required": true			
+		},
+		
+		"lastName": {
+			"description": "Firstname.",
+			"type": "string",
+			"required": true			
+		}	
+	}
+}

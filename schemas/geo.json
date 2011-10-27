@@ -1,15 +1,7 @@
 {
 	"type": "object",	
 	"description" : "Localization coordinates",
-	"additionalProperties": false,
-	"properties": {
-		"lat": {
-			"type": "number",
-			"required": true
-		},
-		"lon": {
-			"type": "number",
-			"required": true
-		}
-	}
+	"extends": {"$ref" : "/schema/geo-abstract" },
+	"additionalProperties": false
+	
 }

@@ -1,0 +1,7 @@
+{
+	"description": "Person",
+	"type": "object",
+	"extends": {"$ref" : "/schema/person-abstract" },
+	"additionalProperties": false
+	
+}
