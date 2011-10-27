@@ -102,7 +102,7 @@ var populateAsync = function(cb) {
 					callback(err);
 				})
 				
-				console.log(tmp);
+				
 				
 				redisClient.sadd.apply(redisClient, tmp);
 				
