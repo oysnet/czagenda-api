@@ -162,7 +162,8 @@ Event.prototype._validate = function(callback) {
 	}
 
 	var schema = null;
-
+	
+	
 	if(this.event === null) {
 		this.addValidationError('event', 'required');
 	} else if( typeof (this.event.links) === 'undefined') {
@@ -176,7 +177,7 @@ Event.prototype._validate = function(callback) {
 				if( typeof (schema) === 'undefined') {
 					this.addValidationError('event.links', 'Link with rel=describedby doesn\'t match any schema: ' + this.event.links[i].href);
 				} else {
-
+					
 					var report = validator.approvedEnvironment.getEnv().validate(this.event, schema);
 					if(report.errors.length > 0) {
 						this.parseJSVErrors(report.errors);
@@ -198,14 +199,10 @@ Event.prototype._validate = function(callback) {
 
 Event.prototype._generateHash = function() {
 
-	var id = this.event.id;
-	delete this.event.id;
 	h = crypto.createHash('md5')
 	h.update(this._type);
 	h.update(JSON.stringify(this.event))
 	this._data['hash'] = h.digest('hex')
-
-	this.event.id = id;
 }
 
 Event.prototype._preSave = function(callback) {

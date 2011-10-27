@@ -126,15 +126,14 @@ Schema.prototype._validate = function(callback) {
 
 Schema.prototype._generateHash = function() {
 
-	var id = this.schema.id;
-	delete this.schema.id;
+	
 	c = require('crypto')
 	h = c.createHash('md5')
 	h.update(this._type);
+	h.update(this['final'] === true ? 'true':'false');
 	h.update(JSON.stringify(this.schema));
 	this._data['hash'] = h.digest('hex')
 
-	this.schema.id = id;
 }
 
 Schema.prototype._generateId = function() {
@@ -229,7 +228,7 @@ Schema.prototype._preDel = function(callback) {
 	methods.push(this.__deleteKey.bind(this,redis.SCHEMA_APPROVED, true));
 	methods.push(this.__deleteKey.bind(this,redis.PREFIX_SCHEMA_PROPOSAL + this.author, false));
 	
-	async.parallel(this.__getRedisSchemasTasks(), function (err) {
+	async.parallel(methods, function (err) {
 		if (typeof(err) !== 'undefined' && err !== null) {
 			callback(new errors.InternalError('Error when trying to remove or add key in redis'));
 		} else {
