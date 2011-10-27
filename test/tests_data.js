@@ -151,6 +151,36 @@ exports.entity_3 = {
 	}
 }
 
+exports.entity_4 = {
+	id : '/entity/d6663b1d306292f66674815d4fefe2d9',
+	createDate : '2011-10-27T14:43:45.934Z',
+	updateDate : '2011-10-27T14:43:45.934Z',
+	writeUsers : '/entity/d6663b1d306292f66674815d4fefe2d9/perms/wu',
+	writeGroups : '/entity/d6663b1d306292f66674815d4fefe2d9/perms/wg',	
+	author : '/user/test',
+	entity : {
+		type : "organization",
+		name : 'name entity 4',
+		links : [{rel:"describedby", href:"/schema/organization"}],
+		where : [{valueString:"Pau"}]
+	}
+}
+
+exports.entity_5 = {
+	id : '/entity/8f9a903fce4570664d9f32eb4b229b69',
+	createDate : '2011-10-27T14:44:21.365Z',
+	updateDate : '2011-10-27T14:44:21.365Z',
+	writeUsers : '/entity/8f9a903fce4570664d9f32eb4b229b69/perms/wu',
+	writeGroups : '/entity/8f9a903fce4570664d9f32eb4b229b69/perms/wg',	
+	author : '/user/test',
+	entity : {
+		type : "organization",
+		name : 'name entity 5',
+		links : [{rel:"describedby", href:"/schema/organization"}],
+		where : [{valueString:"Pau"}]
+	}
+}
+
 // ###############################################################################
 // 		GROUP
 // ###############################################################################
@@ -417,3 +447,9 @@ exports.perms_event_2_write_group_2 = '/perms/event/wg/d9df03cef399b0518e8409b10
 exports.perms_event_2_write_user_2 = '/perms/event/wu/72606c3ffbf91ff903a0ee1ac0ff47ec'
 exports.perms_event_2_read_group_2 = '/perms/event/rg/bdedb9616439fa47c56b6d27e5f2b66a'
 exports.perms_event_2_read_user_2 = '/perms/event/ru/0eff9f1e23304eda1a90b0dfc9c281bc'
+
+exports.perms_entity_4_write_group_2 = '/perms/entity/wg/908e3d04932eeb0bef5dab8777f05a75'
+exports.perms_entity_4_write_user_test = '/perms/entity/wu/661c83628e3ffab717b04b374acc8e59'
+
+exports.perms_entity_5_write_group_2 = '/perms/entity/wg/76ee94a8533eb1da030212d97d446caf'
+exports.perms_entity_5_write_user_2 = '/perms/entity/wu/b9177e34b519fa9a6997a08cedc11351'
