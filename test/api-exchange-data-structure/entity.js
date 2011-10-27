@@ -77,7 +77,7 @@ var get_test_data_in_database = tests_data.entity_2;
 var delete_test_data_in_database = tests_data.entity_3;
 
 
-vows.describe('Event API exchanged data structure').addBatch({
+vows.describe('Entity API exchanged data structure').addBatch({
 
 	'CREATE' : {
 		topic : function() {

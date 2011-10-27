@@ -23,7 +23,7 @@ var create_object = tests_data.entity_5;
 var delete_write_group_perm = tests_data.perms_entity_5_write_group_2
 var delete_write_user_perm = tests_data.perms_entity_5_write_user_2
 
-vows.describe('Agenda perms API exchanged data structure').addBatch({
+vows.describe('Entity perms API exchanged data structure').addBatch({
 
 	'GET groups write' : {
 		topic : function() {

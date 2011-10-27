@@ -181,6 +181,12 @@ exports.entity_5 = {
 	}
 }
 
+
+exports.entity_forbidden_1 = "/entity/1f3fa26e61cc482c128f57dbffa536ec";
+exports.entity_forbidden_2 = "/entity/4d88377cca2ecae7df5a71fb4a664195";
+exports.entity_group_access_1 = "/entity/de165adb46f14a6425b4b9bcd120485e";
+exports.entity_group_access_2 = "/entity/993cc34eace067a0d0e01f8d81d85706";
+
 // ###############################################################################
 // 		GROUP
 // ###############################################################################
