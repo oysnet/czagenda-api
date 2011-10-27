@@ -40,60 +40,6 @@ ValidatorEnvironment.prototype.load = function(callback, user) {
 
 	 redis.redisClient.sunion.apply(redis.redisClient, keys)
 	 
-	/*
-	var fs = require('fs');
-	var SCHEMAS = [{
-		"name" : "/schema/base-abstract",
-		"final" : false,
-		"file" : "base.json"
-	}, {
-		"name" : "/schema/who",
-		"final" : true,
-		"file" : "who.json"
-	}, {
-		"name" : "/schema/geo",
-		"final" : true,
-		"file" : "geo.json"
-	}, {
-		"name" : "/schema/localization",
-		"final" : true,
-		"file" : "localization.json"
-	}, {
-		"name" : "/schema/event-abstract",
-		"final" : true,
-		"file" : "event-abstract.json"
-	}, {
-		"name" : "/schema/event",
-		"final" : true,
-		"file" : "event.json"
-	}, {
-		"name" : "/schema/entity-abstract",
-		"final" : false,
-		"file" : "entity.json"
-	}, {
-		"name" : "/schema/organization-abstract",
-		"final" : false,
-		"file" : "organization-abstract.json"
-	}, {
-		"name" : "/schema/organization",
-		"final" : true,
-		"file" : "organization.json"
-	}, {
-		"name" : "/schema/person-abstract",
-		"final" : false,
-		"file" : "person-abstract.json"
-	}, {
-		"name" : "/schema/person",
-		"final" : true,
-		"file" : "person.json"
-	}]
-
-	SCHEMAS.forEach(function(schema) {
-		console.log(schema.name)
-		this.env.createSchema(JSON.parse(fs.readFileSync("./schemas/" + schema.file, 'utf8')), undefined, schema.name);
-	}.bind(this));
-	
-	callback(null);*/
 }
 /**
  * Public method that return validator environement
@@ -136,22 +82,6 @@ ValidatorEnvironment.prototype._loadFromDB = function(schemas, callback) {
 			return;
 		}
 		
-		/*
-		// try to add schemas
-		while(schemas.length > 0) {
-			var tmp = this._addSchemasToEnv(schemas, this.env);
-			if(tmp.length === 0) {
-				log.notice('Schemas loaded');
-				callback(null, true)
-				break;
-			} else if(tmp.length === schemas.length) {
-				log.critical('Fail to add schemas to validator environment', tmp);
-				callback(new Error('Fail to add schemas to validator environment'));
-				break;
-			} else {
-				schemas = tmp;
-			}
-		}*/
 		
 		if (this._addSchemasToEnv(schemas) === true) {
 			callback(null, true);
@@ -175,151 +105,6 @@ function hash(data) {
  * Try to add schemas to validator environment
  */
 ValidatorEnvironment.prototype._addSchemasToEnv = function(schemas) {
-	
-	/*
-	var hashes = {}
-	
-	var d = {};
-
-	schemas.forEach(function(schema) {
-		d[schema.id] = schema
-		
-	});
-	var env = JSV.createEnvironment("json-schema-draft-03");
-	[ '/schema/geo-abstract',
-  '/schema/base-abstract',
-  '/schema/who-abstract',
-  '/schema/geo',
-  '/schema/localization-abstract',
-  '/schema/who',
-  '/schema/localization',
-  //'/schema/entity-abstract',
-  '/schema/event-abstract',
-  //'/schema/organization-abstract',
-  //'/schema/person-abstract',
-  '/schema/event',
-  //'/schema/organization',
-  //'/schema/person'
-   ].forEach(function (id) {
-  	
-  	var schema = d[id];
-  	env.createSchema(schema.schema, undefined, id);
-  	
-  	hashes[id] = {"hash" : hash(schema.schema), 'data' : schema.schema};
-  	
-  	console.log(id)
-  });
-  
-	
-	this.env = env;
-	return true;
-	
-	throw new Error('ja dois pas passer la')
-	
-var SCHEMAS = [{
-	"name" : "base",
-	"final" : false,
-	"file" : "base-abstract.json"
-},  {
-	"name" : "geo",
-	"final" : false,
-	"file" : "geo-abstract.json"
-}, {
-	"name" : "geo",
-	"final" : true,
-	"file" : "geo.json"
-},{
-	"name" : "localization",
-	"final" : false,
-	"file" : "localization-abstract.json"
-}, {
-	"name" : "localization",
-	"final" : true,
-	"file" : "localization.json"
-},{
-	"name" : "entity",
-	"final" : false,
-	"file" : "entity-abstract.json"
-},{
-	"name" : "who",
-	"final" : false,
-	"file" : "who-abstract.json"
-}, {
-	"name" : "who",
-	"final" : true,
-	"file" : "who.json"
-},  {
-	"name" : "event",
-	"final" : false,
-	"file" : "event-abstract.json"
-}, {
-	"name" : "event",
-	"final" : true,
-	"file" : "event.json"
-},  {
-	"name" : "organization",
-	"final" : false,
-	"file" : "organization-abstract.json"
-}, {
-	"name" : "organization",
-	"final" : true,
-	"file" : "organization.json"
-}, {
-	"name" : "person",
-	"final" : false,
-	"file" : "person-abstract.json"
-}, {
-	"name" : "person",
-	"final" : true,
-	"file" : "person.json"
-}]
-//var env = JSV.createEnvironment("json-schema-draft-03");
-var d = {};
-
-SCHEMAS.forEach(function(schema) {
-	var name = '/schema/' + schema.name + (schema['final'] === false ? '-abstract':'');
-	d[name] = schema
-	
-});
-
-var fs = require('fs');
-[ '/schema/geo-abstract',
-  '/schema/base-abstract',
-  '/schema/who-abstract',
-  '/schema/geo',
-  '/schema/localization-abstract',
-  '/schema/who',
-  '/schema/localization',
-  '/schema/entity-abstract',
-  '/schema/event-abstract',
-  '/schema/organization-abstract',
-  '/schema/person-abstract',
-  '/schema/event',
-  '/schema/organization',
-  '/schema/person' ].forEach(function (id) {
-  	
-  	var schema = d[id];
-  	//env.createSchema(JSON.parse(fs.readFileSync("./schemas/" + schema.file, 'utf8')), undefined, id);
-  	
-  	var data = JSON.parse(fs.readFileSync("./schemas/" + schema.file, 'utf8'))
-  	_hash =  hash(data);
-  	if (hashes[id].hash !== _hash) {
-  		console.log('hash not match', id, hashes[id].hash, _hash)
-  		
-  		console.log(JSON.stringify(data))
-  		console.log(JSON.stringify(hashes[id].data))
-  		
-  		//throw new Error()
-  	}
-  	
-  	console.log(id)
-  });
-	
-	this.env = env;
-	return true;
-	
-	throw new Error('ja dois pas passer la')
-	*/
 	
 	var ordered = [];
 	var expected = schemas.length;
@@ -368,12 +153,6 @@ var fs = require('fs');
 	
 	if (ordered.length === expected) {
 		this.env = env;
-		
-		var tmp = [];
-		ordered.forEach(function (v) {
-			tmp.push(v.id);
-		})
-		console.log(tmp)
 		return true;
 	}
 	
