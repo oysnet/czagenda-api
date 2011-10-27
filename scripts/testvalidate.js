@@ -1,37 +1,39 @@
-var ValidatorEnvironment = require('../libs/schemas/validator').ValidatorEnvironment;
-var redisClient = require('../libs/redis-client');
-var models = require('../models');
-var fs = require('fs');
 var log = require('czagenda-log').from(__filename);
 
-var validator = new ValidatorEnvironment()
-var env = validator.getEnv();
+// ##################################################################################
+// VALIDATOR INITIALISATION
+// ##################################################################################
+var validator = require('../libs/schemas/validator');
 
+function validate(data, schemaId) {
+	console.log('##### VALIDATE AGAINST', schemaId)
+	schema = validator.approvedEnvironment.getEnv().findSchema(schemaId);
 
-validator.load(function () {
-	console.log(arguments);
-	
-	console.log(env.findSchema('tototo'))
-	
-	var test = {
-		'title' : 'un event',
-		'author' : '/user/jh.pinson',
-		where : [{valueString : 'chez moi'}]
-		
+	if( typeof (schema) === 'undefined') {
+		console.log('Fail to load schema', schemaId);
+		return;
 	}
-	
-	console.log(env.validate(test, env.findSchema("/schema/event")).errors)
-})
-
-
-/*
-env.createSchema(schema, undefined, "schema")
-
-var event = {
-	"$schema" : "schema",
-	'author' : '2',
-	"test" : '2'
-
+	var report = validator.approvedEnvironment.getEnv().validate(data, schema);
+	console.log(report.errors)
 }
 
-console.log(env.validate({}, event).errors)*/
+validator.approvedEnvironment.load(function(err, success) {
+	if(err !== null) {
+		log.critical('ValidatorEnvironment failed to load', err);
+		throw err;
+	} else {
+		log.notice('ValidatorEnvironment loaded');
+
+		validate({
+			title : "event title",
+			links : [{
+				rel : "describedby",
+				href : "/schema/event"
+			}],
+			where : [{
+				valueString : "Pau"
+			}]
+		}, "/schema/event")
+
+	}
+})
