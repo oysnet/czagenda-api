@@ -390,12 +390,14 @@ Base.prototype.save = function(callback, transparent) {
 Base.prototype._dbSave = function(callback) {
 
 	log.debug('saving object', this._type, this._data.id);
-
+	
+	// set id on instance because elasticsearchclient will delete it in this._data.id
+	this.id = this._data.id;
+	
 	// encode id since elasticsearch does not support / in id
 	this._data.id = encodeURIComponent(this._data.id);
 
-	// set id on instance because elasticsearchclient will delete it in this._data.id
-	this.id = this._data.id;
+	
 
 	var q = elasticSearchClient.index(this._index, this._type, this._data);
 	q.on('data', function(data) {
@@ -502,8 +504,11 @@ Base.prototype.addValidationError = function(attr, message) {
 	if( typeof (this.validationErrors.items[attr]) === 'undefined') {
 		this.validationErrors.items[attr] = [];
 	}
-
-	this.validationErrors.items[attr].push(message);
+	
+	if (this.validationErrors.items[attr].indexOf(message) === -1) {
+		this.validationErrors.items[attr].push(message);
+	}
+	
 
 }
 
@@ -581,7 +586,7 @@ Base.prototype.validateNotEmptyObject = function(attr) {
 
 	var value = this[attr];
 
-	console.log(value, attr)
+	
 
 	var keys = [];
 
