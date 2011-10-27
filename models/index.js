@@ -1,6 +1,7 @@
 exports.Agenda = require('./agenda.js').Agenda;
 
 exports.Event = require('./event.js').Event;
+exports.Entity = require('./entity.js').Entity;
 exports.Group = require('./group.js').Group;
 exports.Membership = require('./membership.js').Membership;
 exports.User = require('./user.js').User;

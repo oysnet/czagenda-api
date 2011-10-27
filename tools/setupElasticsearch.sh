@@ -62,6 +62,53 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 	}
 }';
 
+curl -XPUT "http://10.7.50.110:9200/$1/entity/_mapping" -d '{
+	"entity": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			
+			"entity" : {
+				"properties": {
+					"name": {				
+						"type" : "multi_field",
+		                "fields" : {
+		                    "name" : {"type" : "string", "index" : "analyzed"},
+		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
+		                }
+					},
+					"firstName": {				
+						"type" : "multi_field",
+		                "fields" : {
+		                    "firstName" : {"type" : "string", "index" : "analyzed"},
+		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
+		                }
+					},
+					"lastName": {				
+						"type" : "multi_field",
+		                "fields" : {
+		                    "lastName" : {"type" : "string", "index" : "analyzed"},
+		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
+		                }
+					},
+					"where": {				
+						"properties": {
+							"geoPt": {
+								"type": "geoPoint",
+								"store" : true
+							}
+						}
+					}				
+				}
+			}
+		}
+	}
+}';
+
 curl -XPUT "http://10.7.50.110:9200/$1/agenda/_mapping" -d '{
 	"agenda": {
 		"properties" : {
