@@ -102,6 +102,55 @@ exports.event_forbidden_2 = "/event/b7344ee057a39399a94827a8338c0c23";
 exports.event_group_access_1 = "/event/b5737c7b02fb4c027ee5fbfde0274051";
 exports.event_group_access_2 = "/event/6891dad3d922b0c01b1330ab0138c6b2";
 
+
+// ###############################################################################
+// 		ENTITY
+// ###############################################################################
+exports.entity_1 = {
+	id : '/entity/69e2d155f49177d5f805fd56f3b61075',
+	updateDate : '2011-10-27T13:41:54.986Z',
+	createDate : '2011-10-27T13:41:54.986Z',
+	writeUsers : '/entity/69e2d155f49177d5f805fd56f3b61075/perms/wu',
+	writeGroups : '/entity/69e2d155f49177d5f805fd56f3b61075/perms/wg',	
+	author : '/user/test',
+	entity : {
+		type : "organization",
+		name : 'name entity 1',
+		links : [{rel:"describedby", href:"/schema/organization"}],
+		where : [{valueString:"Pau"}]
+	}
+}
+
+exports.entity_2 = {
+	id : '/entity/d78aa30894222ba03dd2c0c68fd108c9',
+	createDate : '2011-10-27T13:43:22.261Z',
+	updateDate : '2011-10-27T13:43:22.261Z',
+	writeUsers : '/entity/d78aa30894222ba03dd2c0c68fd108c9/perms/wu',
+	writeGroups : '/entity/d78aa30894222ba03dd2c0c68fd108c9/perms/wg',	
+	author : '/user/test',
+	entity : {
+		type : "organization",
+		name : 'name entity 2',
+		links : [{rel:"describedby", href:"/schema/organization"}],
+		where : [{valueString:"Pau"}]
+	}
+}
+
+exports.entity_3 = {
+	id : '/entity/5e3c77142f094b228f9f3faf5b68744c',
+	createDate : '2011-10-27T13:44:00.426Z',
+	updateDate : '2011-10-27T13:44:00.426Z',
+	writeUsers : '/entity/5e3c77142f094b228f9f3faf5b68744c/perms/wu',
+	writeGroups : '/entity/5e3c77142f094b228f9f3faf5b68744c/perms/wg',	
+	author : '/user/test',
+	entity : {
+		type : "organization",
+		name : 'name entity 3',
+		links : [{rel:"describedby", href:"/schema/organization"}],
+		where : [{valueString:"Pau"}]
+	}
+}
+
 // ###############################################################################
 // 		GROUP
 // ###############################################################################
