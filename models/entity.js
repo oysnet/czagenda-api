@@ -6,7 +6,12 @@ var models = require('../models');
 
 function Entity() {
 	this._attributs = {
-		entity : null
+		entity : null,
+		author : null,
+		writeGroups : null,
+		writeUsers : null,
+		computedWriteUsers : [],
+		computedWriteGroups : []
 	};
 	Base.call(this, 'entity');
 	
@@ -16,7 +21,7 @@ function Entity() {
 
 util.inherits(Entity, Base);
 
-Entity.publicAttributes = Base.publicAttributes.concat(['entity']);
+Entity.publicAttributes = Base.publicAttributes.concat(['author', 'entity', 'writeGroups', 'writeUsers']);
 Entity.staffAttributes = Entity.publicAttributes.concat(Base.staffAttributes);
 Entity.metaAttributes = ['entity'];
 
@@ -68,6 +73,26 @@ Entity.prototype._validate = function(callback) {
 	//this.validateExists(keys, callback);
 }
 
+
+Entity.prototype.hasPerm = function (perm, user, callback) {
+	
+	switch (perm) {
+		case 'read':
+		case 'create':
+			callback(null, true);
+			break;
+					
+		case 'write':
+		case 'del':
+			callback(null, this.hasWritePerm(user));
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
+
 Entity.prototype._generateHash = function() {
 	
 	h = crypto.createHash('md5')
@@ -76,19 +101,15 @@ Entity.prototype._generateHash = function() {
 	this._data['hash'] = h.digest('hex')
 
 }
-/*
+
 Entity.prototype._preSave = function(callback) {
 	if(this.id === null) {
 		this._data.writeGroups = this._data.id + '/perms/wg';
 		this._data.writeUsers = this._data.id + '/perms/wu';
-		this._data.readGroups = this._data.id + '/perms/rg';
-		this._data.readUsers = this._data.id + '/perms/ru';
-
-		//this._data.event.id = this._data.id;
 	}
 
 	callback(null);
-}*/
+}
 
 Entity.get = function(options, callback) {
 	Base.get(options, Entity, callback);

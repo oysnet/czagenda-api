@@ -27,6 +27,12 @@ exports.setup = function (server) {
 	var RestAgendaWriteGroup = require('./agendaWriteGroup.js').RestAgendaWriteGroup;
 	new RestAgendaWriteGroup(server);
 	
+	var RestEntityWriteUser = require('./entityWriteUser.js').RestEntityWriteUser;
+	new RestEntityWriteUser(server);
+	
+	var RestEntityWriteGroup = require('./entityWriteGroup.js').RestEntityWriteGroup;
+	new RestEntityWriteGroup(server);
+	
 	var RestGroupWriteUser = require('./groupWriteUser.js').RestGroupWriteUser;
 	new RestGroupWriteUser(server);
 	

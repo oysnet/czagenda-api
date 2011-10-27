@@ -60,7 +60,7 @@ RestGroup.prototype._preCreate = function(obj, req, callback) {
 	
 	p.save(function(err, p) {
 		
-		if (err !== null) {
+		if (err === null) {
 			req.preCreateObjects = [p];
 		}
 		

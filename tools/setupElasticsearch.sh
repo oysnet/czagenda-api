@@ -236,6 +236,36 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-group/_mapping" -d '{
 		}
 	}
 }';
+
+curl -XPUT "http://10.7.50.110:9200/$1/entity-write-user/_mapping" -d '{
+	"entity-write-user": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
+			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
+		}
+	}
+}';
+curl -XPUT "http://10.7.50.110:9200/$1/entity-write-group/_mapping" -d '{
+	"entity-write-group": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			"applyOn" : {"type" : "string", "index" : "not_analyzed"},
+			"grantTo" : {"type" : "string", "index" : "not_analyzed"}
+		}
+	}
+}';
+
 curl -XPUT "http://10.7.50.110:9200/$1/group-write-user/_mapping" -d '{
 	"group-write-user": {
 		"properties" : {

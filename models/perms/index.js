@@ -9,6 +9,9 @@ exports.EventWriteGroup = require('./eventWriteGroup.js')
 exports.EventReadUser = require('./eventReadUser.js')
 exports.EventReadGroup = require('./eventReadGroup.js')
 
+exports.EntityWriteUser = require('./entityWriteUser.js')
+exports.EntityWriteGroup = require('./entityWriteGroup.js')
+
 var perms = {
 
 	group : {
@@ -39,6 +42,16 @@ var perms = {
 		group : {
 			write : exports.EventWriteGroup,
 			read : exports.EventReadGroup,
+		}
+	},
+	entity : {
+		user : {
+			write : exports.EntityWriteUser,
+			read : null,
+		},
+		group : {
+			write : exports.EntityWriteGroup,
+			read : null,
 		}
 	}
 
