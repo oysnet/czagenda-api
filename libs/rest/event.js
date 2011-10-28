@@ -117,7 +117,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-
+		
+		obj.computedWriteUsersPerms.push(p.getId());
+		
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -146,7 +148,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-
+		
+		obj.computedReadUsersPerms.push(p.getId());
+		
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -175,7 +179,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/user/all';
 		p.setValidationDone();
-
+		
+		obj.computedReadUsersPerms.push(p.getId());
+		
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -204,7 +210,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/group/all';
 		p.setValidationDone();
-
+		
+		obj.computedReadGroupsPerms.push(p.getId());
+		
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -285,6 +293,39 @@ RestEvent.prototype._postCreate = function(err, obj, req, callback) {
 		callback();
 	});
 }
+
+
+RestEvent.prototype._postDel = function(err, obj, req, callback) {
+
+	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+		callback();
+		return;
+	}
+	
+	
+	var methods = [];
+
+	obj.computedWriteUsersPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteUser'));
+	}.bind(this));
+	
+	obj.computedWriteGroupsPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteGroup'));
+	}.bind(this));
+	
+	obj.computedReadUsersPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadUser'));
+	}.bind(this));
+	
+	obj.computedReadGroupsPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadGroup'));
+	}.bind(this));
+	
+	async.parallel(methods, function() {
+		callback();
+	});
+}
+
 
 RestEvent.prototype.permsUserWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('event', 'user', 'write'), grantToClass = models.User;

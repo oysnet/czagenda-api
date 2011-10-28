@@ -16,7 +16,7 @@ function RestAgenda(server) {
 	this._urls.get[this._urlPrefix + '/:id/perms/wg'] = {
 		fn : this.permsGroupWrite
 	};
-	
+
 	this._urls.get[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
@@ -24,12 +24,11 @@ function RestAgenda(server) {
 	this._urls.post[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
-	
+
 	this._initServer();
 }
 
 util.inherits(RestAgenda, RestOAuthModel);
-
 
 for(k in mModelSearch) {
 	RestAgenda.prototype[k] = mModelSearch[k];
@@ -43,11 +42,10 @@ RestAgenda.prototype.searchFields = {
 	'description' : 'text'
 }
 
-
 RestAgenda.prototype.sortFields = {
 	'createDate' : 'createDate',
 	'updateDate' : 'updateDate',
-	'title' : 'title.untouched'	
+	'title' : 'title.untouched'
 }
 
 RestAgenda.prototype._populateObject = function(obj, data, req, res) {
@@ -61,22 +59,25 @@ RestAgenda.prototype._populateObject = function(obj, data, req, res) {
 }
 
 RestAgenda.prototype._preCreate = function(obj, req, callback) {
+
 	
-	// add write permission to obj
-	obj.computedWriteUsers.push(req.user.id);
-	
+
 	// create write permission
 	var p = new models.perms.AgendaWriteUser();
 	p.applyOn = obj.getId();
 	p.grantTo = req.user.id;
 	p.setValidationDone();
 	
+	// add write permission to obj
+	obj.computedWriteUsers.push(req.user.id);
+	obj.computedWriteUsersPerms.push(p.getId());
+	
 	p.save(function(err, p) {
-		
-		if (err === null) {
+
+		if(err === null) {
 			req.preCreateObjects = [p];
 		}
-		
+
 		// trivial but it's what we want...
 		if( err instanceof models.errors.ObjectAlreadyExists) {
 			err = null;
@@ -88,13 +89,13 @@ RestAgenda.prototype._preCreate = function(obj, req, callback) {
 		} else {
 			callback(null);
 		}
-		
+
 	}, false, false)
 }
 
 RestAgenda.prototype._postCreate = function(err, obj, req, callback) {
-	
-	if (err === null || typeof(req.preCreateObjects) === 'undefined') {
+
+	if(err === null || typeof (req.preCreateObjects) === 'undefined') {
 		callback();
 		return;
 	}
@@ -104,11 +105,11 @@ RestAgenda.prototype._postCreate = function(err, obj, req, callback) {
 	req.preCreateObjects.forEach(function(toDelObj) {
 		rollbackMethods.push(function(callback) {
 			toDelObj.del(function(err, obj) {
-				
-				if (err !== null) {
+
+				if(err !== null) {
 					log.warning('RestAgenda.prototype._postCreate: rolling back failed', toDelObj.id)
 				}
-				
+
 				callback(err);
 			});
 		});
@@ -119,6 +120,29 @@ RestAgenda.prototype._postCreate = function(err, obj, req, callback) {
 	});
 }
 
+
+RestAgenda.prototype._postDel = function(err, obj, req, callback) {
+
+	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+		callback();
+		return;
+	}
+	
+	
+	var methods = [];
+
+	obj.computedWriteUsersPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'AgendaWriteUser'));
+	}.bind(this));
+	
+	obj.computedWriteGroupsPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'AgendaWriteGroup'));
+	}.bind(this));
+	
+	async.parallel(methods, function() {
+		callback();
+	});
+}
 
 RestAgenda.prototype.permsUserWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('agenda', 'user', 'write'), grantToClass = models.User;

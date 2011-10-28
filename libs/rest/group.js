@@ -49,14 +49,15 @@ RestGroup.prototype.sortFields = {
 
 RestGroup.prototype._preCreate = function(obj, req, callback) {
 	
-	// add write permission to obj
-	obj.computedWriteUsers.push(req.user.id);
-	
 	// create write permission
 	var p = new models.perms.GroupWriteUser();
 	p.applyOn = obj.getId();
 	p.grantTo = req.user.id;
 	p.setValidationDone();
+	
+	// add write permission to obj
+	obj.computedWriteUsers.push(req.user.id);
+	obj.computedWriteUsersPerms.push(p.getId());
 	
 	p.save(function(err, p) {
 		
@@ -102,6 +103,31 @@ RestGroup.prototype._postCreate = function(err, obj, req, callback) {
 	});
 
 	async.parallel(rollbackMethods, function(rollbackErr) {
+		callback();
+	});
+}
+
+
+
+RestGroup.prototype._postDel = function(err, obj, req, callback) {
+
+	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+		callback();
+		return;
+	}
+	
+	
+	var methods = [];
+
+	obj.computedWriteUsersPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'GroupWriteUser'));
+	}.bind(this));
+	
+	obj.computedWriteGroupsPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'GroupWriteGroup'));
+	}.bind(this));
+	
+	async.parallel(methods, function() {
 		callback();
 	});
 }

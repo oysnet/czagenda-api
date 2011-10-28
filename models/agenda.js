@@ -5,7 +5,7 @@ var errors = require('./errors.js');
 var settings = require('../settings.js');
 
 function Agenda () {
-	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, computedWriteUsers : [], computedWriteGroups : [], author:null};
+	this._attributs = {title : null, description : null, writeGroups : null, writeUsers : null, computedWriteUsers : [], computedWriteGroups : [],computedWriteUsersPerms : [], computedWriteGroupsPerms : [], author:null};
 	Base.call(this, 'agenda');	
 }
 

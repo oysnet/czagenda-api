@@ -3,6 +3,7 @@ var statusCodes = require('../statusCodes');
 var errors = require('../../models').errors;
 var restError = require('./errors');
 var async = require('async');
+var models = require('../../models');
 
 exports.populateModelUrls = function() {
 	this._urls.get[this._urlPrefix] = {
@@ -184,7 +185,7 @@ exports._preCreate = function(obj, req, callback) {
 	callback(null)
 }
 /**
- * this methods is called before save object
+ * this methods is called after save object
  * err is an error instance or null
  * obj is the prepared obj to save
  * req is the current request
@@ -350,6 +351,25 @@ exports.update = function(req, res) {
 
 	}.bind(this))
 }
+/**
+ * this methods is called before del object
+ * obj is the obj to delete
+ * req is the current request
+ * callback take one argument : null if all went done or an InternalError instance with a message to return as response. If an error is passed, create process is stopped
+ */
+exports._preDel = function(obj, req, callback) {
+	callback(null)
+}
+/**
+ * this methods is called after delete object
+ * err is an error instance or null
+ * obj is the obj to del
+ * req is the current request
+ * callback take no arguments
+ */
+exports._postDel = function(err, obj, req, callback) {
+	callback();
+}
 
 exports.del = function(req, res) {
 
@@ -382,18 +402,26 @@ exports.del = function(req, res) {
 					return;
 				}
 
-				// and delete it...
-				obj.del( function(err, obj) {
+				this._preDel(obj, req, function(err) {
 
-					if(err !== null) {
+					if(err !== null && err instanceof errors.InternalError) {
 						res.statusCode = statusCodes.INTERNAL_ERROR;
-						res.end('Internal error')
-					} else {
-
-						res.statusCode = statusCodes.DELETED;
-						res.end()
+						res.end(err.message);
+						return;
 					}
 
+					// and delete it...
+					obj.del( function(err, obj) {
+						this._postDel(err, obj, req, function() {
+							if(err !== null) {
+								res.statusCode = statusCodes.INTERNAL_ERROR;
+								res.end('Internal error')
+							} else {
+								res.statusCode = statusCodes.DELETED;
+								res.end()
+							}
+						}.bind(this));
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		}
@@ -401,14 +429,13 @@ exports.del = function(req, res) {
 	}.bind(this))
 }
 
-exports._getSort =  function(sort, req) {
+exports._getSort = function(sort, req) {
 
 	var formatedSort = [];
 
-
-	sort.forEach(function(sort) {
+	sort.forEach( function(sort) {
 		var s = {};
-		
+
 		var way = sort.substr(0, 1), sortField = null;
 		if(way == '-' || way == '+') {
 			sortField = sort.substr(1);
@@ -416,13 +443,12 @@ exports._getSort =  function(sort, req) {
 			way = '+';
 			sortField = sort;
 		}
-		
-		if (typeof(this.sortFields[sortField]) === 'undefined') {
+
+		if( typeof (this.sortFields[sortField]) === 'undefined') {
 			throw new restError.BadRequest("Sort by " + sortField + " is not allowed");
 		}
-		
 		sortField = this.sortFields[sortField];
-		
+
 		if(sortField == 'distance') {
 			if( typeof (req.geoDistanceQuery) === 'undefined') {
 				throw new restError.BadRequest("Sort by distance is only availlable when a distance search is performed");
@@ -436,9 +462,11 @@ exports._getSort =  function(sort, req) {
 			s._geo_distance[req.geoDistanceQuery.field] = req.geoDistanceQuery.point;
 
 		} else {
-			
-			s[sortField] = {"order" : way == '+' ? "asc" : "desc"}
-			
+
+			s[sortField] = {
+				"order" : way == '+' ? "asc" : "desc"
+			}
+
 		}
 		formatedSort.push(s);
 	}.bind(this));
@@ -473,9 +501,9 @@ exports._search = function(req, res, query) {
 		}
 
 	} catch (e) {
-		
+
 		console.log(e);
-		
+
 		if( e instanceof restError.BadRequest) {
 			res.statusCode = statusCodes.BAD_REQUEST;
 			res.end(e.message);
@@ -657,4 +685,42 @@ exports._perms = function(req, res, permClass, grantToClass) {
 
 	}.bind(this))
 
+}
+
+
+
+/**
+ * Return a function to use with async to delete perms when object was deleted
+ * @obj : the object that was deleted
+ * @id : the permission id to delete
+ * @strClass: the permission class name
+ */
+exports._getPermDeleteMethod = function (obj, id, strClass) {
+	
+	return function(callback) {
+			models.perms[strClass].get({
+				id : id
+			}, function(err, perm) {
+				
+				if (err === null) {
+					
+					perm.del(function (err, perm) {
+						
+						if (err !== null && !(err instanceof models.errors.ObjectDoesNotExist)) {
+							log.warning('_postDel: error while delete ' + strClass, id, obj.id)
+						}
+						
+						callback();
+					}, false);
+					
+				} else if (err instanceof models.errors.ObjectDoesNotExist) {
+					callback(null);
+				} else {
+					log.warning('_postDel: error while get ' + strClass + ' to delete it', id, obj.id)
+					callback(null)
+				}
+				
+			});
+		}
+	
 }

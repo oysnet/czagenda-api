@@ -26,6 +26,14 @@ BasePermission.prototype.save = function(callback, transparent, updateComputedVa
 
 	Base.prototype.save.call(this, callback, transparent);
 }
+
+BasePermission.prototype.del = function(callback, updateComputedValue) {
+
+	this.__updateComputedValue = updateComputedValue !== false;
+
+	Base.prototype.del.call(this, callback);
+}
+
 /**
  * Update computed values such as computedWriteUsers, computedWriteGroups, etc... on applyOn document
  * clazz is the class to deal with applyOn document
@@ -38,7 +46,9 @@ BasePermission.prototype.updateComputedValue = function(clazz, attr, add, callba
 		callback();
 		return;
 	}
-
+	
+	var permAttr = attr + 'Perms';
+	
 	clazz.get({
 		id : this.applyOn
 	}, function(err, obj) {
@@ -53,9 +63,18 @@ BasePermission.prototype.updateComputedValue = function(clazz, attr, add, callba
 			if(obj[attr].indexOf(this.grantTo) === -1) {
 				obj[attr].push(this.grantTo)
 			}
+			
+			if(obj[permAttr].indexOf(this.id) === -1) {
+				obj[permAttr].push(this.id)
+			}
+			
 		} else {
 			if(obj[attr].indexOf(this.grantTo) !== -1) {
 				obj[attr].splice(obj[attr].indexOf(this.grantTo), 1)
+			}
+			
+			if(obj[permAttr].indexOf(this.id) !== -1) {
+				obj[permAttr].splice(obj[permAttr].indexOf(this.id), 1)
 			}
 		}
 		obj.save(function(err) {

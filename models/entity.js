@@ -11,7 +11,9 @@ function Entity() {
 		writeGroups : null,
 		writeUsers : null,
 		computedWriteUsers : [],
-		computedWriteGroups : []
+		computedWriteGroups : [],
+		computedWriteUsersPerms : [],
+		computedWriteGroupsPerms : []
 	};
 	Base.call(this, 'entity');
 	

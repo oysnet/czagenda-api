@@ -76,14 +76,17 @@ RestEntity.prototype._populateObject = function(obj, data, req, res) {
 
 RestEntity.prototype._preCreate = function(obj, req, callback) {
 	
-	// add write permission to obj
-	obj.computedWriteUsers.push(req.user.id);
+	
 	
 	// create write permission
 	var p = new models.perms.EntityWriteUser();
 	p.applyOn = obj.getId();
 	p.grantTo = req.user.id;
 	p.setValidationDone();
+	
+	// add write permission to obj
+	obj.computedWriteUsers.push(req.user.id);
+	obj.computedWriteUsersPerms.push(p.getId());
 	
 	p.save(function(err, p) {
 		
@@ -135,6 +138,29 @@ RestEntity.prototype._postCreate = function(err, obj, req, callback) {
 	});
 }
 
+
+RestEntity.prototype._postDel = function(err, obj, req, callback) {
+
+	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+		callback();
+		return;
+	}
+	
+	
+	var methods = [];
+
+	obj.computedWriteUsersPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EntityWriteUser'));
+	}.bind(this));
+	
+	obj.computedWriteGroupsPerms.forEach(function(id) {
+		methods.push(this._getPermDeleteMethod(obj, id, 'EntityWriteGroup'));
+	}.bind(this));
+	
+	async.parallel(methods, function() {
+		callback();
+	});
+}
 
 RestEntity.prototype.permsUserWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('entity', 'user', 'write'), grantToClass = models.User;
