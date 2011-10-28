@@ -59,7 +59,8 @@ RestEvent.prototype.searchFields = {
 	'event.where.country' : 'text',
 	'event.where.admin_level_2' : 'text',
 	'event.where.admin_level_3' : 'text',
-	'event.where.geoPt' : 'geo'
+	'event.where.geoPt' : 'geo',
+	'event.who.href' : 'term'
 }
 
 RestEvent.prototype.sortFields = {

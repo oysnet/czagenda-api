@@ -46,6 +46,13 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 							}
 						}
 					},
+					"who": {				
+						"properties": {
+							"href": {
+								"type" : "string", "index" : "not_analyzed"
+							}
+						}
+					},
 					"when" : {
 						"properties" : {
 							"startTime" : {
