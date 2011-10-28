@@ -1,35 +1,26 @@
 {
-	"description" : "A person associated with the containing entity. The type of the association is determined by the rel attribute; the details about the person are contained in an embedded or linked-to Contact entry.",
+	"description" : "An entity associated with the containing entity. The type of the association is determined by the rel attribute.",
 	"type": "object",	
 	"properties": {
-		"email": {
-			"description" : "Email address",
-			"type": "string",
-			"format" : "email",
-			"required": false
-		},
+		
 		"rel": {
-			"description" : "Specifies the relationship between the containing entity and the contained person. ",
+			"description" : "Specifies the relationship between the containing entity and the contained entity. ",
 			"type": "string",
 			"required": false,
 			"enum" : ["attendee", "organizer", "performer", "speaker"]
 		},
+		
+		"href": {
+			"description" : "Id of the entity",
+			"type": "string",
+			"required": true,
+			"pattern" : "^\\/entity\\/[0-9a-z]+$"
+		},
+		
 		"valueString": {
 			"description" : "A simple string value that can be used as a representation of this person.",
 			"type": "string",			
 			"required": false
-		},
-		"attendeeStatus": {
-			"description" : "Status of event attendee.",
-			"type": "string",			
-			"required": false,
-			"enum" : ["accepted", "declined", "invited", "tentative"]
-		},
-		"attendeeType": {
-			"description" : "Type of event attendee.",
-			"type": "string",			
-			"required": false,
-			"enum" : ["optional", "required"]
 		}
 	}
 }
