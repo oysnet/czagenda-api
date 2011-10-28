@@ -531,7 +531,12 @@ Base.prototype.getJSVErrorAttribute = function(attr) {
 
 Base.prototype._getMessageFromJSVError = function(error) {
 	if(error.attribute === 'type' && error.message === "Instance is not a required type") {
-		return "a " + error.details[0] + " is required";
+		if (typeof(error.details[0]) === 'object') {
+			return "bad value";
+		} else {
+			return "a " + error.details[0] + " is required";	
+		}
+		
 	} else {
 		return error.message
 	}
