@@ -220,9 +220,25 @@ Event.prototype._preSave = function(callback) {
 
 		//this._data.event.id = this._data.id;
 	}
-
+	
+	if (typeof(this._data.event.tags) !== 'undefined') {
+		
+		var tags = [];
+		var lowerTags = [];
+		this._data.event.tags.forEach(function (tag) {
+			var lowerTag = tag.toLowerCase();
+			if (lowerTags.indexOf(lowerTag) === -1) {
+				lowerTags.push(lowerTag);
+				tags.push(tag);
+			}
+		});
+		this._data.event.tags = tags;	
+	}
+	
 	callback(null);
 }
+
+
 
 Event.get = function(options, callback) {
 	Base.get(options, Event, function(err, obj) {

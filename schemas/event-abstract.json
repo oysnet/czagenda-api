@@ -1,22 +1,36 @@
 {
 	"description": "Event",
 	"type": "object",
-	"extends": {"$ref" : "/schema/base-abstract" },
+	"extends": {
+		"$ref": "/schema/base-abstract"
+	},
 	"properties": {
 		"content": {
 			"description": "Longer description of the event.",
 			"type": "string",
-			"required": false			
+			"required": false
 		},
 		"title": {
 			"description": "Brief title for the event.",
 			"type": "string",
-			"required" : true
+			"required": true
 		},
 		"eventStatus": {
 			"description": "Extensible enum",
 			"type": "string",
-			"enum" : ["canceled", "confirmed", "tentative"]
+			"enum": ["canceled", "confirmed", "tentative"]
+		},
+		"tags": {
+			"type": "array",
+			"required": false,
+			"items": {
+				"type": [
+					{
+						"type" : "string",
+						"maxLength" : 128
+					}
+				]
+			}
 		},
 		"when": {
 			"description": "Event time. The startTime and endTime attributes must both be set, although for all-day events those attributes are only dates, with no times.",
@@ -31,7 +45,7 @@
 							"startTime": {
 								"description": "Describes when the event starts or (for zero-duration events) when it occurs. If the timezone is not specified, the observer local timezone is assumed.",
 								"type": "string",
-								"required" : true,
+								"required": true,
 								"format": "date"
 							},
 							"endTime": {
@@ -53,7 +67,7 @@
 							"startTime": {
 								"description": "Describes when the event starts or (for zero-duration events) when it occurs. If the timezone is not specified, the observer local timezone is assumed.",
 								"type": "string",
-								"required" : true,
+								"required": true,
 								"format": "date-time"
 							},
 							"endTime": {
@@ -86,9 +100,11 @@
 			"type": "array",
 			"required": false,
 			"items": {
-				"type": [{
-					"$ref": "/schema/who"
-				}]
+				"type": [
+					{
+						"$ref": "/schema/who"
+					}
+				]
 			}
 		}
 	}

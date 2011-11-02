@@ -19,5 +19,4 @@ rest.post('/agenda-test/_search',JSON.stringify({size:1000}),function(err, res, 
 	  if (err) throw err;
 	  console.log('It\'s saved!');
 	});
-	
 });
