@@ -29,6 +29,22 @@ var RestEvent = exports.RestEvent = function(server) {
 		fn : this.permsGroupRead
 	};
 
+	this._urls.post[this._urlPrefix + '/:id/moderate/approve'] = {
+		fn : this.addApprove
+	};
+
+	this._urls.post[this._urlPrefix + '/:id/moderate/disapprove'] = {
+		fn : this.addDisapprove
+	};
+
+	this._urls.del[this._urlPrefix + '/:id/moderate/approve'] = {
+		fn : this.delApprove
+	};
+
+	this._urls.del[this._urlPrefix + '/:id/moderate/disapprove'] = {
+		fn : this.delDisapprove
+	};
+
 	this._urls.get[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
@@ -50,6 +66,8 @@ RestEvent.prototype.searchFields = {
 	'author' : 'term',
 	'createDate' : 'datetime',
 	'updateDate' : 'datetime',
+	'approvedBy' : 'term',
+	'disapprovedBy' : 'term',
 	'event.title' : 'text',
 	'event.content' : 'text',
 	'event.eventStatus' : 'term',
@@ -86,7 +104,6 @@ RestEvent.prototype._getDefaultSort = function() {
 	}]
 }
 
-
 RestEvent.prototype._populateObject = function(obj, data, req, res) {
 
 	if(obj.author === null) {
@@ -117,9 +134,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-		
+
 		obj.computedWriteUsersPerms.push(p.getId());
-		
+
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -148,9 +165,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = req.user.id;
 		p.setValidationDone();
-		
+
 		obj.computedReadUsersPerms.push(p.getId());
-		
+
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -179,9 +196,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/user/all';
 		p.setValidationDone();
-		
+
 		obj.computedReadUsersPerms.push(p.getId());
-		
+
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -210,9 +227,9 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 		p.applyOn = obj.getId();
 		p.grantTo = '/group/all';
 		p.setValidationDone();
-		
+
 		obj.computedReadGroupsPerms.push(p.getId());
-		
+
 		p.save(function(err, p) {
 
 			if(err === null) {
@@ -294,38 +311,111 @@ RestEvent.prototype._postCreate = function(err, obj, req, callback) {
 	});
 }
 
-
 RestEvent.prototype._postDel = function(err, obj, req, callback) {
 
 	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
 		callback();
 		return;
 	}
-	
-	
+
 	var methods = [];
 
-	obj.computedWriteUsersPerms.forEach(function(id) {
+	obj.computedWriteUsersPerms.forEach( function(id) {
 		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteUser'));
 	}.bind(this));
-	
-	obj.computedWriteGroupsPerms.forEach(function(id) {
+
+	obj.computedWriteGroupsPerms.forEach( function(id) {
 		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteGroup'));
 	}.bind(this));
-	
-	obj.computedReadUsersPerms.forEach(function(id) {
+
+	obj.computedReadUsersPerms.forEach( function(id) {
 		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadUser'));
 	}.bind(this));
-	
-	obj.computedReadGroupsPerms.forEach(function(id) {
+
+	obj.computedReadGroupsPerms.forEach( function(id) {
 		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadGroup'));
 	}.bind(this));
-	
+
 	async.parallel(methods, function() {
 		callback();
 	});
 }
 
+RestEvent.prototype.__moderate = function(req, res, moderate) {
+
+	models.Event.get({
+		id : "/event/" + req.params.id
+	}, function(err, event) {
+
+		if(err !== null) {
+			if( err instanceof models.errors.ObjectDoesNotExist) {
+				res.statusCode = statusCodes.NOT_FOUND;
+				res.end('Not found')
+			} else {
+				res.statusCode = statusCodes.INTERNAL_ERROR;
+				res.end('Internal error')
+			}
+		} else {
+
+			moderate(event);
+
+			event.save(function(err, obj) {
+				if(err === null) {
+					res.statusCode = statusCodes.ALL_OK;
+					res.end();
+				} else {
+					res.statusCode = statusCodes.INTERNAL_ERROR;
+					res.end('Internal error')
+				}
+			})
+		}
+
+	});
+}
+
+RestEvent.prototype.addApprove = function(req, res) {
+
+	this.__moderate(req, res, function(event) {
+		if(event.approvedBy.indexOf(req.user.id) === -1) {
+			event.approvedBy.push(req.user.id);
+		}
+
+		if(( pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
+			event.disapprovedBy.splice(pos, 1);
+		}
+	});
+}
+
+RestEvent.prototype.addDisapprove = function(req, res) {
+
+	this.__moderate(req, res, function(event) {
+		if(event.disapprovedBy.indexOf(req.user.id) === -1) {
+			event.disapprovedBy.push(req.user.id);
+		}
+
+		if(( pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
+			event.approvedBy.splice(pos, 1);
+		}
+	});
+}
+
+RestEvent.prototype.delApprove = function(req, res) {
+
+	this.__moderate(req, res, function(event) {
+		if(( pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
+			event.approvedBy.splice(pos, 1);
+		}
+	});
+}
+
+RestEvent.prototype.delDisapprove = function(req, res) {
+
+	this.__moderate(req, res, function(event) {
+		if(( pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
+			event.disapprovedBy.splice(pos, 1);
+		}
+	});
+}
 
 RestEvent.prototype.permsUserWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('event', 'user', 'write'), grantToClass = models.User;

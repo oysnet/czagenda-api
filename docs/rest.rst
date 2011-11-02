@@ -418,6 +418,39 @@ Event base uri is /event
 	
 	Note that author was automatically added according to your oauth domain
 
+2. Moderate
+	
+	Events have moderate attributes which are approvedBy and disapprovedBy. These attributes are populate with special urls:
+	
+	* /api/event/<EVENT_ID>/moderate/approve
+	* /api/event/<EVENT_ID>/moderate/disapprove
+	
+	These urls accept POST and DELETE http methods.
+	
+	Operation is that when a request is made on one of these urls. The attributes approvedBy and disapprovedBy are populated with the request user id.
+	
+	
+	Approve an event
+	
+	>>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
+	
+	Disapprove an event
+
+	>>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
+
+	Remove an approval
+	
+	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
+
+	Remove a disapproval
+	
+	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
+
+
+	To fetch events that has been approved, a search request can be done like this. See :ref:`search <doc_search>` for more informations about searching.
+	
+	>>> curl-oauth --domain cz-api  -X DELETE http://api-master.czagenda.oxys.net/api/event/_search -d 'q=approvedBy:/user/johndoe'
+
 Entity
 ^^^^^^
 
@@ -492,6 +525,7 @@ All documents types don't have all permissions types.
 		To create a group permission
 
 
+.. _doc_search:
 
 *************************************
 Searches

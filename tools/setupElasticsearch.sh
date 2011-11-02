@@ -25,6 +25,8 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 				 "type" : "date"
 			},
 			"author" :  {"type" : "string", "index" : "not_analyzed"},
+			"approvedBy" :  {"type" : "string", "index" : "not_analyzed"},
+			"disapprovedBy" :  {"type" : "string", "index" : "not_analyzed"},
 			"computedWriteGroups" : {"type" : "string", "index" : "not_analyzed"},
 			"computedWriteUsers" : {"type" : "string", "index" : "not_analyzed"},
 			"computedReadGroups" : {"type" : "string", "index" : "not_analyzed"},

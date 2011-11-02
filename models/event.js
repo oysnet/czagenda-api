@@ -22,7 +22,9 @@ function Event() {
 		computedWriteUsersPerms : [],
 		computedWriteGroupsPerms : [],
 		computedReadUsersPerms : [],
-		computedReadGroupsPerms : []
+		computedReadGroupsPerms : [],
+		approvedBy : [],
+		disapprovedBy : []
 	};
 	Base.call(this, 'event');
 	

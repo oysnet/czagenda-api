@@ -467,6 +467,37 @@
 <p>Note that author was automatically added according to your oauth domain</p>
 </div></blockquote>
 </li>
+<li><p class="first">Moderate</p>
+<blockquote>
+<div><p>Events have moderate attributes which are approvedBy and disapprovedBy. These attributes are populate with special urls:</p>
+<ul class="simple">
+<li>/api/event/&lt;EVENT_ID&gt;/moderate/approve</li>
+<li>/api/event/&lt;EVENT_ID&gt;/moderate/disapprove</li>
+</ul>
+<p>These urls accept POST and DELETE http methods.</p>
+<p>Operation is that when a request is made on one of these urls. The attributes approvedBy and disapprovedBy are populated with the request user id.</p>
+<p>Approve an event</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">b31398e4e0de03ef76bb168e32e41948</span><span class="o">/</span><span class="n">moderate</span><span class="o">/</span><span class="n">approve</span>
+</pre></div>
+</div>
+<p>Disapprove an event</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">b31398e4e0de03ef76bb168e32e41948</span><span class="o">/</span><span class="n">moderate</span><span class="o">/</span><span class="n">disapprove</span>
+</pre></div>
+</div>
+<p>Remove an approval</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">b31398e4e0de03ef76bb168e32e41948</span><span class="o">/</span><span class="n">moderate</span><span class="o">/</span><span class="n">approve</span>
+</pre></div>
+</div>
+<p>Remove a disapproval</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">-</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">b31398e4e0de03ef76bb168e32e41948</span><span class="o">/</span><span class="n">moderate</span><span class="o">/</span><span class="n">disapprove</span>
+</pre></div>
+</div>
+<p>To fetch events that has been approved, a search request can be done like this. See <a class="reference internal" href="#doc-search"><em>search</em></a> for more informations about searching.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span>  <span class="o">-</span><span class="n">X</span> <span class="n">DELETE</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">_search</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;q=approvedBy:/user/johndoe&#39;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
 </ol>
 </div>
 <div class="section" id="entity">
@@ -554,7 +585,7 @@
 </div>
 </div>
 <div class="section" id="searches">
-<h2>Searches<a class="headerlink" href="#searches" title="Permalink to this headline">¶</a></h2>
+<span id="doc-search"></span><h2>Searches<a class="headerlink" href="#searches" title="Permalink to this headline">¶</a></h2>
 <p>Documents searches are restricted to types event, agenda, group, entity and user.</p>
 <dl class="docutils">
 <dt>Searches urls are:</dt>
