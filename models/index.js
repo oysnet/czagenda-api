@@ -6,6 +6,7 @@ exports.Group = require('./group.js').Group;
 exports.Membership = require('./membership.js').Membership;
 exports.User = require('./user.js').User;
 exports.Schema = require('./schema.js').Schema;
+exports.Category = require('./category.js').Category;
 
 exports.errors = require('./errors.js');
 

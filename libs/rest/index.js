@@ -6,6 +6,9 @@ exports.setup = function (server) {
 	var RestEvent = require('./event.js').RestEvent;
 	new RestEvent(server);
 	
+	var RestCategory = require('./category.js').RestCategory;
+	new RestCategory(server);
+	
 	var RestEntity = require('./entity.js').RestEntity;
 	new RestEntity(server);
 	

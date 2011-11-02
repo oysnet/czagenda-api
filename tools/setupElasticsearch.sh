@@ -140,6 +140,26 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda/_mapping" -d '{
 	}
 }';
 
+curl -XPUT "http://10.7.50.110:9200/$1/category/_mapping" -d '{
+	"category": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			"title": {				
+				"type" : "multi_field",
+                "fields" : {
+                    "title" : {"type" : "string", "index" : "analyzed"},
+                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
+                }
+			}
+		}
+	}
+}';
+
 curl -XPUT "http://10.7.50.110:9200/$1/group/_mapping" -d '{
 	"group": {
 		"properties" : {

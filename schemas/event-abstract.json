@@ -32,6 +32,7 @@
 				]
 			}
 		},
+		
 		"when": {
 			"description": "Event time. The startTime and endTime attributes must both be set, although for all-day events those attributes are only dates, with no times.",
 			"type": "array",

@@ -1,4 +1,37 @@
 // ###############################################################################
+// 		CATGEORY
+// ###############################################################################
+exports.category_1 = null;
+
+exports.category_2 = {
+	title : 'TITLE_CATEGORY_2',
+	description : 'DESCRIPTION_CATEGORY_2',
+	id: "/category/8de0ea0cda9af2ff9be086310e650756",
+	updateDate: "2011-11-02T16:03:18.634Z", 
+	createDate : '2011-11-02T16:03:18.634Z',	
+	author:"/user/staff"
+}
+
+exports.category_3 = {
+	title : 'TITLE_CATEGORY_3',
+	description : 'DESCRIPTION_CATEGORY_3',
+	createDate : '2011-11-02T16:04:14.092Z',
+	updateDate : '2011-11-02T16:04:14.092Z',
+	id : '/category/ee47f900c7d8ee5ac5b0369f2b182e05',	
+	author:"/user/staff"
+}
+
+exports.category_4 = {
+	title : 'TITLE_CATEGORY_4',
+	description : 'DESCRIPTION_AGENDA_4',
+	createDate : '2011-11-02T16:05:12.404Z',
+	updateDate : '2011-11-02T16:05:12.404Z',
+	id : '/category/98702b8906c9589c573b9d7de1c63bb5',	
+	author:"/user/staff"
+}
+
+
+// ###############################################################################
 // 		AGENDA
 // ###############################################################################
 exports.agenda_1 = null;
