@@ -418,7 +418,52 @@ Event base uri is /event
 	
 	Note that author was automatically added according to your oauth domain
 
-		
+Entity
+^^^^^^
+
+Entity base uri is /entity
+	
+1. Create
+
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/entity  -d '{
+			"entity" : {
+				"type" : "organization",
+				"name" : "My organization",
+				"where" : [{"valueString" : "Somewhere on earth planet !"}],
+				"links" : [{"rel" : "describedby", "href" : "/schema/organization"}]
+			}
+		}'
+	
+	Data structure in the entity attribute is written according to schemas /schema/organization or /schema/person. see `schemas <schemas.html>`_
+	
+	Server response
+	
+	>>> {
+		  "writeUsers": "/entity/74319158a22cb48e4cf2b8aa32344695/perms/wu", 
+		  "author": "/user/johndoe", 
+		  "createDate": "2011-11-02T08:27:44.115Z", 
+		  "writeGroups": "/entity/74319158a22cb48e4cf2b8aa32344695/perms/wg", 
+		  "entity": {
+		    "where": [
+		      {
+		        "valueString": "Somewhere on earth planet !"
+		      }
+		    ], 
+		    "type": "organization", 
+		    "name": "My organization", 
+		    "links": [
+		      {
+		        "href": "/schema/organization", 
+		        "rel": "describedby"
+		      }
+		    ]
+		  }, 
+		  "updateDate": "2011-11-02T08:27:44.115Z", 
+		  "id": "/entity/74319158a22cb48e4cf2b8aa32344695"
+		}
+	
+	Note that author was automatically added according to your oauth domain
+	
 Permission
 ^^^^^^^^^^
 
@@ -452,13 +497,14 @@ All documents types don't have all permissions types.
 Searches
 *************************************
 
-Documents searches are restricted to types event, agenda, group and user.
+Documents searches are restricted to types event, agenda, group, entity and user.
 
 Searches urls are:
 	* http://api-master.czagenda.oxys.net/api/event/_search
 	* http://api-master.czagenda.oxys.net/api/agenda/_search
 	* http://api-master.czagenda.oxys.net/api/group/_search
-	* http://api-master.czagenda.oxys.net/api/user/_search
+	* http://api-master.czagenda.oxys.net/api/entity/_search
+	* http://api-master.czagenda.oxys.net/api/user/_search	
 	
 Methods allowed are POST and GET.
 
@@ -675,6 +721,15 @@ For agenda and group:
 	* createDate
 	* updateDate
 	* title
+	
+For entity:
+
+	* createDate
+	* updateDate
+	* entity.name
+	* entity.firstName
+	* entity.lastName
+	* distance (only if a distance query was done)
 	
 For user:
 	* createDate

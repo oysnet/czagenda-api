@@ -176,6 +176,39 @@ Define document's status
 	* DEPRECATED
 
 
+.. _doc_entity:
+
+Type *entity*
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. _doc_entity_entity:
+
+``entity (Object)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+entity attribute contains a data structure that describes the entity itself. this structure is constrained by a :ref:`schema <doc_schema>` document type.
+
+
+``author (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
+
+
+``writeGroups (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get write group permissions.
+
+
+
+``writeUsers (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Contains an URI to get write user permissions.
+
+
+
 .. _doc_group:
 
 Type *group*

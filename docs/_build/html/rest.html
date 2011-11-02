@@ -469,6 +469,54 @@
 </li>
 </ol>
 </div>
+<div class="section" id="entity">
+<h3>Entity<a class="headerlink" href="#entity" title="Permalink to this headline">¶</a></h3>
+<p>Entity base uri is /entity</p>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">entity</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                &quot;entity&quot; : {</span>
+<span class="go">                        &quot;type&quot; : &quot;organization&quot;,</span>
+<span class="go">                        &quot;name&quot; : &quot;My organization&quot;,</span>
+<span class="go">                        &quot;where&quot; : [{&quot;valueString&quot; : &quot;Somewhere on earth planet !&quot;}],</span>
+<span class="go">                        &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/organization&quot;}]</span>
+<span class="go">                }</span>
+<span class="go">        }&#39;</span>
+</pre></div>
+</div>
+<p>Data structure in the entity attribute is written according to schemas /schema/organization or /schema/person. see <a class="reference external" href="schemas.html">schemas</a></p>
+<p>Server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">          &quot;writeUsers&quot;: &quot;/entity/74319158a22cb48e4cf2b8aa32344695/perms/wu&quot;,</span>
+<span class="go">          &quot;author&quot;: &quot;/user/johndoe&quot;,</span>
+<span class="go">          &quot;createDate&quot;: &quot;2011-11-02T08:27:44.115Z&quot;,</span>
+<span class="go">          &quot;writeGroups&quot;: &quot;/entity/74319158a22cb48e4cf2b8aa32344695/perms/wg&quot;,</span>
+<span class="go">          &quot;entity&quot;: {</span>
+<span class="go">            &quot;where&quot;: [</span>
+<span class="go">              {</span>
+<span class="go">                &quot;valueString&quot;: &quot;Somewhere on earth planet !&quot;</span>
+<span class="go">              }</span>
+<span class="go">            ],</span>
+<span class="go">            &quot;type&quot;: &quot;organization&quot;,</span>
+<span class="go">            &quot;name&quot;: &quot;My organization&quot;,</span>
+<span class="go">            &quot;links&quot;: [</span>
+<span class="go">              {</span>
+<span class="go">                &quot;href&quot;: &quot;/schema/organization&quot;,</span>
+<span class="go">                &quot;rel&quot;: &quot;describedby&quot;</span>
+<span class="go">              }</span>
+<span class="go">            ]</span>
+<span class="go">          },</span>
+<span class="go">          &quot;updateDate&quot;: &quot;2011-11-02T08:27:44.115Z&quot;,</span>
+<span class="go">          &quot;id&quot;: &quot;/entity/74319158a22cb48e4cf2b8aa32344695&quot;</span>
+<span class="go">        }</span>
+</pre></div>
+</div>
+<p>Note that author was automatically added according to your oauth domain</p>
+</div></blockquote>
+</li>
+</ol>
+</div>
 <div class="section" id="permission">
 <h3>Permission<a class="headerlink" href="#permission" title="Permalink to this headline">¶</a></h3>
 <p>Permission documents are used to define access rights on documents.</p>
@@ -507,13 +555,14 @@
 </div>
 <div class="section" id="searches">
 <h2>Searches<a class="headerlink" href="#searches" title="Permalink to this headline">¶</a></h2>
-<p>Documents searches are restricted to types event, agenda, group and user.</p>
+<p>Documents searches are restricted to types event, agenda, group, entity and user.</p>
 <dl class="docutils">
 <dt>Searches urls are:</dt>
 <dd><ul class="first last simple">
 <li><a class="reference external" href="http://api-master.czagenda.oxys.net/api/event/_search">http://api-master.czagenda.oxys.net/api/event/_search</a></li>
 <li><a class="reference external" href="http://api-master.czagenda.oxys.net/api/agenda/_search">http://api-master.czagenda.oxys.net/api/agenda/_search</a></li>
 <li><a class="reference external" href="http://api-master.czagenda.oxys.net/api/group/_search">http://api-master.czagenda.oxys.net/api/group/_search</a></li>
+<li><a class="reference external" href="http://api-master.czagenda.oxys.net/api/entity/_search">http://api-master.czagenda.oxys.net/api/entity/_search</a></li>
 <li><a class="reference external" href="http://api-master.czagenda.oxys.net/api/user/_search">http://api-master.czagenda.oxys.net/api/user/_search</a></li>
 </ul>
 </dd>
@@ -641,7 +690,7 @@
 <li><p class="first">Date range searches</p>
 <blockquote>
 <div><p>Date range syntax is [from TO to]. The range operator &#8220;TO&#8221; must be CAPS.</p>
-<p>From and to can be a date, datetime, NOW or <a href="#id1"><span class="problematic" id="id2">*</span></a>.</p>
+<p>From and to can be a date, datetime, NOW or <a href="#id2"><span class="problematic" id="id3">*</span></a>.</p>
 <p>To search for documents that were created last year use this query:</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">q</span><span class="o">=</span><span class="n">createDate</span><span class="p">:[</span><span class="mi">2010</span><span class="o">-</span><span class="mo">01</span><span class="o">-</span><span class="mo">01</span> <span class="n">TO</span> <span class="mi">2010</span><span class="o">-</span><span class="mi">12</span><span class="o">-</span><span class="mi">31</span><span class="p">]</span>
 </pre></div>
@@ -740,6 +789,19 @@
 <li>title</li>
 </ul>
 </dd>
+</dl>
+<p>For entity:</p>
+<blockquote>
+<div><ul class="simple">
+<li>createDate</li>
+<li>updateDate</li>
+<li>entity.name</li>
+<li>entity.firstName</li>
+<li>entity.lastName</li>
+<li>distance (only if a distance query was done)</li>
+</ul>
+</div></blockquote>
+<dl class="docutils">
 <dt>For user:</dt>
 <dd><ul class="first last simple">
 <li>createDate</li>
@@ -805,6 +867,7 @@
 <li><a class="reference internal" href="#membership">Membership</a></li>
 <li><a class="reference internal" href="#agenda">Agenda</a></li>
 <li><a class="reference internal" href="#event">Event</a></li>
+<li><a class="reference internal" href="#entity">Entity</a></li>
 <li><a class="reference internal" href="#permission">Permission</a></li>
 </ul>
 </li>

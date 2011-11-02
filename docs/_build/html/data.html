@@ -23,7 +23,7 @@
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
-    <link rel="next" title="Les schémas" href="schema.html" />
+    <link rel="next" title="Schemas" href="schemas.html" />
     <link rel="prev" title="RESTful API" href="rest.html" /> 
   </head>
   <body>
@@ -34,7 +34,7 @@
           <a href="genindex.html" title="General Index"
              accesskey="I">index</a></li>
         <li class="right" >
-          <a href="schema.html" title="Les schémas"
+          <a href="schemas.html" title="Schemas"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="rest.html" title="RESTful API"
@@ -183,6 +183,25 @@
 </dl>
 </div>
 </div>
+<div class="section" id="type-entity">
+<span id="doc-entity"></span><h2>Type <em>entity</em><a class="headerlink" href="#type-entity" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="entity-object">
+<span id="doc-entity-entity"></span><h3><tt class="docutils literal"><span class="pre">entity</span> <span class="pre">(Object)</span></tt><a class="headerlink" href="#entity-object" title="Permalink to this headline">¶</a></h3>
+<p>entity attribute contains a data structure that describes the entity itself. this structure is constrained by a <a class="reference internal" href="#doc-schema"><em>schema</em></a> document type.</p>
+</div>
+<div class="section" id="id1">
+<h3><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<p>The user <a class="reference internal" href="#common-id"><em>id</em></a> of the <a class="reference internal" href="#doc-user"><em>user</em></a> document type.</p>
+</div>
+<div class="section" id="id2">
+<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<p>Contains an URI to get write group permissions.</p>
+</div>
+<div class="section" id="id3">
+<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<p>Contains an URI to get write user permissions.</p>
+</div>
+</div>
 <div class="section" id="type-group">
 <span id="doc-group"></span><h2>Type <em>group</em><a class="headerlink" href="#type-group" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="title-string">
@@ -195,12 +214,12 @@
 <h3><tt class="docutils literal"><span class="pre">users</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#users-string" title="Permalink to this headline">¶</a></h3>
 <p>Contains an URI to get group memberships in terms of the group.</p>
 </div>
-<div class="section" id="id1">
-<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id4">
+<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
 <p>Contains an URI to get write group permissions.</p>
 </div>
-<div class="section" id="id2">
-<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id5">
+<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
 <p>Contains an URI to get write user permissions.</p>
 </div>
 </div>
@@ -262,12 +281,19 @@
 <li><a class="reference internal" href="#status-enum"><tt class="docutils literal"><span class="pre">status</span> <span class="pre">(Enum)</span></tt></a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#type-entity">Type <em>entity</em></a><ul>
+<li><a class="reference internal" href="#entity-object"><tt class="docutils literal"><span class="pre">entity</span> <span class="pre">(Object)</span></tt></a></li>
+<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#id2"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id3"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
+</ul>
+</li>
 <li><a class="reference internal" href="#type-group">Type <em>group</em></a><ul>
 <li><a class="reference internal" href="#title-string"><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#description-string"><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#users-string"><tt class="docutils literal"><span class="pre">users</span> <span class="pre">(String)</span></tt></a></li>
-<li><a class="reference internal" href="#id1"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
-<li><a class="reference internal" href="#id2"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id4"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id5"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#type-membership">Type <em>membership</em></a><ul>
@@ -283,8 +309,8 @@
   <p class="topless"><a href="rest.html"
                         title="previous chapter">RESTful API</a></p>
   <h4>Next topic</h4>
-  <p class="topless"><a href="schema.html"
-                        title="next chapter">Les schémas</a></p>
+  <p class="topless"><a href="schemas.html"
+                        title="next chapter">Schemas</a></p>
   <h3>This Page</h3>
   <ul class="this-page-menu">
     <li><a href="_sources/data.txt"
@@ -314,7 +340,7 @@
           <a href="genindex.html" title="General Index"
              >index</a></li>
         <li class="right" >
-          <a href="schema.html" title="Les schémas"
+          <a href="schemas.html" title="Schemas"
              >next</a> |</li>
         <li class="right" >
           <a href="rest.html" title="RESTful API"
