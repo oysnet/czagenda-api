@@ -2,27 +2,47 @@
 
 var settings = require('../settings');
 
-function Rest (host, port) {
+function Rest (config) {
 
-	if(typeof(host) === 'undefined' || host === null) {
-		host = 'localhost';
+	if (typeof(config) === 'undefined' || config === null) {
+		config = {};
 	}
 
-	if(typeof(port) === 'undefined' || port === null) {
-		port = 3000;
+	if(typeof(config.host) === 'undefined' || config.host === null) {
+		config.host = 'localhost';
+	} 
+	
+	if(typeof(config.port) === 'undefined' || config.port === null) {
+		config.port = 3000;
 	}
 
 	
-	this.__url = "http://"+ host + ":" + port;
+	this.__url = "http://"+ config.host + ":" + config.port;
 	
-	this.token = settings.oauth.access_token;
-	this.token_secret = settings.oauth.access_secret;
 	
-	var consumer= settings.oauth.consumer_token;
-	var consumer_secret = settings.oauth.consumer_secret;
+	if(typeof(config.token) === 'undefined' || config.token === null) {
+		config.token = settings.oauth.access_token;
+	} 
+	this.token = config.token;
+	
+	if(typeof(config.token_secret) === 'undefined' || config.token_secret === null) {
+		config.token_secret = settings.oauth.access_secret;
+	} 
+	this.token_secret = config.token_secret;
+	
+	if(typeof(config.consumer) === 'undefined' || config.consumer === null) {
+		config.consumer = settings.oauth.consumer_token;
+	} 
+	this.consumer = config.consumer;
+	
+	if(typeof(config.consumer_secret) === 'undefined' || config.consumer_secret === null) {
+		config.consumer_secret = settings.oauth.consumer_secret;
+	} 
+	this.consumer_secret = config.consumer_secret;
+	
 	
 	var OAuth= require('node-oauth').OAuth;
-	this.client= new OAuth("","",consumer,consumer_secret,"1.0",null,"HMAC-SHA1")
+	this.client= new OAuth("","",this.consumer,this.consumer_secret,"1.0",null,"HMAC-SHA1")
 	                  
 	
 	
