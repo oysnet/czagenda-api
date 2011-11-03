@@ -17,13 +17,13 @@ function User() {
 		isStaff : false,
 		isSuperuser : false,
 		lastLogin : null,
-		dateJoined : null,
+		joinedDate : null,
 		groups : null
 	};
 	Base.call(this, 'user');
 }
 
-User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'dateJoined', 'groups']);
+User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'joinedDate', 'groups']);
 
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 
@@ -59,6 +59,7 @@ User.prototype._generateId = function() {
 User.prototype._preSave = function(callback) {
 	if(this.id === null) {
 		this._data.groups = this._data.id + '/groups';
+		this._data.joinedDate = this._data.createDate;
 	}
 
 	callback(null);
