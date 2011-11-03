@@ -234,7 +234,7 @@ vows.describe('User groups membership API exchanged data structure').addBatch({
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
 			delete user_5_group_5_include_docs.user.email;
-			
+						
 			assert.deepEqual(data.rows[0], user_5_group_5_include_docs);
 		}
 	},

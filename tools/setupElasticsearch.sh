@@ -194,7 +194,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/user/_mapping" -d '{
 			"joinedDate" : {
 				 "type" : "date"
 			},
-			"lastLogin" : {
+			"lastSeen" : {
 				 "type" : "date"
 			},
 			"login": {				

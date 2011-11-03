@@ -36,7 +36,7 @@ for(k in mModelSearch) {
 RestUser.prototype.searchFields = {	
 	'createDate' : 'datetime',
 	'updateDate' : 'datetime',
-	'lastLogin' : 'datetime',
+	'lastSeen' : 'datetime',
 	'dateJoined' : 'datetime',
 	'login' : 'text',
 	'lastName' : 'text',
@@ -54,7 +54,7 @@ RestUser.prototype.sortFields = {
 	'login' : 'login.untouched',
 	'firstName' : 'firstName.untouched',
 	'lastName' : 'lastName.untouched',
-	'lastLogin' : 'lastLogin',
+	'lastSeen' : 'lastLogin',
 	'joinedDate' : 'joinedDate'
 }
 

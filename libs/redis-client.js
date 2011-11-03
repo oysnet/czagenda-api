@@ -10,3 +10,5 @@ exports.PREFIX_SCHEMA_PROPOSAL = "schemasProposal_";
 exports.SCHEMA_APPROVED = "schemasApproved";
 exports.USER_PREFIX = "user_";
 exports.USER_GROUP_PREFIX = "user_group_";
+exports.LAST_SEEN = "last_seen";
+exports.LAST_SEEN_PREFIX = "last_seen_";

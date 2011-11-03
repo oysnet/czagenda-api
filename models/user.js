@@ -16,14 +16,14 @@ function User() {
 		isActive : false,
 		isStaff : false,
 		isSuperuser : false,
-		lastLogin : null,
+		lastSeen : null,
 		joinedDate : null,
 		groups : null
 	};
 	Base.call(this, 'user');
 }
 
-User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'joinedDate', 'groups']);
+User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastSeen', 'joinedDate', 'groups']);
 
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 

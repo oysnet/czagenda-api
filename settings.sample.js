@@ -24,3 +24,4 @@ exports.redis = {
 	'db' : 0
 }
 
+exports.lastSeenUpdateFrequency = 10000;

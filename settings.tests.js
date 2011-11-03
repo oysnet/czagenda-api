@@ -32,3 +32,5 @@ exports.oauth = {
 	access_token : 'rkPs43b7LJO3TXAEDk',
 	access_secret : '4T2LLM9AGMz5j5Dzg57UvnLgjZLy8zCt'
 }
+
+exports.lastSeenUpdateFrequency = 10000;

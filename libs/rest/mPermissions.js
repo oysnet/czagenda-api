@@ -18,6 +18,10 @@ exports.getUserPermsAndGroups = function (req, res, next) {
 	multi.hgetall(redis.USER_PREFIX + id)
 	multi.smembers(redis.USER_GROUP_PREFIX + id);
 	
+	multi.sadd(redis.LAST_SEEN, id);
+	multi.set(redis.LAST_SEEN_PREFIX + id, (new Date()).toISOString());
+	
+	
 	multi.exec(function (err, replies) {
 		
 		if (err !== null) {

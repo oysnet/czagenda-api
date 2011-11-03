@@ -9,7 +9,7 @@ var tests_data = require('../tests_data');
 var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}\.[0-9]{3}Z$");
 var number_re = new RegExp("^[0-9]+$");
 
-var data_keys = ['firstName', 'lastName', 'login', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'joinedDate', 'id', 'groups',  'createDate', 'updateDate' ].sort();
+var data_keys = ['firstName', 'lastName', 'login', 'isActive', 'isStaff', 'isSuperuser', 'lastSeen', 'joinedDate', 'id', 'groups',  'createDate', 'updateDate' ].sort();
 
 // CREATE
 var create_test_data = {
@@ -26,7 +26,7 @@ var create_test_data_expected = {
 	isActive : false,
 	isStaff : false,
 	isSuperuser : false,
-	lastLogin: null,
+	lastSeen: null,
 	id : '/user/LOGIN_USER_1',
 	groups : '/user/LOGIN_USER_1/groups'
 }
@@ -70,7 +70,7 @@ var update_test_data_expected = {
 	isActive : false,
 	isStaff : false,
 	isSuperuser : false,
-	lastLogin: null,
+	lastSeen: null,
 	joinedDate: null,	
 	id : '/user/login-user-2',
 	createDate : tests_data.user_2.createDate,

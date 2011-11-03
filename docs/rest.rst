@@ -184,7 +184,7 @@ User base uri is /user
 		  "isActive": false,
 		  "isStaff": false,
 		  "isSuperuser": false,
-		  "lastLogin": null,
+		  "lastSeen": null,
 		  "dateJoined": null,
 		  "groups": "/user/johndoe/groups"				
 		}
@@ -212,7 +212,7 @@ User base uri is /user
 		  "isActive": false,
 		  "isStaff": false,
 		  "isSuperuser": false,
-		  "lastLogin": null,
+		  "lastSeen": null,
 		  "dateJoined": null,
 		  "groups": "/user/johndoe/groups"
 		}
@@ -804,7 +804,7 @@ For entity:
 For user:
 	* createDate
 	* updateDate
-	* lastLogin
+	* lastSeen
 	* joinedDate
 	* login
 	* firstName

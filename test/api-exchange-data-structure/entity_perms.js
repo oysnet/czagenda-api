@@ -215,6 +215,10 @@ vows.describe('Entity perms API exchanged data structure').addBatch({
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
 			delete write_user.email;
+			
+			delete data.rows[0].grantTo.lastSeen;
+			delete write_user.lastSeen;
+			
 			assert.deepEqual(data.rows[0], {id : write_user_perm, grantTo : write_user});
 		}
 	},

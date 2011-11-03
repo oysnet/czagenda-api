@@ -1,4 +1,5 @@
 var log = require('czagenda-log').from(__filename);
+var lastSeen = require('./libs/lastSeen');
 
 // ##################################################################################
 // HTTP SERVER INITIALISATION
@@ -25,6 +26,7 @@ validator.approvedEnvironment.load( function(err, success) {
 	} else {
 		log.notice('ValidatorEnvironment loaded');
 		init_server();
+		lastSeen.start();
 	}
 })
 

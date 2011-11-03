@@ -82,7 +82,7 @@ True if the user is a staff member. Only staff members can access the admin inte
 True if the user is a super user. Super users have no restrictions when accessing the admin interface.
 	
 
-``lastLogin (Datetime)``
+``lastSeen (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 .. warning:: Read only

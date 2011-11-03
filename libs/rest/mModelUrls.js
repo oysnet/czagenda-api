@@ -42,8 +42,6 @@ exports.populateModelUrls = function() {
  */
 exports._populateObject = function(obj, data, req, res) {
 
-	log.notice("[TODO] exports._populateObject Supprimer oauthKeys");
-
 	var oauthKeys = ['oauth_nonce', 'oauth_timestamp', 'oauth_consumer_key', 'oauth_signature_method', 'oauth_version', 'oauth_token', 'oauth_signature'];
 
 	var allowedKeys = obj.constructor.publicWriteAttributes;

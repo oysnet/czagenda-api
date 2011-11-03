@@ -15,7 +15,9 @@ var verifyConsumerToken = function(req, identifier, callback) {
 
 	});
 }
-
+/**
+ * This middleware is the regular signature control
+ */
 exports._verifySignature = oauth.verifySignature(function(req, type, identifier, callback) {
 	
 	if(type == 'client') {
@@ -39,7 +41,9 @@ exports._verifySignature = oauth.verifySignature(function(req, type, identifier,
 });
 
 
-
+/**
+ * This middleware is used when oauth is requesting the temporary token
+ */
 exports._verifyConsumerSignature = oauth.verifySignature(function(req, type, identifier, callback) {
 		
 	if(type == 'client') {
@@ -53,6 +57,9 @@ exports._verifyConsumerSignature = oauth.verifySignature(function(req, type, ide
 
 });
 
+/**
+ * This middleware is used when oauth is requesting the definitve access token
+ */
 exports._verifyRequestTokenSignature = oauth.verifySignature(function(req, type, identifier, callback) {
 
 	if(type == 'client') {
