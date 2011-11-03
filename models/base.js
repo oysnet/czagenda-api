@@ -644,7 +644,12 @@ Base.prototype.validateExists = function(keys, callback) {
 	var multi = redis.redisClient.multi();
 	
 	keys.forEach(function (k) {
-		multi.exists(this[k]);
+		var d = this;		
+		k.split('.').forEach(function (_k) {
+			d = d[_k];
+		});
+		
+		multi.exists(d);
 	}.bind(this));
 	
 	multi.exec(function (err, replies) {

@@ -57,7 +57,10 @@ vows.describe('Event API permissions').addBatch({
 		'update' : {
 			topic : function() {
 				rest = new Rest();
-				rest.put('/api' + forbidden_1, '{}' ,this.callback);
+				rest.put('/api' + forbidden_1, JSON.stringify({event : {title : "event title" + Math.random(),
+																	links : [{rel:"describedby", href:"/schema/event"}],
+																	where : [{valueString:"Pau"}], category : "/category/34b74b021369bb23e67f22bad8f1229a"}
+															}) ,this.callback);
 			},
 			
 			'check statusCode is 403' : function(err, res, data) {
@@ -121,7 +124,7 @@ vows.describe('Event API permissions').addBatch({
 				rest = new Rest();
 				rest.put('/api' + group_access_1, JSON.stringify({event : {title : "event title" + Math.random(),
 																	links : [{rel:"describedby", href:"/schema/event"}],
-																	where : [{valueString:"Pau"}]}
+																	where : [{valueString:"Pau"}], category : "/category/34b74b021369bb23e67f22bad8f1229a"}
 															}) , this.callback);
 			},
 			
@@ -150,7 +153,7 @@ vows.describe('Event API permissions').addBatch({
 				rest = new Rest();
 				rest.post('/api/event',  JSON.stringify({agenda : agenda_forbidden, event : {title : "event title",
 																	links : [{rel:"describedby", href:"/schema/event"}],
-																	where : [{valueString:"Pau"}]}
+																	where : [{valueString:"Pau"}], category : "/category/34b74b021369bb23e67f22bad8f1229a"}
 															}) , this.callback);
 			},
 			
@@ -165,7 +168,7 @@ vows.describe('Event API permissions').addBatch({
 				rest = new Rest();
 				rest.post('/api/event',  JSON.stringify({agenda : group_access_agenda, event : {title : "event title" + Math.random(),
 																	links : [{rel:"describedby", href:"/schema/event"}],
-																	where : [{valueString:"Pau"}]}
+																	where : [{valueString:"Pau"}], category : "/category/34b74b021369bb23e67f22bad8f1229a" }
 															}) , this.callback);
 			},
 			

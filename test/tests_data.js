@@ -91,7 +91,8 @@ exports.event_1 = {
 	event : {
 		title : 'title event 1',
 		links : [{rel:"describedby", href:"/schema/event"}],
-		where : [{valueString:"Pau"}]
+		where : [{valueString:"Pau"}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	},
 	agenda : null
 }
@@ -108,7 +109,8 @@ exports.event_2 = {
 	event : {
 		title : 'title event 2',
 		links : [{rel:"describedby", href:"/schema/event"}],
-		where : [{valueString:"Pau"}]
+		where : [{valueString:"Pau"}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	},
 	agenda : null
 }
@@ -125,7 +127,8 @@ exports.event_3 = {
 	event : {
 		title : 'title event 3',
 		links : [{rel:"describedby", href:"/schema/event"}],
-		where : [{valueString:"Pau"}]
+		where : [{valueString:"Pau"}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	},
 	agenda : null
 }

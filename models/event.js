@@ -166,7 +166,9 @@ Event.prototype._validate = function(callback) {
 	if(this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true) === true && this.agenda !== null) {
 		keys.push('agenda');
 	}
-
+	
+	
+	
 	var schema = null;
 	
 	
@@ -199,7 +201,12 @@ Event.prototype._validate = function(callback) {
 		}
 
 	}
-
+	
+	if (typeof(this.event.category) !== 'undefined') {
+		keys.push('event.category');
+	}
+	
+	
 	this.validateExists(keys, callback);
 }
 

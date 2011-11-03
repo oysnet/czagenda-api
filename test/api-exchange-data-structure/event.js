@@ -16,19 +16,21 @@ var data_keys = ['agenda', 'author', 'createDate', 'updateDate', 'writeUsers', '
 // CREATION
 var create_test_data = {
 	event : {title : "event title",
+			category : "/category/34b74b021369bb23e67f22bad8f1229a",
 			links : [{rel:"describedby", href:"/schema/event"}],
 			where : [{valueString:"Pau"}]}
 }
 
 var create_test_data_expected = {
 	author : '/user/test',
+	
 	event : {title : "event title",links : [{rel:"describedby", href:"/schema/event"}],
-			where : [{valueString:"Pau"}]},
+			where : [{valueString:"Pau"}], category : "/category/34b74b021369bb23e67f22bad8f1229a"},
 	agenda : null
 }
 
 var create_invalid_test_data = {
-	event : {title : "even title"},
+	event : {title : "even title", category : "/category/34b74b021369bb23e67f22bad8f1229a"},
 }
 
 var create_invalid_test_data_expected = { items : {'event.links': [ 'required' ] }, errors : []};
@@ -36,19 +38,21 @@ var create_invalid_test_data_expected = { items : {'event.links': [ 'required' ]
 
 var create_invalid_test_data_2 = {
 	event : {title : "event that fail to validate against schema",links : [{rel:"describedby", href:"/schema/event"}],
-			where : [{valueString: 2}]}
+			where : [{valueString: 2}], category : "/category/34b74b021369bb23e67f22bad8f1229a"}
 }
 
 var create_invalid_test_data_expected_2 = { items : { '/event/where/0/valueString': [ 'a string is required' ] }, errors : []};
 
 var create_invalid_test_data_3 = {
 	agenda : "/agenda/ditnotexists",
-	event : {title : "event title",
+	event : {title : "event title",category : "/category/idnotexists",
 			links : [{rel:"describedby", href:"/schema/event"}],
 			where : [{valueString:"Pau"}]}
 }
 
-var create_invalid_test_data_expected_3 = { items : { 'agenda': [ 'Object doesn\'t exist' ] }, errors : []};
+var create_invalid_test_data_expected_3 = { items : { 'agenda': [ 'Object doesn\'t exist' ], 'event.category': [ 'Object doesn\'t exist' ] }, errors : []};
+
+
 
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
@@ -57,7 +61,7 @@ var update_test_data = {
 	event : {
 		title : 'modified title event',
 		links : [{rel:"describedby", href:"/schema/event"}],
-		where : [{valueString:"Pau"}]
+		where : [{valueString:"Pau"}],category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	}
 }
 
@@ -72,7 +76,8 @@ var update_test_data_expected = {
 	event : {
 		title : 'modified title event',
 		links : [{rel:"describedby", href:"/schema/event"}],
-		where : [{valueString:"Pau"}]
+		where : [{valueString:"Pau"}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	},
 	agenda : null
 }
