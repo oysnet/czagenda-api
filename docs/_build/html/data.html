@@ -57,15 +57,15 @@
 <li><a class="reference internal" href="#doc-user"><em>user</em></a></li>
 <li><a class="reference internal" href="#doc-group"><em>group</em></a></li>
 <li><a class="reference internal" href="#doc-schema"><em>schema</em></a></li>
-<li>...</li>
-<li>...</li>
+<li><em class="xref std std-ref">agenda</em></li>
+<li><a class="reference internal" href="#doc-category"><em>category</em></a></li>
 </ul>
 </div></blockquote>
 <div class="section" id="common-attributes">
 <h2>Common attributes<a class="headerlink" href="#common-attributes" title="Permalink to this headline">¶</a></h2>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p class="last">Les attributs ci-dessous sont en lecture seule.</p>
+<p class="last">These attributes are read only.</p>
 </div>
 <div class="section" id="common-id">
 <span id="id-string"></span><h3><tt class="docutils literal"><span class="pre">id</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#common-id" title="Permalink to this headline">¶</a></h3>
@@ -82,6 +82,7 @@
 </div>
 <div class="section" id="type-user">
 <span id="doc-user"></span><h2>Type <em>user</em><a class="headerlink" href="#type-user" title="Permalink to this headline">¶</a></h2>
+<p>These documents holds informations about registered users.</p>
 <div class="section" id="firstname-string">
 <h3><tt class="docutils literal"><span class="pre">firstName</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#firstname-string" title="Permalink to this headline">¶</a></h3>
 </div>
@@ -93,31 +94,50 @@
 </div>
 <div class="section" id="isactive-boolean">
 <h3><tt class="docutils literal"><span class="pre">isActive</span> <span class="pre">(Boolean)</span></tt><a class="headerlink" href="#isactive-boolean" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>True if the user is active.  Inactive users cant&#8217;s access the service.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Staff account is required to write/update this attribute</p>
+</div>
+<p>True if the user is active.  Inactive users cant&#8217;s access the service.</p>
 </div>
 <div class="section" id="isstaff-boolean">
 <h3><tt class="docutils literal"><span class="pre">isStaff</span> <span class="pre">(Boolean)</span></tt><a class="headerlink" href="#isstaff-boolean" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>True if the user is a staff member. Only staff members can access the admin interface.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Staff account is required to write/update this attribute</p>
+</div>
+<p>True if the user is a staff member. Only staff members can access the admin interface.</p>
 </div>
 <div class="section" id="issuperuser-boolean">
 <h3><tt class="docutils literal"><span class="pre">isSuperuser</span> <span class="pre">(Boolean)</span></tt><a class="headerlink" href="#issuperuser-boolean" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>True if the user is a super user. Super users have no restrictions when accessing the admin interface.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Staff account is required to write/update this attribute</p>
+</div>
+<p>True if the user is a super user. Super users have no restrictions when accessing the admin interface.</p>
 </div>
 <div class="section" id="lastlogin-datetime">
 <h3><tt class="docutils literal"><span class="pre">lastLogin</span> <span class="pre">(Datetime)</span></tt><a class="headerlink" href="#lastlogin-datetime" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>Date of last authentication against the service.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
+<p>Date of last authentication against the service.</p>
 </div>
 <div class="section" id="datejoined-datetime">
 <h3><tt class="docutils literal"><span class="pre">dateJoined</span> <span class="pre">(Datetime)</span></tt><a class="headerlink" href="#datejoined-datetime" title="Permalink to this headline">¶</a></h3>
-<blockquote>
-<div>Date of the registration.</div></blockquote>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
+<p>Date of the registration.</p>
 </div>
 <div class="section" id="groups-string">
 <h3><tt class="docutils literal"><span class="pre">groups</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#groups-string" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get groups list of which the user is a member.</p>
 </div>
 </div>
@@ -129,22 +149,42 @@
 </div>
 <div class="section" id="author-string">
 <h3><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#author-string" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>The user <a class="reference internal" href="#common-id"><em>id</em></a> of the <a class="reference internal" href="#doc-user"><em>user</em></a> document type.</p>
 </div>
 <div class="section" id="writegroups-list">
 <h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#writegroups-list" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get write group permissions.</p>
 </div>
 <div class="section" id="readgroups-list">
 <h3><tt class="docutils literal"><span class="pre">readGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#readgroups-list" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get read group permissions.</p>
 </div>
 <div class="section" id="writeusers-list">
 <h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#writeusers-list" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get write user permissions.</p>
 </div>
 <div class="section" id="readusers-list">
 <h3><tt class="docutils literal"><span class="pre">readUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#readusers-list" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get read user permissions.</p>
 </div>
 </div>
@@ -160,6 +200,10 @@
 </div>
 <div class="section" id="final-boolean">
 <h3><tt class="docutils literal"><span class="pre">final</span> <span class="pre">(Boolean)</span></tt><a class="headerlink" href="#final-boolean" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Staff account is required to write/update this attribute</p>
+</div>
 <p>True if the document can be used to validate an event. If false the document must be part of an inheritance.</p>
 </div>
 <div class="section" id="sample-object">
@@ -172,6 +216,10 @@
 </div>
 <div class="section" id="status-enum">
 <h3><tt class="docutils literal"><span class="pre">status</span> <span class="pre">(Enum)</span></tt><a class="headerlink" href="#status-enum" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Staff account is required to write/update this attribute</p>
+</div>
 <dl class="docutils">
 <dt>Define document&#8217;s status</dt>
 <dd><ul class="first last simple">
@@ -191,6 +239,10 @@
 </div>
 <div class="section" id="id1">
 <h3><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">read only</p>
+</div>
 <p>The user <a class="reference internal" href="#common-id"><em>id</em></a> of the <a class="reference internal" href="#doc-user"><em>user</em></a> document type.</p>
 </div>
 <div class="section" id="id2">
@@ -199,27 +251,65 @@
 </div>
 <div class="section" id="id3">
 <h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">read only</p>
+</div>
 <p>Contains an URI to get write user permissions.</p>
 </div>
 </div>
-<div class="section" id="type-group">
-<span id="doc-group"></span><h2>Type <em>group</em><a class="headerlink" href="#type-group" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="type-category">
+<span id="doc-category"></span><h2>Type <em>category</em><a class="headerlink" href="#type-category" title="Permalink to this headline">¶</a></h2>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Create, update and delete require staff privileges</p>
+</div>
+<p>Category are used in event.</p>
 <div class="section" id="title-string">
 <h3><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#title-string" title="Permalink to this headline">¶</a></h3>
 </div>
 <div class="section" id="description-string">
 <h3><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#description-string" title="Permalink to this headline">¶</a></h3>
 </div>
+<div class="section" id="id4">
+<h3><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">read only</p>
+</div>
+<p>The user <a class="reference internal" href="#common-id"><em>id</em></a> of the <a class="reference internal" href="#doc-user"><em>user</em></a> document type.</p>
+</div>
+</div>
+<div class="section" id="type-group">
+<span id="doc-group"></span><h2>Type <em>group</em><a class="headerlink" href="#type-group" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id5">
+<h3><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id6">
+<h3><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id6" title="Permalink to this headline">¶</a></h3>
+</div>
 <div class="section" id="users-string">
 <h3><tt class="docutils literal"><span class="pre">users</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#users-string" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get group memberships in terms of the group.</p>
 </div>
-<div class="section" id="id4">
-<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id4" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id7">
+<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id7" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get write group permissions.</p>
 </div>
-<div class="section" id="id5">
-<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id5" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="id8">
+<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id8" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
 <p>Contains an URI to get write user permissions.</p>
 </div>
 </div>
@@ -288,12 +378,18 @@
 <li><a class="reference internal" href="#id3"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
 </ul>
 </li>
-<li><a class="reference internal" href="#type-group">Type <em>group</em></a><ul>
+<li><a class="reference internal" href="#type-category">Type <em>category</em></a><ul>
 <li><a class="reference internal" href="#title-string"><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#description-string"><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#id4"><tt class="docutils literal"><span class="pre">author</span> <span class="pre">(String)</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#type-group">Type <em>group</em></a><ul>
+<li><a class="reference internal" href="#id5"><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#id6"><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#users-string"><tt class="docutils literal"><span class="pre">users</span> <span class="pre">(String)</span></tt></a></li>
-<li><a class="reference internal" href="#id4"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
-<li><a class="reference internal" href="#id5"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id7"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id8"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#type-membership">Type <em>membership</em></a><ul>

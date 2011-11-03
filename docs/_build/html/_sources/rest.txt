@@ -380,6 +380,33 @@ Agenda base uri is /agenda
 	
 	Note that id was generated from the provided title.
 
+Category
+^^^^^^^^^
+
+Category base uri is /category
+
+.. warning:: Create, update or delete a category require staff privilege.
+
+1. Create
+
+	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/category/  -d '{
+				"title" : "A category",
+				"description" : "a description"
+			}'
+	
+	
+	
+	Server response
+	
+	>>> {
+	  "id": "/category/b31398e4e0de03ef76bb168e32e41948",
+	  "createDate": "2011-10-04T09:06:38.071Z",
+	  "updateDate": "2011-10-04T09:06:38.071Z",
+	  "title": "A category",
+	  "description": "a description"
+	}
+	
+
 Event
 ^^^^^^
 
@@ -391,7 +418,8 @@ Event base uri is /event
 			"event" : {
 				"title" : "My first event",
 				"where" : [{"valueString" : "Somewhere on earth planet !"}],
-				"links" : [{"rel" : "describedby", "href" : "/schema/event"}]
+				"links" : [{"rel" : "describedby", "href" : "/schema/event"}],
+				"category" : "/category/b31398e4e0de03ef76bb168e32e41948"
 			}
 		}'
 	
@@ -406,7 +434,8 @@ Event base uri is /event
 		  "event": {
 		    "title": "My first event",
 		    "where" : [{"valueString" : "Somewhere on earth planet !"}],
-			"links" : [{"rel" : "describedby", "href" : "/schema/event"}]
+			"links" : [{"rel" : "describedby", "href" : "/schema/event"}],
+			"category" : "/category/b31398e4e0de03ef76bb168e32e41948"
 		  },
 		  "author": "/user/johndoe",
 		  "writeGroups": "/event/b31398e4e0de03ef76bb168e32e41948/perms/wg",
@@ -506,24 +535,31 @@ A permission document is composed of two attributes:
 	* grantTo which defines who has the permission. It could be a group or an user.
 	* applyOn which defines the document on which the permission is applied.
 	
+	
+All documents types don't have all permissions types. More information can be found  `here <data.html>`_ 
+
+To create a permission on a document:
+
+>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/perms/<DOCUMENT_TYPE>/<PERMISSION_CODE> -d '{
+		"applyOn" : "<DOCUMENT_ID>",
+		"grantTo" : "<GROUP_OR_USER_ID>"
+	}'
+
 Base permission uri varies depending on the document type and the permission type.
 
-Permissions types are:
-	* write user
-	* read user
-	* write group 
-	* read group
+Permissions types and code are:
+	* write user : wu
+	* read user : ru
+	* write group : wg
+	* read group : rg
 	
-All documents types don't have all permissions types.
 
-1. Permissions by document types
-	
-	1.1 Group
-		
-		Group have user and group write permissions.
-		
-		To create a group permission
+For example, to grant write privilege to group /group/my-group on an event document
 
+>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/perms/event/wg -d '{
+		"applyOn" : "/event/b31398e4e0de03ef76bb168e32e41948",
+		"grantTo" : "/group/my-group"
+	}'
 
 .. _doc_search:
 

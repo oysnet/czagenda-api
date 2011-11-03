@@ -429,6 +429,36 @@
 </li>
 </ol>
 </div>
+<div class="section" id="category">
+<h3>Category<a class="headerlink" href="#category" title="Permalink to this headline">¶</a></h3>
+<p>Category base uri is /category</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Create, update or delete a category require staff privilege.</p>
+</div>
+<ol class="arabic">
+<li><p class="first">Create</p>
+<blockquote>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">category</span><span class="o">/</span>  <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                        &quot;title&quot; : &quot;A category&quot;,</span>
+<span class="go">                        &quot;description&quot; : &quot;a description&quot;</span>
+<span class="go">                }&#39;</span>
+</pre></div>
+</div>
+<p>Server response</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="p">{</span>
+<span class="go">  &quot;id&quot;: &quot;/category/b31398e4e0de03ef76bb168e32e41948&quot;,</span>
+<span class="go">  &quot;createDate&quot;: &quot;2011-10-04T09:06:38.071Z&quot;,</span>
+<span class="go">  &quot;updateDate&quot;: &quot;2011-10-04T09:06:38.071Z&quot;,</span>
+<span class="go">  &quot;title&quot;: &quot;A category&quot;,</span>
+<span class="go">  &quot;description&quot;: &quot;a description&quot;</span>
+<span class="go">}</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</div>
 <div class="section" id="event">
 <h3>Event<a class="headerlink" href="#event" title="Permalink to this headline">¶</a></h3>
 <p>Event base uri is /event</p>
@@ -439,7 +469,8 @@
 <span class="go">                &quot;event&quot; : {</span>
 <span class="go">                        &quot;title&quot; : &quot;My first event&quot;,</span>
 <span class="go">                        &quot;where&quot; : [{&quot;valueString&quot; : &quot;Somewhere on earth planet !&quot;}],</span>
-<span class="go">                        &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/event&quot;}]</span>
+<span class="go">                        &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/event&quot;}],</span>
+<span class="go">                        &quot;category&quot; : &quot;/category/b31398e4e0de03ef76bb168e32e41948&quot;</span>
 <span class="go">                }</span>
 <span class="go">        }&#39;</span>
 </pre></div>
@@ -453,7 +484,8 @@
 <span class="go">          &quot;event&quot;: {</span>
 <span class="go">            &quot;title&quot;: &quot;My first event&quot;,</span>
 <span class="go">            &quot;where&quot; : [{&quot;valueString&quot; : &quot;Somewhere on earth planet !&quot;}],</span>
-<span class="go">                &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/event&quot;}]</span>
+<span class="go">                &quot;links&quot; : [{&quot;rel&quot; : &quot;describedby&quot;, &quot;href&quot; : &quot;/schema/event&quot;}],</span>
+<span class="go">                &quot;category&quot; : &quot;/category/b31398e4e0de03ef76bb168e32e41948&quot;</span>
 <span class="go">          },</span>
 <span class="go">          &quot;author&quot;: &quot;/user/johndoe&quot;,</span>
 <span class="go">          &quot;writeGroups&quot;: &quot;/event/b31398e4e0de03ef76bb168e32e41948/perms/wg&quot;,</span>
@@ -559,29 +591,32 @@
 </ul>
 </dd>
 </dl>
+<p>All documents types don&#8217;t have all permissions types. More information can be found  <a class="reference external" href="data.html">here</a></p>
+<p>To create a permission on a document:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">perms</span><span class="o">/&lt;</span><span class="n">DOCUMENT_TYPE</span><span class="o">&gt;/&lt;</span><span class="n">PERMISSION_CODE</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                &quot;applyOn&quot; : &quot;&lt;DOCUMENT_ID&gt;&quot;,</span>
+<span class="go">                &quot;grantTo&quot; : &quot;&lt;GROUP_OR_USER_ID&gt;&quot;</span>
+<span class="go">        }&#39;</span>
+</pre></div>
+</div>
 <p>Base permission uri varies depending on the document type and the permission type.</p>
 <dl class="docutils">
-<dt>Permissions types are:</dt>
+<dt>Permissions types and code are:</dt>
 <dd><ul class="first last simple">
-<li>write user</li>
-<li>read user</li>
-<li>write group</li>
-<li>read group</li>
+<li>write user : wu</li>
+<li>read user : ru</li>
+<li>write group : wg</li>
+<li>read group : rg</li>
 </ul>
 </dd>
 </dl>
-<p>All documents types don&#8217;t have all permissions types.</p>
-<ol class="arabic">
-<li><p class="first">Permissions by document types</p>
-<blockquote>
-<div><p>1.1 Group</p>
-<blockquote>
-<div><p>Group have user and group write permissions.</p>
-<p>To create a group permission</p>
-</div></blockquote>
-</div></blockquote>
-</li>
-</ol>
+<p>For example, to grant write privilege to group /group/my-group on an event document</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">-</span><span class="n">master</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">oxys</span><span class="o">.</span><span class="n">net</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">perms</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">wg</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
+<span class="go">                &quot;applyOn&quot; : &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;,</span>
+<span class="go">                &quot;grantTo&quot; : &quot;/group/my-group&quot;</span>
+<span class="go">        }&#39;</span>
+</pre></div>
+</div>
 </div>
 </div>
 <div class="section" id="searches">
@@ -897,6 +932,7 @@
 <li><a class="reference internal" href="#group">Group</a></li>
 <li><a class="reference internal" href="#membership">Membership</a></li>
 <li><a class="reference internal" href="#agenda">Agenda</a></li>
+<li><a class="reference internal" href="#category">Category</a></li>
 <li><a class="reference internal" href="#event">Event</a></li>
 <li><a class="reference internal" href="#entity">Entity</a></li>
 <li><a class="reference internal" href="#permission">Permission</a></li>

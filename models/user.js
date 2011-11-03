@@ -24,13 +24,13 @@ function User() {
 }
 
 User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastLogin', 'dateJoined', 'groups']);
-// enlever email
+
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 
-User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email', 'password', 'isActive'];
-// enlever password
-User.staffWriteAttributes = User.publicWriteAttributes.concat(['isActive', 'isStaff', 'isSuperuser']);
-// ajouter password
+User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email',  'isActive'];
+
+User.staffWriteAttributes = User.publicWriteAttributes.concat(['password', 'isStaff', 'isSuperuser']);
+
 
 util.inherits(User, Base);
 

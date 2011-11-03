@@ -7,8 +7,8 @@ Types of documents are:
 	* :ref:`user <doc_user>`
 	* :ref:`group <doc_group>`
 	* :ref:`schema <doc_schema>`
-	* ...
-	* ...
+	* :ref:`agenda <doc_agenda>`
+	* :ref:`category <doc_category>`
 
 
 
@@ -16,7 +16,7 @@ Types of documents are:
 Common attributes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
 	
-.. warning:: Les attributs ci-dessous sont en lecture seule. 
+.. warning:: These attributes are read only.
 	
 .. _common_id:
 	
@@ -43,6 +43,8 @@ Last update date.
 Type *user*
 ^^^^^^^^^^^^^^^^^^^^^^^
 	
+These documents holds informations about registered users.
+	
 ``firstName (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
@@ -59,34 +61,46 @@ Type *user*
 ``isActive (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	True if the user is active.  Inactive users cant's access the service.
+.. warning:: Staff account is required to write/update this attribute
+
+True if the user is active.  Inactive users cant's access the service.
 	
 	
 ``isStaff (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	True if the user is a staff member. Only staff members can access the admin interface.
+.. warning:: Staff account is required to write/update this attribute
+
+True if the user is a staff member. Only staff members can access the admin interface.
 	
 	
 ``isSuperuser (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	True if the user is a super user. Super users have no restrictions when accessing the admin interface.
+.. warning:: Staff account is required to write/update this attribute
+
+True if the user is a super user. Super users have no restrictions when accessing the admin interface.
 	
 
 ``lastLogin (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Date of last authentication against the service.
+.. warning:: Read only
+
+Date of last authentication against the service.
 	
 ``dateJoined (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
-	Date of the registration.
+.. warning:: Read only
+
+Date of the registration.
 		
 		
 ``groups (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
 
 Contains an URI to get groups list of which the user is a member. 
 
@@ -107,11 +121,15 @@ event attribute contains a data structure that describes the event itself. this 
 ``author (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Read only
+
 The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
 
 
 ``writeGroups (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
 
 Contains an URI to get write group permissions.
 
@@ -119,17 +137,23 @@ Contains an URI to get write group permissions.
 ``readGroups (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Read only
+
 Contains an URI to get read group permissions.
 
 
 ``writeUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Read only
+
 Contains an URI to get write user permissions.
 
 
 ``readUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
 
 Contains an URI to get read user permissions.
  
@@ -154,6 +178,8 @@ Contains the data structure used to validate. More informations can be found `he
 ``final (Boolean)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Staff account is required to write/update this attribute
+
 True if the document can be used to validate an event. If false the document must be part of an inheritance.
 
 
@@ -169,6 +195,8 @@ Contains a template which can be used to render an event as html.
 
 ``status (Enum)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Staff account is required to write/update this attribute
 
 Define document's status
 	* PUBLISHED  
@@ -192,6 +220,8 @@ entity attribute contains a data structure that describes the entity itself. thi
 ``author (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: read only
+
 The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
 
 
@@ -201,12 +231,34 @@ The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
 Contains an URI to get write group permissions.
 
 
-
 ``writeUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: read only
+
 Contains an URI to get write user permissions.
 
+.. _doc_category:
+
+Type *category*
+^^^^^^^^^^^^^^^^^^^^^^^^^	
+	
+.. warning:: Create, update and delete require staff privileges
+	
+Category are used in event. 
+	
+``title (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``description (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``author (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: read only
+
+The user :ref:`id <common_id>` of the :ref:`user <doc_user>` document type.
 
 
 .. _doc_group:
@@ -223,15 +275,21 @@ Type *group*
 ``users (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Read only
+
 Contains an URI to get group memberships in terms of the group.
 
 ``writeGroups (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. warning:: Read only
+
 Contains an URI to get write group permissions.
 
 ``writeUsers (List)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
 
 Contains an URI to get write user permissions.
 
