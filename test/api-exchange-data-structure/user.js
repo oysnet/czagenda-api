@@ -87,7 +87,7 @@ var delete_test_data_in_database = tests_data.user_4
 
 
 vows.describe('User API exchanged data structure').addBatch({
-/*
+
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
@@ -246,7 +246,7 @@ vows.describe('User API exchanged data structure').addBatch({
 			
 		}
 	},
-	*/
+	
 	'DELETE' : {
 		topic : function() {
 			rest = new Rest({token: "r3gvHGOpMs48jg2Dcf", token_secret:"dcm34D7JG0AJA7ippSPnBfuDLNIXTtIn", consumer:"vqfY05YtGqWfNalPqX", consumer_secret:"zlsH0YhTm2DmX6K8plHaeiRObJIjaB9b"});
