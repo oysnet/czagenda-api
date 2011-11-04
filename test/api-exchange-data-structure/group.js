@@ -55,6 +55,7 @@ var get_test_data_in_database = tests_data.group_3;
 
 var delete_test_data_in_database = tests_data.group_4;
 
+var delete_test_integrity = tests_data.group_integrity_error;
 
 vows.describe('Group API exchanged data structure').addBatch({
 
@@ -279,6 +280,15 @@ vows.describe('Group API exchanged data structure').addBatch({
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
+		}
+	},
+	'INTEGRITY' : {
+		topic : function() {
+			rest = new Rest();
+			rest.del('/api'+delete_test_integrity, this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
 		}
 	}
 

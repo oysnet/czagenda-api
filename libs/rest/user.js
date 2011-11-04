@@ -1,13 +1,13 @@
 var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 var models = require('../../models');
-
 var errors = require('../../models/errors.js');
-
 var statusCode = require('../statusCodes.js');
 var settings = require('../../settings.js');
 var async = require('async');
 var mModelSearch = require('./mModelSearch');
+var redis = require('../redis-client');
+var log = require('czagenda-log').from(__filename);
 
 var RestUser = exports.RestUser = function(server) {
 
@@ -90,6 +90,54 @@ RestUser.prototype._preDel = function(obj, req, callback) {
 
 	this._checkIntegrity(query, req, callback);
 
+}
+
+RestUser.prototype._postDel = function(err, obj, req, callback) {
+
+	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+		callback();
+		return;
+	}
+
+	redis.redisClient.smembers(redis.USER_MEMBERSHIP_PREFIX + obj.id, function(err, res) {
+
+		if(err !== null) {
+			log.warning('REDIS: error on smembers ', redis.USER_MEMBERSHIP_PREFIX + obj.id, err);
+			callback();
+			return;
+		}
+
+		var methods = [];
+
+		res.forEach(function(id) {
+
+			methods.push(function(callback) {
+
+				models.Membership.get({
+					id : id
+				}, function(err, membership) {
+
+					if(err !== null) {
+						log.warning('Unable to load membership', id);
+						callback();
+						return;
+					}
+
+					membership.del(function(err) {
+						if(err !== null) {
+							log.warning('Unable to delete membership', membership.id);
+						}
+
+						callback();
+					});
+				});
+			});
+		});
+
+		async.parallel(methods, function() {
+			callback();
+		});
+	})
 }
 
 RestUser.prototype.memberships = function(req, res) {

@@ -294,6 +294,8 @@ exports.group_forbidden_2 = "/group/group-perms-forbidden-2";
 exports.group_group_access_1 = "/group/group-perms-group-access-1";
 exports.group_group_access_2 = "/group/group-perms-group-access-2";
 
+exports.group_integrity_error = "/group/group-test-for-integrity"
+
 // ###############################################################################
 // 		SCHEMA
 // ###############################################################################
