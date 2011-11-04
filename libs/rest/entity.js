@@ -139,6 +139,32 @@ RestEntity.prototype._postCreate = function(err, obj, req, callback) {
 }
 
 
+RestEntity.prototype._preDel = function(obj, req, callback) {
+
+	var id = "/entity/" + req.params.id;
+
+	var query = {
+		
+		"query" : {
+			"filtered" : {
+				"query" : {
+						"term" : {
+							"event.who.href" : id // match event
+						}
+					},
+				"filter" : {
+					"type" : {
+						"value" : "event"
+					}
+				}
+			}
+		}
+	}
+	
+	this._checkIntegrity(query,  req, callback);
+}
+
+
 RestEntity.prototype._postDel = function(err, obj, req, callback) {
 
 	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {

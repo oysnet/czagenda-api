@@ -50,7 +50,7 @@ var populateAsync = function(cb) {
 				if (typeof(users[d._source.user]) === 'undefined') {
 					users[d._source.user] = [];
 				}
-				users[d._source.user].push(d._source.group);
+				users[d._source.user].push({group : d._source.group, id : d._id});
 			
 			} else if(d._type === 'schema') {
 
@@ -84,27 +84,26 @@ var populateAsync = function(cb) {
 		// Add user groups
 		for (k in users) {
 			
-			methods.push( function(user, groups, callback) {
+			methods.push( function(user, memberships, callback) {
 				
-				var tmp = []
-				tmp.push(redis.USER_GROUP_PREFIX + user)
+				var multi = redisClient.multi();
 				
-				groups.forEach(function (v) {
-					tmp.push(v);
+				memberships.forEach(function (v) {
+					multi.sadd( redis.USER_GROUP_PREFIX + user, v.group);
+					log.debug("membership sadd ", redis.USER_GROUP_PREFIX + user, v.group)
+					multi.sadd( redis.USER_MEMBERSHIP_PREFIX + user, v.id);
+					log.debug("membership sadd ", redis.USER_MEMBERSHIP_PREFIX + user, v.id)
 				});
 				
-				tmp.push(function(err) {
+				multi.exec(function(err) {
 					
 					if (err !== null) {
-						log.critical.apply(log, tmp);
+						log.critical("Error when restoring USER_GROUP_PREFIX", user, groups.join(' ,'));
 					}
-					log.debug.apply(log, tmp);
+					
 					callback(err);
 				})
 				
-				
-				
-				redisClient.sadd.apply(redisClient, tmp);
 				
 			}.bind(this, k, users[k]))
 		}

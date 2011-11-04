@@ -65,6 +65,7 @@ var update_test_data_expected = {
 var get_test_data_in_database = tests_data.category_3;
 
 var delete_test_data_in_database = tests_data.category_4;
+var delete_test_integrity = tests_data.category_integrity_error;
 
 
 vows.describe('Agenda API exchanged data structure').addBatch({
@@ -231,6 +232,15 @@ vows.describe('Agenda API exchanged data structure').addBatch({
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
+		}
+	},
+	'INTEGRITY' : {
+		topic : function() {
+			rest = new Rest({token: "r3gvHGOpMs48jg2Dcf", token_secret:"dcm34D7JG0AJA7ippSPnBfuDLNIXTtIn", consumer:"vqfY05YtGqWfNalPqX", consumer_secret:"zlsH0YhTm2DmX6K8plHaeiRObJIjaB9b"});
+			rest.del('/api'+delete_test_integrity, this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
 		}
 	}
 

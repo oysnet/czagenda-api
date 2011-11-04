@@ -7,7 +7,8 @@ var models = require('../../models');
 var settings = require('../../settings.js');
 var ElasticSearchClient = require('elasticsearchclient');
 var elasticSearchClient = new ElasticSearchClient(settings.elasticsearch);
-	
+var statusCodes = require('../statusCodes');
+
 exports.populateModelUrls = function() {
 	this._urls.get[this._urlPrefix] = {
 		middleware : [],
@@ -463,7 +464,7 @@ exports._checkIntegrity = function(query, req, callback) {
 				output.documents.push(data.hits.hits[i]._id);
 			}
 
-			req.res.statusCode = statusCode.BAD_REQUEST;
+			req.res.statusCode = statusCodes.BAD_REQUEST;
 			req.res.end(this._renderJson(req, req.res, output))
 			return;
 		} else {

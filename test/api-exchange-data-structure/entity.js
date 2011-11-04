@@ -76,6 +76,7 @@ var get_test_data_in_database = tests_data.entity_2;
 
 var delete_test_data_in_database = tests_data.entity_3;
 
+var delete_test_integrity = tests_data.entity_integrity_error;
 
 vows.describe('Entity API exchanged data structure').addBatch({
 
@@ -341,6 +342,15 @@ vows.describe('Entity API exchanged data structure').addBatch({
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
+		}
+	},
+	'INTEGRITY' : {
+		topic : function() {
+			rest = new Rest();
+			rest.del('/api'+delete_test_integrity, this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
 		}
 	}
 

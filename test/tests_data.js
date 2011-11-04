@@ -30,6 +30,7 @@ exports.category_4 = {
 	author:"/user/staff"
 }
 
+exports.category_integrity_error = "/category/34b74b021369bb23e67f22bad8f1229a";
 
 // ###############################################################################
 // 		AGENDA
@@ -75,6 +76,8 @@ exports.agenda_forbidden_3 = "/agenda/agenda-forbidden-3";
 exports.agenda_group_access_1 = "/agenda/agenda-perms-group-access-1";
 exports.agenda_group_access_2 = "/agenda/agenda-perms-group-access-2";
 exports.agenda_group_access_3 = "/agenda/agenda-perms-group-access-3";
+
+exports.agenda_integrity_error = "/agenda/agenda-for-integrity-test";
 
 // ###############################################################################
 // 		EVENT
@@ -222,6 +225,8 @@ exports.entity_forbidden_1 = "/entity/1f3fa26e61cc482c128f57dbffa536ec";
 exports.entity_forbidden_2 = "/entity/4d88377cca2ecae7df5a71fb4a664195";
 exports.entity_group_access_1 = "/entity/de165adb46f14a6425b4b9bcd120485e";
 exports.entity_group_access_2 = "/entity/993cc34eace067a0d0e01f8d81d85706";
+
+exports.entity_integrity_error = "/entity/5380ed6370dc23cdd3484d8a2b8fffde";
 
 // ###############################################################################
 // 		GROUP
