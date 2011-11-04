@@ -35,6 +35,27 @@ Schema.metaAttributes = ['schema'];
 Schema.publicWriteAttributes = ['schema', 'name', 'sample', 'template'];
 Schema.staffWriteAttributes = Schema.publicWriteAttributes.concat(['final', 'status', 'name']);
 
+
+Schema.prototype.hasPerm = function (perm, user, callback) {
+	
+	switch (perm) {
+		case 'create':
+		case 'read':
+			callback(null, true);
+			break;
+		
+		case 'write':
+		case 'del':
+			callback(null, this.status !== Schema.APPROVED && (user.isStaff === true || user.isSuperuser === true || user.id === this.author));
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
+
+
 Schema.prototype._findMissingDependencies = function(schema, env) {
 
 	var deps = [];
