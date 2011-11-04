@@ -65,7 +65,7 @@ var update_test_data = {
 var update_test_data_expected = {
 	firstName : 'MODIFIED_FIRST_NAME_USER_2',
 	lastName : 'MODIFIED_LAST_NAME_USER_2',
-	//email : 'EMAIL_USER_2@domain.com',
+	email : 'EMAIL_USER_2@domain.com',
 	login : 'LOGIN_USER_2',
 	isActive : false,
 	isStaff : false,
@@ -74,7 +74,8 @@ var update_test_data_expected = {
 	joinedDate: null,	
 	id : '/user/login-user-2',
 	createDate : tests_data.user_2.createDate,
-	groups : '/user/login-user-2/groups'
+	groups : '/user/login-user-2/groups',
+	password: 'PASSWORD_USER_2'
 }
 
 
@@ -86,7 +87,7 @@ var delete_test_data_in_database = tests_data.user_4
 
 
 vows.describe('User API exchanged data structure').addBatch({
-
+/*
 	'CREATE' : {
 		topic : function() {
 			rest = new Rest();
@@ -159,7 +160,7 @@ vows.describe('User API exchanged data structure').addBatch({
 
 	'UPDATE' : {
 		topic : function() {
-			rest = new Rest();
+			rest = new Rest({token: "r3gvHGOpMs48jg2Dcf", token_secret:"dcm34D7JG0AJA7ippSPnBfuDLNIXTtIn", consumer:"vqfY05YtGqWfNalPqX", consumer_secret:"zlsH0YhTm2DmX6K8plHaeiRObJIjaB9b"});
 			
 			rest.put('/api'+update_test_data_in_database.id, JSON.stringify(update_test_data), this.callback);
 		},
@@ -245,10 +246,10 @@ vows.describe('User API exchanged data structure').addBatch({
 			
 		}
 	},
-	
+	*/
 	'DELETE' : {
 		topic : function() {
-			rest = new Rest();
+			rest = new Rest({token: "r3gvHGOpMs48jg2Dcf", token_secret:"dcm34D7JG0AJA7ippSPnBfuDLNIXTtIn", consumer:"vqfY05YtGqWfNalPqX", consumer_secret:"zlsH0YhTm2DmX6K8plHaeiRObJIjaB9b"});
 			rest.del('/api'+delete_test_data_in_database.id, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {

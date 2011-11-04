@@ -34,6 +34,27 @@ User.staffWriteAttributes = User.publicWriteAttributes.concat(['password', 'isSt
 
 util.inherits(User, Base);
 
+User.prototype.hasPerm = function (perm, user, callback) {
+	
+	switch (perm) {
+		case 'read':
+		case 'create':
+			callback(null, true);
+			break;
+					
+		case 'write':
+		case 'del':
+			callback(null, user.isStaff === true ||
+			user.isSuperuser === true || user.id === this.id);
+			
+			break;
+			
+		default:
+			return false;
+		
+	}
+}
+
 User.prototype._validate = function(callback) {
 	//this.validateString('login', false, 2, 30);
 	this.validateRegexp('login', '^[\-_\.0-9a-zA-Z]{2,30}$', false);
