@@ -120,6 +120,30 @@ RestAgenda.prototype._postCreate = function(err, obj, req, callback) {
 	});
 }
 
+RestAgenda.prototype._preDel = function(obj, req, callback) {
+
+	var id = "/agenda/" + req.params.id;
+
+	var query = {
+		
+		"query" : {
+			"filtered" : {
+				"query" : {
+						"term" : {
+							"agenda" : id // match event
+						}
+					},
+				"filter" : {
+					"type" : {
+						"value" : "event"
+					}
+				}
+			}
+		}
+	}
+	
+	this._checkIntegrity(query,  req, callback);
+}
 
 RestAgenda.prototype._postDel = function(err, obj, req, callback) {
 

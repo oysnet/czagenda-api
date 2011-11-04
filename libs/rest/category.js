@@ -51,4 +51,29 @@ RestCategory.prototype._populateObject = function(obj, data, req, res) {
 
 }
 
+RestCategory.prototype._preDel = function(obj, req, callback) {
+
+	var id = "/category/" + req.params.id;
+
+	var query = {
+		
+		"query" : {
+			"filtered" : {
+				"query" : {
+						"term" : {
+							"event.category" : id // match event
+						}
+					},
+				"filter" : {
+					"type" : {
+						"value" : "event"
+					}
+				}
+			}
+		}
+	}
+	
+	this._checkIntegrity(query,  req, callback);
+}
+
 exports.RestCategory = RestCategory

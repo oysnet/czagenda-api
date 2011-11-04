@@ -4,7 +4,10 @@ var errors = require('../../models').errors;
 var restError = require('./errors');
 var async = require('async');
 var models = require('../../models');
-
+var settings = require('../../settings.js');
+var ElasticSearchClient = require('elasticsearchclient');
+var elasticSearchClient = new ElasticSearchClient(settings.elasticsearch);
+	
 exports.populateModelUrls = function() {
 	this._urls.get[this._urlPrefix] = {
 		middleware : [],
@@ -229,7 +232,7 @@ exports.create = function(req, res) {
 
 				this._preCreate(obj, req, function(err) {
 
-					if(err !== null && err instanceof errors.InternalError) {
+					if(err !== null ) {
 						res.statusCode = statusCodes.INTERNAL_ERROR;
 						res.end(err.message);
 						return;
@@ -402,7 +405,7 @@ exports.del = function(req, res) {
 
 				this._preDel(obj, req, function(err) {
 
-					if(err !== null && err instanceof errors.InternalError) {
+					if(err !== null) {
 						res.statusCode = statusCodes.INTERNAL_ERROR;
 						res.end(err.message);
 						return;
@@ -425,6 +428,50 @@ exports.del = function(req, res) {
 		}
 
 	}.bind(this))
+}
+
+exports._checkIntegrity = function(query, req, callback) {
+	
+	query.fields = [];
+	query.size = 10;	
+
+	var q = elasticSearchClient.search(settings.elasticsearch.index, query);
+	q.on('data', function(data) {
+
+		var data = JSON.parse(data);
+
+		if(data.status === 404) {
+			callback(new errors.IndexDoesNotExist(settings.elasticsearch.index))
+			return;
+		} else if( typeof (data.error) !== 'undefined') {
+
+			log.warning("Search failed", settings.elasticsearch.index, JSON.stringify(query), JSON.stringify(data))
+
+			callback(new errors.UnknowError(this.id));
+			return;
+		}
+
+		var output = {
+			errors : 'Integrity error',
+			documents : []
+		};
+
+		var tmp = null;
+
+		if(data.hits.hits.length > 0) {
+			for(var i = 0, l = data.hits.hits.length; i < l; i++) {
+				output.documents.push(data.hits.hits[i]._id);
+			}
+
+			req.res.statusCode = statusCode.BAD_REQUEST;
+			req.res.end(this._renderJson(req, req.res, output))
+			return;
+		} else {
+			callback(null);
+		}
+
+	}.bind(this));
+	q.exec();
 }
 
 exports._getSort = function(sort, req) {

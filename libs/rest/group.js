@@ -107,6 +107,35 @@ RestGroup.prototype._postCreate = function(err, obj, req, callback) {
 	});
 }
 
+RestGroup.prototype._preDel = function(obj, req, callback) {
+
+	var id = "/group/" + req.params.id;
+
+	var query = {
+		
+		"query" : {
+			"filtered" : {
+				"query" : {
+					"match_all" : {}
+				},
+				"filter" : {
+					"or" : [{
+						"term" : {
+							"group" : id // match membership, group is not empty
+						}
+					}, {
+						"term" : {
+							"grantTo" : id // match perms granted to the group that will be deleted
+						}
+					}]
+				}
+			}
+		}
+	}
+	
+	this._checkIntegrity(query,  req, callback);
+
+}
 
 
 RestGroup.prototype._postDel = function(err, obj, req, callback) {

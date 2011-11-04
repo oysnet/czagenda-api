@@ -9,14 +9,20 @@ var settings = require('../../settings.js');
 var async = require('async');
 var mModelSearch = require('./mModelSearch');
 
-var RestUser = exports.RestUser = function (server) {
-	
+var RestUser = exports.RestUser = function(server) {
+
 	RestOAuthModel.call(this, 'user', models.User, server);
-	
-	this._urls.get[this._urlPrefix + '/:id/events/_count'] = {fn :  this.getEventCount};
-	this._urls.get[this._urlPrefix + '/:id/groups'] = {fn :  this.memberships};
-	this._urls.post[this._urlPrefix + '/:id/_checkpassword'] = {fn :  this.checkpassword};
-	
+
+	this._urls.get[this._urlPrefix + '/:id/events/_count'] = {
+		fn : this.getEventCount
+	};
+	this._urls.get[this._urlPrefix + '/:id/groups'] = {
+		fn : this.memberships
+	};
+	this._urls.post[this._urlPrefix + '/:id/_checkpassword'] = {
+		fn : this.checkpassword
+	};
+
 	this._urls.get[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
@@ -24,7 +30,7 @@ var RestUser = exports.RestUser = function (server) {
 	this._urls.post[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
-	
+
 	this._initServer();
 }
 util.inherits(RestUser, RestOAuthModel);
@@ -33,7 +39,7 @@ for(k in mModelSearch) {
 	RestUser.prototype[k] = mModelSearch[k];
 }
 
-RestUser.prototype.searchFields = {	
+RestUser.prototype.searchFields = {
 	'createDate' : 'datetime',
 	'updateDate' : 'datetime',
 	'lastSeen' : 'datetime',
@@ -44,9 +50,8 @@ RestUser.prototype.searchFields = {
 	'isActive' : 'boolean',
 	'isStaff' : 'boolean',
 	'isSuperuser' : 'boolean'
-	
-}
 
+}
 
 RestUser.prototype.sortFields = {
 	'createDate' : 'createDate',
@@ -58,58 +63,97 @@ RestUser.prototype.sortFields = {
 	'joinedDate' : 'joinedDate'
 }
 
-RestUser.prototype.memberships = function(req, res) {
-	
-	var q = {
-		query : {term : { user : '/user/' + req.params.id}}};
-	
-	
-	var tasks = [
-		
-		function (callback) {
-			models.Membership.search(q, ["group", "createDate", "updateDate"] , function ( err, result) {
-				
-				if (err !== null) {
-					callback(err)
-				} else {
-					callback(null,  result);
+RestUser.prototype._preDel = function(obj, req, callback) {
+
+	var id = "/user/" + req.params.id;
+
+	var query = {
+		"query" : {
+			"filtered" : {
+				"query" : {
+					"match_all" : {}
+				},
+				"filter" : {
+					"or" : [{
+						"term" : {
+							"author" : id // match document owned by user that will be deleted
+						}
+					}, {
+						"term" : {
+							"grantTo" : id // match perms granted to the user that will be deleted
+						}
+					}]
 				}
-				
-			});
+			}
 		}
-	];
-	
-	if (req.query.include_docs == true || (typeof(req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
-		tasks.push(function (result, callback) {
-			
+	}
+
+	this._checkIntegrity(query, req, callback);
+
+}
+
+RestUser.prototype.memberships = function(req, res) {
+
+	var q = {
+		query : {
+			term : {
+				user : '/user/' + req.params.id
+			}
+		}
+	};
+
+	var tasks = [
+
+	function(callback) {
+		models.Membership.search(q, ["group", "createDate", "updateDate"], function(err, result) {
+
+			if(err !== null) {
+				callback(err)
+			} else {
+				callback(null, result);
+			}
+
+		});
+	}];
+
+	if(req.query.include_docs == true || ( typeof (req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
+		tasks.push(function(result, callback) {
+
 			var ids = [];
 			var bygroup = {};
-			
-			for (var i = 0, l = result.rows.length; i < l;i++) {
+
+			for(var i = 0, l = result.rows.length; i < l; i++) {
 				ids.push(result.rows[i].group)
 				bygroup[result.rows[i].group] = result.rows[i];
 			}
-			
-			var q = {size: 10000, query : {ids : {values : ids}}}
-			
-			models.Group.search(q, models.Group.publicAttributes, function ( err, groups) {
-				
-				if (err !== null) {
+
+			var q = {
+				size : 10000,
+				query : {
+					ids : {
+						values : ids
+					}
+				}
+			}
+
+			models.Group.search(q, models.Group.publicAttributes, function(err, groups) {
+
+				if(err !== null) {
 					callback(err);
 				} else {
-					
-					for (var i = 0, l = groups.rows.length; i<l; i++ ) {
+
+					for(var i = 0, l = groups.rows.length; i < l; i++) {
 						bygroup[groups.rows[i].id].group = groups.rows[i];
 					}
-					callback(null,  result);
+					callback(null, result);
 				}
 			});
 		});
 	}
-	
-	async.waterfall(tasks, function ( err, result) {
-		if (err !== null) {
-			if (err instanceof errors.IndexDoesNotExist) {
+
+	async.waterfall(tasks, function(err, result) {
+		if(err !== null) {
+			if( err instanceof errors.IndexDoesNotExist) {
 				res.statusCode = statusCode.NOT_FOUND;
 				res.end('Not found');
 			} else {
@@ -120,54 +164,55 @@ RestUser.prototype.memberships = function(req, res) {
 			res.end(this._renderJson(req, res, result));
 		}
 	}.bind(this));
-	
-	
 
 }
 
 RestUser.prototype.checkpassword = function(req, res) {
 	var data = req.body;
-	
-	if (typeof(data) === 'undefined' || typeof(data.password) === 'undefined') {
+
+	if( typeof (data) === 'undefined' || typeof (data.password) === 'undefined') {
 		res.statusCode = statusCode.BAD_REQUEST;
 		res.end('Missing password');
 		return;
 	}
-	
+
 	models.User.get({
 		id : '/user/' + req.params.id
-	}, function( err, obj) {
+	}, function(err, obj) {
 
 		if(err !== null) {
 
 			if( err instanceof errors.ObjectDoesNotExist) {
 				res.statusCode = statusCode.NOT_FOUND;
 				res.end('Not found')
-			}  else {
+			} else {
 				res.statusCode = statusCode.INTERNAL_ERROR;
 				res.end('Internal error')
 			}
 
 		} else {
-			
+
 			res.statusCode = statusCode.ALL_OK;
-			
-			if (data.password === obj.password) {
+
+			if(data.password === obj.password) {
 				res.end('{"success":true}');
 			} else {
 				res.end('{"success":false}');
 			}
-			
+
 		}
 
 	}.bind(this))
-	
+
 }
 
-
 RestUser.prototype.getEventCount = function(req, res) {
-	
-	models.Event.count({term : {author : '/user/' + req.params.id}}, function(err, result) {
+
+	models.Event.count({
+		term : {
+			author : '/user/' + req.params.id
+		}
+	}, function(err, result) {
 		if(err !== null) {
 			if( err instanceof errors.IndexDoesNotExist) {
 				res.statusCode = statusCode.NOT_FOUND;
@@ -177,9 +222,9 @@ RestUser.prototype.getEventCount = function(req, res) {
 				res.end('Internal error')
 			}
 		} else {
-			res.end(this._renderJson( req, res, result));
+			res.end(this._renderJson(req, res, result));
 		}
 
 	}.bind(this));
-	
+
 }
