@@ -165,8 +165,6 @@ RestEntity.prototype._postDel = function(err, obj, req, callback) {
 RestEntity.prototype.permsUserWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('entity', 'user', 'write'), grantToClass = models.User;
 	
-	console.log(permClass)
-	
 	this._perms(req, res, permClass, grantToClass);
 }
 
