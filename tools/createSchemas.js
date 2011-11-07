@@ -90,7 +90,7 @@ var createSchema = function() {
 			
 
 			if(SCHEMAS.length > 0) {
-				setTimeout(createSchema, 1000);
+				setTimeout(createSchema, 3000);
 			} else {
 				log.notice("All done");
 			}

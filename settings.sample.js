@@ -24,4 +24,8 @@ exports.redis = {
 	'db' : 0
 }
 
+exports.validator = {
+    'refreshFrequency' : 1000
+}
+
 exports.lastSeenUpdateFrequency = 10000;

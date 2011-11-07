@@ -23,6 +23,9 @@ exports.redis = {
     'db' : 2
 }
 
+exports.validator = {
+    'refreshFrequency' : 1000
+}
 
 exports.oauth = {
 	

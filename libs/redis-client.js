@@ -13,3 +13,4 @@ exports.USER_GROUP_PREFIX = "user_group_";
 exports.USER_MEMBERSHIP_PREFIX = "user_membership_";
 exports.LAST_SEEN = "last_seen";
 exports.LAST_SEEN_PREFIX = "last_seen_";
+exports.SCHEMA_KEY = "schemas";

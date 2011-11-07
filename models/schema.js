@@ -99,7 +99,7 @@ Schema.prototype._validate = function(callback) {
 
 	// validate schema with user environment (include user's schema with status proposal')
 	if(this.status === Schema.PROPOSAL) {
-		var userEnv = new validator.ValidatorEnvironment();
+		var userEnv = new validator.ValidatorEnvironment(this.author);
 		userEnv.load( function(err, res) {
 			if(err !== null) {
 				log.warning('Unable to load ValidatorEnvironment for user ' + this.author, err);
@@ -123,7 +123,7 @@ Schema.prototype._validate = function(callback) {
 				callback(null);
 			}
 
-		}.bind(this), this.author);
+		}.bind(this));
 
 	} else {
 		var veSchema = validator.approvedEnvironment.getEnv().findSchema(validator.approvedEnvironment.getEnv().getOption("latestJSONSchemaSchemaURI"));
@@ -180,7 +180,8 @@ Schema.prototype.__deleteKey = function(key, broadcast, callback) {
 		if(err !== null) {
 			log.critical('REDIS SCHEMAS: error on sdel ', key, this.id, err)
 		} else if(res === 1 && broadcast === true) {
-			// braodcast
+			
+			validator.approvedEnvironment.envChange();
 		}
 		
 		callback(err);
@@ -195,7 +196,7 @@ Schema.prototype.__addKey = function(key, broadcast, callback) {
 		if(err !== null) {
 			log.critical('REDIS SCHEMAS: error on sadd ', key, this.id, err)
 		} else if(res === 1 && broadcast === true) {
-			// braodcast
+			validator.approvedEnvironment.envChange();
 		}
 		
 		callback(err);
