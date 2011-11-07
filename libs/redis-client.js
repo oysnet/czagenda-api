@@ -14,3 +14,4 @@ exports.USER_MEMBERSHIP_PREFIX = "user_membership_";
 exports.LAST_SEEN = "last_seen";
 exports.LAST_SEEN_PREFIX = "last_seen_";
 exports.SCHEMA_KEY = "schemas";
+exports.LOCK_PREFIX = 'lock_';
