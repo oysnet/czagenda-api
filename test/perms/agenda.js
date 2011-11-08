@@ -53,10 +53,15 @@ vows.describe('Agenda API permissions').addBatch({
 		},
 		
 		'update' : {
+			
 			topic : function() {
-				rest = new Rest();
-				rest.put('/api' + forbidden_1, '{}' ,this.callback);
+				setTimeout(function () {
+					rest = new Rest();
+					rest.put('/api' + forbidden_1, '{}' ,this.callback);
+				}.bind(this),1000)
+				
 			},
+			
 			
 			'check statusCode is 403' : function(err, res, data) {
 				
@@ -66,8 +71,11 @@ vows.describe('Agenda API permissions').addBatch({
 		
 		'delete' : {
 			topic : function() {
-				rest = new Rest();
-				rest.del('/api' + forbidden_1, this.callback);
+				setTimeout(function () {
+					rest = new Rest();
+					rest.del('/api' + forbidden_1, this.callback);
+				}.bind(this),2000)
+				
 			},
 			
 			'check statusCode is 403' : function(err, res, data) {
@@ -116,8 +124,11 @@ vows.describe('Agenda API permissions').addBatch({
 		
 		'update' : {
 			topic : function() {
-				rest = new Rest();
-				rest.put('/api' + group_access_1, '{"description":"any words"}' , this.callback);
+				setTimeout(function () {
+					rest = new Rest();
+					rest.put('/api' + group_access_1, '{"description":"any words"}' , this.callback);
+				}.bind(this),1000)
+				
 			},
 			
 			'check statusCode is 200' : function(err, res, data) {

@@ -306,8 +306,11 @@ vows.describe('Group perms API exchanged data structure').addBatch({
 	
 	'CREATE Write User perm' : {
 		topic : function() {
-			rest = new Rest();
-			rest.post('/api/perms/group/wu', JSON.stringify({grantTo : write_user.id, applyOn : create_object.id}), this.callback);
+			setTimeout(function () {
+				rest = new Rest();
+				rest.post('/api/perms/group/wu', JSON.stringify({grantTo : write_user.id, applyOn : create_object.id}), this.callback);
+			}.bind(this), 1000)
+			
 		},
 		
 		'check statusCode is 201' : function(err, res, data) {
@@ -345,8 +348,12 @@ vows.describe('Group perms API exchanged data structure').addBatch({
 	
 	'DELETE Write group perm' : {
 		topic : function() {
-			rest = new Rest();
-			rest.del('/api'+delete_write_group_perm, this.callback);
+			setTimeout( function() {
+				rest = new Rest();
+				rest.del('/api'+delete_write_group_perm, this.callback);
+			}.bind(this), 2000)
+			
+			
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
@@ -355,8 +362,12 @@ vows.describe('Group perms API exchanged data structure').addBatch({
 	
 	'DELETE Write user perm' : {
 		topic : function() {
-			rest = new Rest();
-			rest.del('/api'+delete_write_user_perm, this.callback);
+			setTimeout( function() {
+				rest = new Rest();
+				rest.del('/api'+delete_write_user_perm, this.callback);
+			}.bind(this), 4000)
+			
+			
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);

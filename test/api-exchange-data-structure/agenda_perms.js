@@ -28,301 +28,277 @@ vows.describe('Agenda perms API exchanged data structure').addBatch({
 	'GET groups write' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/api'+get_object.writeGroups, this.callback);
+			rest.get('/api' + get_object.writeGroups, this.callback);
 		},
-		
 		'check statusCode is 200' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.ALL_OK);
 		},
-		
 		'check total_rows is an integer' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(number_re.test(data.total_rows), true);
 		},
-		
 		'check total_rows value is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.strictEqual(data.total_rows, 1);
 		},
-		
 		'check rows is an array' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
 		},
-		
 		'check rows length is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(data.rows.length, 1);
 		},
-		
 		'check rows first item createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].createDate), true);
 		},
-		
 		'check rows first item updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].updateDate), true);
 		},
-		
-		
 		'check rows first item structure' : function(err, res, data) {
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
-			assert.deepEqual(data.rows[0], {id : write_group_perm, grantTo :  write_group.id});
+			assert.deepEqual(data.rows[0], {
+				id : write_group_perm,
+				grantTo : write_group.id
+			});
 		}
 	},
-	
+
 	'GET groups write include_docs' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/api'+get_object.writeGroups+ '?include_docs=true', this.callback);
+			rest.get('/api' + get_object.writeGroups + '?include_docs=true', this.callback);
 		},
-		
 		'check statusCode is 200' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.ALL_OK);
 		},
-		
 		'check total_rows is an integer' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(number_re.test(data.total_rows), true);
 		},
-		
 		'check total_rows value is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.strictEqual(data.total_rows, 1);
 		},
-				
 		'check rows is an array' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
 		},
-		
 		'check rows length is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(data.rows.length, 1);
 		},
-		
 		'check rows first item createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].createDate), true);
 		},
-		
 		'check rows first item updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].updateDate), true);
 		},
-		
 		'check rows first item structure' : function(err, res, data) {
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
-			assert.deepEqual(data.rows[0], {id : write_group_perm, grantTo : write_group});
+			assert.deepEqual(data.rows[0], {
+				id : write_group_perm,
+				grantTo : write_group
+			});
 		}
 	},
-	
+
 	'GET users write' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/api'+get_object.writeUsers, this.callback);
+			rest.get('/api' + get_object.writeUsers, this.callback);
 		},
-		
 		'check statusCode is 200' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.ALL_OK);
 		},
-		
 		'check total_rows is an integer' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(number_re.test(data.total_rows), true);
 		},
-		
 		'check total_rows value is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.strictEqual(data.total_rows, 1);
 		},
-		
 		'check rows is an array' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
 		},
-		
 		'check rows length is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(data.rows.length, 1);
 		},
-		
 		'check rows first item createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].createDate), true);
 		},
-		
 		'check rows first item updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].updateDate), true);
 		},
-		
 		'check rows first item structure' : function(err, res, data) {
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
-			
-			assert.deepEqual(data.rows[0], {id : write_user_perm, grantTo: write_user.id});
+
+			assert.deepEqual(data.rows[0], {
+				id : write_user_perm,
+				grantTo : write_user.id
+			});
 		}
 	},
-	
+
 	'GET users write include_docs' : {
 		topic : function() {
 			rest = new Rest();
-			rest.get('/api'+get_object.writeUsers+ '?include_docs=true', this.callback);
+			rest.get('/api' + get_object.writeUsers + '?include_docs=true', this.callback);
 		},
-		
 		'check statusCode is 200' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.ALL_OK);
 		},
-		
 		'check total_rows is an integer' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(number_re.test(data.total_rows), true);
 		},
-		
 		'check total_rows value is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.strictEqual(data.total_rows, 1);
 		},
-		
 		'check rows is an array' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
 		},
-		
 		'check rows length is 1' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(data.rows.length, 1);
 		},
-		
 		'check rows first item createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].createDate), true);
 		},
-		
 		'check rows first item updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.rows[0].updateDate), true);
 		},
-		
 		'check rows first item structure' : function(err, res, data) {
 			var data = JSON.parse(data);
 			delete data.rows[0].createDate;
 			delete data.rows[0].updateDate;
 			delete write_user.email;
-			
 			delete data.rows[0].grantTo.lastSeen;
 			delete write_user.lastSeen;
-			
-			assert.deepEqual(data.rows[0], {id : write_user_perm, grantTo : write_user});
+
+			assert.deepEqual(data.rows[0], {
+				id : write_user_perm,
+				grantTo : write_user
+			});
 		}
 	},
-	
-	
+
 	'CREATE Write Group perm' : {
 		topic : function() {
 			rest = new Rest();
-			rest.post('/api/perms/agenda/wg', JSON.stringify({grantTo : write_group.id, applyOn : create_object.id}), this.callback);
+			rest.post('/api/perms/agenda/wg', JSON.stringify({
+				grantTo : write_group.id,
+				applyOn : create_object.id
+			}), this.callback);
 		},
-		
 		'check statusCode is 201' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.CREATED);
 		},
-		
 		'check createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.createDate), true);
 		},
-		
 		'check updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.updateDate), true);
 		},
-		
 		'check id' : function(err, res, data) {
 			var data = JSON.parse(data);
 			var re = new RegExp("^\/perms/agenda\/wg\/[0-9a-z]+$")
 			assert.equal(re.test(data.id), true);
 		},
-		
 		'check response structure' : function(err, res, data) {
 			var data = JSON.parse(data);
-			
 			delete data.createDate;
 			delete data.updateDate;
-			delete data.id;						
-			assert.deepEqual(data, {applyOn :  create_object.id,
-									grantTo : write_group.id
-									} );
+			delete data.id;
+			assert.deepEqual(data, {
+				applyOn : create_object.id,
+				grantTo : write_group.id
+			});
 		}
-		
 	},
-	
-	
+
 	'CREATE Write User perm' : {
 		topic : function() {
-			rest = new Rest();
-			rest.post('/api/perms/agenda/wu', JSON.stringify({grantTo : write_user.id, applyOn : create_object.id}), this.callback);
+
+			setTimeout( function() {
+				rest = new Rest();
+				rest.post('/api/perms/agenda/wu', JSON.stringify({
+					grantTo : write_user.id,
+					applyOn : create_object.id
+				}), this.callback);
+			}.bind(this), 1000)
+
 		},
-		
 		'check statusCode is 201' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.CREATED);
 		},
-		
 		'check createDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.createDate), true);
 		},
-		
 		'check updateDate' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.equal(date_re.test(data.updateDate), true);
 		},
-		
 		'check id' : function(err, res, data) {
 			var data = JSON.parse(data);
 			var re = new RegExp("^\/perms/agenda\/wu\/[0-9a-z]+$")
 			assert.equal(re.test(data.id), true);
 		},
-		
 		'check response structure' : function(err, res, data) {
 			var data = JSON.parse(data);
-			
 			delete data.createDate;
 			delete data.updateDate;
-			delete data.id;						
-			assert.deepEqual(data, {applyOn :  create_object.id,
-									grantTo :  write_user.id
-									} );
+			delete data.id;
+			assert.deepEqual(data, {
+				applyOn : create_object.id,
+				grantTo : write_user.id
+			});
 		}
-		
 	},
-	
+
 	'DELETE Write group perm' : {
 		topic : function() {
 			rest = new Rest();
-			rest.del('/api'+delete_write_group_perm, this.callback);
+			rest.del('/api' + delete_write_group_perm, this.callback);
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
 		}
 	},
-	
+
 	'DELETE Write user perm' : {
 		topic : function() {
-			rest = new Rest();
-			rest.del('/api'+delete_write_user_perm, this.callback);
+			setTimeout( function() {
+				rest = new Rest();
+				rest.del('/api' + delete_write_user_perm, this.callback);
+			}.bind(this), 3000)
+
 		},
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
 		}
 	}
-	
 
 }).export(module);

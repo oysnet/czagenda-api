@@ -233,7 +233,7 @@ exports.create = function(req, res) {
 
 				this._preCreate(obj, req, function(err) {
 
-					if(err !== null ) {
+					if(err !== null) {
 						res.statusCode = statusCodes.INTERNAL_ERROR;
 						res.end(err.message);
 						return;
@@ -277,8 +277,10 @@ exports.create = function(req, res) {
 exports.update = function(req, res) {
 	// load object...
 
+	var id = this._urlPrefix + "/" + req.params.id;
+
 	this._clazz.get({
-		id : this._urlPrefix + "/" + req.params.id
+		id : id
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -351,7 +353,8 @@ exports.update = function(req, res) {
 
 		}
 
-	}.bind(this))
+	}.bind(this));
+
 }
 /**
  * this methods is called before del object
@@ -375,9 +378,11 @@ exports._postDel = function(err, obj, req, callback) {
 
 exports.del = function(req, res) {
 
+	var id = this._urlPrefix + "/" + req.params.id;
+
 	// load object...
 	this._clazz.get({
-		id : this._urlPrefix + "/" + req.params.id
+		id : id
 	}, function(err, obj) {
 
 		if(err !== null) {
@@ -428,13 +433,13 @@ exports.del = function(req, res) {
 			}.bind(this));
 		}
 
-	}.bind(this))
+	}.bind(this));
 }
 
 exports._checkIntegrity = function(query, req, callback) {
-	
+
 	query.fields = [];
-	query.size = 10;	
+	query.size = 10;
 
 	var q = elasticSearchClient.search(settings.elasticsearch.index, query);
 	q.on('data', function(data) {
@@ -732,41 +737,36 @@ exports._perms = function(req, res, permClass, grantToClass) {
 	}.bind(this))
 
 }
-
-
-
 /**
  * Return a function to use with async to delete perms when object was deleted
  * @obj : the object that was deleted
  * @id : the permission id to delete
  * @strClass: the permission class name
  */
-exports._getPermDeleteMethod = function (obj, id, strClass) {
-	
+exports._getPermDeleteMethod = function(obj, id, strClass) {
+
 	return function(callback) {
-			models.perms[strClass].get({
-				id : id
-			}, function(err, perm) {
-				
-				if (err === null) {
-					
-					perm.del(function (err, perm) {
-						
-						if (err !== null && !(err instanceof models.errors.ObjectDoesNotExist)) {
-							log.warning('_postDel: error while delete ' + strClass, id, obj.id)
-						}
-						
-						callback();
-					}, false);
-					
-				} else if (err instanceof models.errors.ObjectDoesNotExist) {
-					callback(null);
-				} else {
-					log.warning('_postDel: error while get ' + strClass + ' to delete it', id, obj.id)
-					callback(null)
-				}
-				
-			});
-		}
-	
+		models.perms[strClass].get({
+			id : id
+		}, function(err, perm) {
+
+			if(err === null) {
+
+				perm.del(function(err, perm) {
+
+					if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+						log.warning('_postDel: error while delete ' + strClass, id, obj.id)
+					}
+
+					callback();
+				}, false);
+			} else if( err instanceof models.errors.ObjectDoesNotExist) {
+				callback(null);
+			} else {
+				log.warning('_postDel: error while get ' + strClass + ' to delete it', id, obj.id)
+				callback(null)
+			}
+
+		});
+	}
 }

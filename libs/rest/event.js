@@ -11,6 +11,7 @@ var models = require('../../models');
 var async = require('async');
 var statusCodes = require('../statusCodes');
 var mModelSearch = require('./mModelSearch');
+var Lock = require('../lock');
 
 var RestEvent = exports.RestEvent = function(server) {
 
@@ -343,33 +344,46 @@ RestEvent.prototype._postDel = function(err, obj, req, callback) {
 
 RestEvent.prototype.__moderate = function(req, res, moderate) {
 
-	models.Event.get({
-		id : "/event/" + req.params.id
-	}, function(err, event) {
+	var id = "/event/" + req.params.id;
 
-		if(err !== null) {
-			if( err instanceof models.errors.ObjectDoesNotExist) {
-				res.statusCode = statusCodes.NOT_FOUND;
-				res.end('Not found')
-			} else {
-				res.statusCode = statusCodes.INTERNAL_ERROR;
-				res.end('Internal error')
-			}
-		} else {
+	var lock = new Lock(id);
+	lock.acquire(function(err, locked) {
 
-			moderate(event);
+		if(err !== null || locked === false) {
+			res.statusCode = statusCodes.LOCKED;
+			res.end('Document is Locked');
+			return;
+		}
 
-			event.save(function(err, obj) {
-				if(err === null) {
-					res.statusCode = statusCodes.ALL_OK;
-					res.end();
+		req.locks = [lock];
+
+		models.Event.get({
+			id : id
+		}, function(err, event) {
+
+			if(err !== null) {
+				if( err instanceof models.errors.ObjectDoesNotExist) {
+					res.statusCode = statusCodes.NOT_FOUND;
+					res.end('Not found')
 				} else {
 					res.statusCode = statusCodes.INTERNAL_ERROR;
 					res.end('Internal error')
 				}
-			})
-		}
+			} else {
 
+				moderate(event);
+
+				event.save(function(err, obj) {
+					if(err === null) {
+						res.statusCode = statusCodes.ALL_OK;
+						res.end();
+					} else {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error')
+					}
+				})
+			}
+		});
 	});
 }
 

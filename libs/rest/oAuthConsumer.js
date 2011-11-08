@@ -1,6 +1,6 @@
 var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
-
+var mLock = require('./mLock');
 var models = require('../../models');
 
 function RestOAuthConsumer (server) {
@@ -17,8 +17,15 @@ function RestOAuthConsumer (server) {
 		}
 	}
 	
+	this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
+	this._urls.del[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
+	
 	this._initServer();
 }
 util.inherits(RestOAuthConsumer,RestOAuthModel );
+
+for(k in mLock) {
+	RestOAuthModel.prototype[k] = mLock[k];
+}
 
 exports.RestOAuthConsumer = RestOAuthConsumer

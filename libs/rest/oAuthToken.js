@@ -6,6 +6,8 @@ var oauth = require('../oauth');
 var mOAuth = require('./mOAuth');
 var mModelUrls = require('./mModelUrls');
 var mPermissions = require('./mPermissions');
+var mLock = require('./mLock');
+
 
 function RestOAuthToken(server) {
 
@@ -20,7 +22,7 @@ function RestOAuthToken(server) {
 	
 	this._idRegexp = '([0-9a-zA-Z]+)';
 	
-	this._urls.post[this._urlPrefix + '/:id/_authorize'] = {middleware : modelMiddleware, fn :  this.authorize};
+	this._urls.post[this._urlPrefix + '/:id/_authorize'] = {middleware : modelMiddleware.concat([this.requireLock.bind(this)]), fn :  this.authorize};
 	
 	this._urls.get[this._urlPrefix] = { middleware : modelMiddleware, fn : this.list};
 	this._urls.get[this._urlPrefix + '/_count'] =  { middleware : modelMiddleware,  fn :this.count};
@@ -29,8 +31,8 @@ function RestOAuthToken(server) {
 	
 	this._urls.post[this._urlPrefix] =  { middleware :modelMiddleware, fn :this.create};
 
-	this._urls.put[this._urlPrefix + '/:id'] =  { middleware : modelMiddleware, fn :this.update};
-	this._urls.del[this._urlPrefix + '/:id'] =  { middleware : modelMiddleware, fn :this.del};
+	this._urls.put[this._urlPrefix + '/:id'] =  { middleware : modelMiddleware.concat([this.requireLock.bind(this)]), fn :this.update};
+	this._urls.del[this._urlPrefix + '/:id'] =  { middleware : modelMiddleware.concat([this.requireLock.bind(this)]), fn :this.del};
 	
 	// Challenge OAuth
 	this._urls.get[this._urlPrefix + '/_request-token'] = { middleware : [this._verifyConsumerSignature], fn : this.requestToken};
@@ -59,13 +61,17 @@ for (k in mPermissions) {
 	RestOAuthToken.prototype[k] = mPermissions[k];
 }
 
+// mixin mLock
+for(k in mLock) {
+	RestOAuthToken.prototype[k] = mLock[k];
+}
+
 RestOAuthToken.prototype._getDefaultMiddleware = function () {
 	return [oauth.verifyBody()];
 }
 
 RestOAuthToken.prototype.requestToken = function(req, res) {
 	
-	console.log('requestToken');
 	var obj = new models.OAuthToken;
 
 	obj.consumer = req.consumer;
