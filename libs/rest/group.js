@@ -196,6 +196,10 @@ RestGroup.prototype.memberships = function(req, res) {
 	if (req.query.include_docs == true || (typeof(req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
 		tasks.push(function (result, callback) {
 			
+			if (result.rows.length > 0) {
+				
+			
+			
 			var ids = [];
 			var byuser = {};
 			
@@ -218,6 +222,9 @@ RestGroup.prototype.memberships = function(req, res) {
 					callback(null,  result);
 				}
 			});
+			} else {
+				callback(null,  result);
+			}
 		});
 	}
 	

@@ -167,35 +167,40 @@ RestUser.prototype.memberships = function(req, res) {
 	if(req.query.include_docs == true || ( typeof (req.query.include_docs) !== 'undefined' && req.query.include_docs.toLowerCase() == 'true')) {
 		tasks.push(function(result, callback) {
 
-			var ids = [];
-			var bygroup = {};
+			if(result.rows.length > 0) {
 
-			for(var i = 0, l = result.rows.length; i < l; i++) {
-				ids.push(result.rows[i].group)
-				bygroup[result.rows[i].group] = result.rows[i];
-			}
+				var ids = [];
+				var bygroup = {};
 
-			var q = {
-				size : 10000,
-				query : {
-					ids : {
-						values : ids
+				for(var i = 0, l = result.rows.length; i < l; i++) {
+					ids.push(result.rows[i].group)
+					bygroup[result.rows[i].group] = result.rows[i];
+				}
+
+				var q = {
+					size : 10000,
+					query : {
+						ids : {
+							values : ids
+						}
 					}
 				}
-			}
 
-			models.Group.search(q, models.Group.publicAttributes, function(err, groups) {
+				models.Group.search(q, models.Group.publicAttributes, function(err, groups) {
 
-				if(err !== null) {
-					callback(err);
-				} else {
+					if(err !== null) {
+						callback(err);
+					} else {
 
-					for(var i = 0, l = groups.rows.length; i < l; i++) {
-						bygroup[groups.rows[i].id].group = groups.rows[i];
+						for(var i = 0, l = groups.rows.length; i < l; i++) {
+							bygroup[groups.rows[i].id].group = groups.rows[i];
+						}
+						callback(null, result);
 					}
-					callback(null, result);
-				}
-			});
+				});
+			} else {
+				callback(null, result)
+			}
 		});
 	}
 
