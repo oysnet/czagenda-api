@@ -18,8 +18,8 @@ function RestOAuthConsumer (server) {
 		}
 	}
 	
-	this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
-	this._urls.del[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
+	//this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
+	//this._urls.del[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
 	
 	this._urls.get[this._urlPrefix + '/_search'] = {
 		fn : this.search,
