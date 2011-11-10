@@ -553,7 +553,6 @@ exports._search = function(req, res, query) {
 
 	} catch (e) {
 
-		console.log(e);
 
 		if( e instanceof restError.BadRequest) {
 			res.statusCode = statusCodes.BAD_REQUEST;
