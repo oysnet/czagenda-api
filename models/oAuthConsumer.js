@@ -7,7 +7,7 @@ var settings = require('../settings.js');
 var log = require('czagenda-log').from(__filename);
 
 function OAuthConsumer () {
-	this._attributs = {name : null, description : null, key : null, secret : null, status : 'PENDING', user : null};
+	this._attributs = {name : null, description : null, key : null, secret : null, status : 'ACCEPTED', user : null};
 	Base.call(this, 'oauth-consumer');	
 }
 
