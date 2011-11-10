@@ -15,6 +15,43 @@ curl -XDELETE http://10.7.50.110:9200/$1;
 
 curl -XPUT http://10.7.50.110:9200/$1
 
+curl -XPUT "http://10.7.50.110:9200/$1/oauth-token/_mapping" -d '{
+	"oauth-token": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			"user" :  {"type" : "string", "index" : "not_analyzed"},
+			"tokenType" :  {"type" : "string", "index" : "not_analyzed"},
+			"consumer" :  {"type" : "string", "index" : "not_analyzed"}
+		}
+	}
+}';
+
+curl -XPUT "http://10.7.50.110:9200/$1/oauth-consumer/_mapping" -d '{
+	"oauth-consumer": {
+		"properties" : {
+			"createDate" : {
+				 "type" : "date"
+			},
+			"updateDate" : {
+				 "type" : "date"
+			},
+			"user" :  {"type" : "string", "index" : "not_analyzed"},			
+			"name": {				
+					"type" : "multi_field",
+	                "fields" : {
+	                    "name" : {"type" : "string", "index" : "analyzed"},
+	                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
+	                }
+				}
+		}
+	}
+}';
+
 curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 	"event": {
 		"properties" : {

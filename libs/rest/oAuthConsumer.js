@@ -2,6 +2,7 @@ var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 var mLock = require('./mLock');
 var models = require('../../models');
+var mModelSearch = require('./mModelSearch');
 
 function RestOAuthConsumer (server) {
 	
@@ -20,12 +21,40 @@ function RestOAuthConsumer (server) {
 	this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
 	this._urls.del[this._urlPrefix + '/:id'].middleware.push(this.requireLock.bind(this))
 	
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search,
+		middleware : [this.staffOnly]
+	};
+
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search,
+		middleware : [this.staffOnly]
+	};
+	
 	this._initServer();
 }
 util.inherits(RestOAuthConsumer,RestOAuthModel );
 
 for(k in mLock) {
-	RestOAuthModel.prototype[k] = mLock[k];
+	RestOAuthConsumer.prototype[k] = mLock[k];
+}
+
+for(k in mModelSearch) {
+	RestOAuthConsumer.prototype[k] = mModelSearch[k];
+}
+
+RestOAuthConsumer.prototype.searchFields = {
+	'user' : 'term',
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'name' : 'text',
+	'description' : 'text'
+}
+
+RestOAuthConsumer.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'name' : 'name.untouched'
 }
 
 exports.RestOAuthConsumer = RestOAuthConsumer
