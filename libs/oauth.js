@@ -169,7 +169,7 @@ exports.verifySignature = function (lookup, redisClient) {
 			var baseStringURI = oauthBaseStringURI(req);
 			var requestParameterString = oauthRequestParameterString(req);
 			var baseString = req.method.toUpperCase() + "&" + qs.escape(baseStringURI) + "&" + specialEscape(requestParameterString);
-
+			
 			// Construct key from returned tokens		
 			var key = qs.escape(clientSecret ? clientSecret : '') + '&' + qs.escape(tokenSecret ? tokenSecret : '');
 	
