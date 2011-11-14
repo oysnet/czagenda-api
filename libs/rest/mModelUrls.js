@@ -526,6 +526,11 @@ exports._getSort = function(sort, req) {
 }
 
 exports._getDefaultSort = function() {
+	return ['_score',{
+	"createDate" : {
+	"order" : "desc"
+	}}];
+
 	return [{
 		"createDate" : {
 			"order" : "desc"
@@ -552,7 +557,6 @@ exports._search = function(req, res, query) {
 		}
 
 	} catch (e) {
-
 
 		if( e instanceof restError.BadRequest) {
 			res.statusCode = statusCodes.BAD_REQUEST;
