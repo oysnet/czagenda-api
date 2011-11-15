@@ -63,6 +63,8 @@ RestUser.prototype.sortFields = {
 	'joinedDate' : 'joinedDate'
 }
 
+RestUser.prototype.fulltextFields = ['login', 'lastName', 'firstName'];
+
 RestUser.prototype._preDel = function(obj, req, callback) {
 
 	var id = "/user/" + req.params.id;

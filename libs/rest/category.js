@@ -41,6 +41,8 @@ RestCategory.prototype.sortFields = {
 	'title' : 'title.untouched'
 }
 
+RestCategory.prototype.fulltextFields = ['title', 'description'];
+
 RestCategory.prototype._populateObject = function(obj, data, req, res) {
 
 	if(obj.author === null) {

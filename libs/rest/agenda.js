@@ -47,6 +47,7 @@ RestAgenda.prototype.sortFields = {
 	'updateDate' : 'updateDate',
 	'title' : 'title.untouched'
 }
+RestAgenda.prototype.fulltextFields = ['title', 'description'];
 
 RestAgenda.prototype._populateObject = function(obj, data, req, res) {
 

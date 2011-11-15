@@ -3,6 +3,7 @@ var restError = require('./errors');
 var log = require('czagenda-log').from(__filename);
 
 exports.searchFields = {};
+exports.fulltextFields = null;
 
 exports.search = function(req, res) {
 
@@ -42,14 +43,13 @@ exports.getSearchQuery = function(req) {
 	} else {
 		rawData = req.query;
 	}
-	
+
 	var q = {};
-	
+
 	if( typeof (rawData.q) !== 'undefined') {
 		qString = rawData.q.trim();
 
 		// parse query : text field:.. field:...
-		
 
 		var re = new RegExp(/[a-z0-9\.]+:/gi);
 		var fields = [];
@@ -88,7 +88,6 @@ exports.getSearchQuery = function(req) {
 		}
 
 	}
-	
 
 	return q;
 
@@ -215,7 +214,7 @@ exports.getGeoSearchPart = function(field, args, req) {
 			q.or.push(this.getGeoSearchPart(field, [arg]));
 		}.bind(this))
 	} else {
-		
+
 		if(( bbox = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*)\]/)) !== null) {
 			q = {
 				"geo_bounding_box" : {}
@@ -225,9 +224,11 @@ exports.getGeoSearchPart = function(field, args, req) {
 				"bottom_right" : [parseFloat(bbox[3]), parseFloat(bbox[4])]
 			}
 		} else if(( distance = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
-			
-			req.geoDistanceQuery = {field : field, point:[parseFloat(distance[1]), parseFloat(distance[2])]};
-			
+
+			req.geoDistanceQuery = {
+				field : field,
+				point : [parseFloat(distance[1]), parseFloat(distance[2])]
+			};
 			q = {
 				"geo_distance" : {
 					"distance" : distance[3]
@@ -242,7 +243,6 @@ exports.getGeoSearchPart = function(field, args, req) {
 
 	return q;
 }
-
 
 exports.getBooleanSearchPart = function(field, args) {
 	var q = null;
@@ -261,6 +261,7 @@ exports.getBooleanSearchPart = function(field, args) {
 	return q;
 }
 
+
 exports._getQueryFromRequest = function(req, callback) {
 
 	var searchQuery = this.getSearchQuery(req);
@@ -275,7 +276,11 @@ exports._getQueryFromRequest = function(req, callback) {
 				"query" : searchQuery.fulltext,
 				"analyze_wildcard" : true,
 				"auto_generate_phrase_queries" : true
+				
 			}
+		}
+		if(this.fulltextFields !== null) {
+			query.query_string.fields = this.fulltextFields;
 		}
 		delete searchQuery.fulltext;
 	}
@@ -284,7 +289,7 @@ exports._getQueryFromRequest = function(req, callback) {
 
 		// create filter search
 		for(field in searchQuery) {
-			
+
 			if(filter === null) {
 				filter = {
 					"and" : []
@@ -308,11 +313,11 @@ exports._getQueryFromRequest = function(req, callback) {
 				case 'geo':
 					filter.and.push(this.getGeoSearchPart(field, searchQuery[field], req))
 					break;
-					
+
 				case 'boolean':
 					filter.and.push(this.getBooleanSearchPart(field, searchQuery[field]))
 					break;
-					
+
 				default:
 					filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
 					break;

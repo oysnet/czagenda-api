@@ -47,6 +47,8 @@ RestGroup.prototype.sortFields = {
 	'title' : 'title.untouched'	
 }
 
+RestGroup.prototype.fulltextFields = ['title', 'description'];
+
 RestGroup.prototype._preCreate = function(obj, req, callback) {
 	
 	// create write permission
