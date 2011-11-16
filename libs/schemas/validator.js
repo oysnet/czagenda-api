@@ -20,6 +20,7 @@ var ValidatorEnvironment = function(user) {
 }
 
 ValidatorEnvironment.prototype.env = null;
+ValidatorEnvironment.prototype._inheritanceChains = null;
 
 ValidatorEnvironment.prototype.startMonitor = function() {
 	setInterval(this.monitor.bind(this), settings.validator.refreshFrequency);
@@ -35,7 +36,7 @@ ValidatorEnvironment.prototype.envChange = function() {
 		if(err !== null) {
 			log.critical('REDIS: unable to set', redis.SCHEMA_KEY);
 
-		} 
+		}
 
 	}.bind(this));
 }
@@ -166,6 +167,39 @@ function hash(data) {
 	return h.digest('hex')
 }
 
+ValidatorEnvironment.prototype.isSubschema = function(schema, subschema) {
+	try {
+		return this._inheritanceChains[schema].indexOf(subschema) !== -1;
+	} catch (e) {
+		
+		log.critical('ValidatorEnvironment.prototype.isSubschema', schema, subschema, JSON.stringify(e))
+		return false
+	}
+}
+
+ValidatorEnvironment.prototype._constructInheritance = function(schemas) {
+
+	var inheritance = {};
+	schemas.reverse();
+	
+	schemas.forEach(function(schema) {
+		if( typeof (inheritance[schema.id]) === 'undefined') {
+			inheritance[schema.id] = [];
+		}
+		if( typeof (schema.schema['extends']) !== 'undefined' && typeof (schema.schema['extends']['$ref']) !== 'undefined') {
+			inheritance[schema.id].push(schema.schema['extends']['$ref']);
+			
+			for(var k in inheritance) {
+				if(inheritance[k].indexOf(schema.id) !== -1) {
+					inheritance[k].push(schema.schema['extends']['$ref']);
+				}
+			}
+
+		}
+
+	});
+	this._inheritanceChains = inheritance;
+}
 /**
  * Try to add schemas to validator environment
  */
@@ -184,6 +218,7 @@ ValidatorEnvironment.prototype._addSchemasToEnv = function(schemas) {
 
 			try {
 				env.createSchema(ordered[i].schema, undefined, ordered[i].id);
+
 			} catch (e) {
 				log.critical("_addSchemasToEnv: Schema that succeed, fail now !", ordered[i].id);
 				return false;
@@ -215,6 +250,9 @@ ValidatorEnvironment.prototype._addSchemasToEnv = function(schemas) {
 	}
 
 	if(ordered.length === expected) {
+
+		this._constructInheritance(ordered)
+
 		this.env = env;
 		return true;
 	}
