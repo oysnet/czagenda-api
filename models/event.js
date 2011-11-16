@@ -29,7 +29,8 @@ function Event() {
 	Base.call(this, 'event');
 
 	this.initialData = {
-		agenda : null
+		agenda : null,
+		parentEvent : null
 	}
 
 }
@@ -168,7 +169,7 @@ Event.prototype._validate = function(callback) {
 	if(this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true) === true && this.agenda !== null) {
 		keys.push('agenda');
 	}
-
+	
 	var schema = null;
 
 	if(this.event === null) {
@@ -209,7 +210,11 @@ Event.prototype._validate = function(callback) {
 	if( typeof (this.event.category) !== 'undefined') {
 		keys.push('event.category');
 	}
-
+	
+	if( typeof (this.event.parentEvent) !== 'undefined') {
+		keys.push('event.parentEvent');
+	}
+	
 	this.validateExists(keys, callback);
 }
 
@@ -253,7 +258,8 @@ Event.get = function(options, callback) {
 		// save initial agenda value to check perms
 		if(err === null) {
 			obj.initialData = {
-				agenda : obj.agenda
+				agenda : obj.agenda,
+				parentEvent : typeof(obj.event.parentEvent) != 'undefined' ? obj.event.parentEvent : null
 			}
 		}
 

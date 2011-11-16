@@ -274,6 +274,26 @@ exports.create = function(req, res) {
 	}
 }
 
+/**
+ * this methods is called before save object
+ * obj is the prepared obj to save
+ * req is the current request
+ * callback take one argument : null if all went done or an InternalError instance with a message to return as response. If an error is passed, create process is stopped
+ */
+exports._preUpdate = function(obj, req, callback) {
+	callback(null)
+}
+/**
+ * this methods is called after save object
+ * err is an error instance or null
+ * obj is the prepared obj to save
+ * req is the current request
+ * callback take no arguments
+ */
+exports._postUpdate = function(err, obj, req, callback) {
+	callback();
+}
+
 exports.update = function(req, res) {
 	// load object...
 
@@ -326,26 +346,56 @@ exports.update = function(req, res) {
 							return;
 						}
 
-						obj.save( function(err, obj) {
+						this._preUpdate(obj, req, function(err) {
 
 							if(err !== null) {
-								if( err instanceof errors.ObjectDoesNotExist) {
-									res.statusCode = statusCodes.NOT_FOUND;
-									res.end('Not found')
-								} else if( err instanceof errors.ValidationError) {
-									res.statusCode = statusCodes.BAD_REQUEST;
-									res.end(this._renderJson(req, res, obj.validationErrors));
-
-								} else {
-									res.statusCode = statusCodes.INTERNAL_ERROR;
-									res.end('Internal error')
-								}
-
-							} else {
-								res.statusCode = statusCodes.ALL_OK;
-								res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+								res.statusCode = statusCodes.INTERNAL_ERROR;
+								res.end(err.message);
+								return;
 							}
 
+							obj.save( function(err, obj) {
+								/*
+								 if(err !== null) {
+								 if( err instanceof errors.ObjectDoesNotExist) {
+								 res.statusCode = statusCodes.NOT_FOUND;
+								 res.end('Not found')
+								 } else if( err instanceof errors.ValidationError) {
+								 res.statusCode = statusCodes.BAD_REQUEST;
+								 res.end(this._renderJson(req, res, obj.validationErrors));
+
+								 } else {
+								 res.statusCode = statusCodes.INTERNAL_ERROR;
+								 res.end('Internal error')
+								 }
+
+								 } else {
+								 res.statusCode = statusCodes.ALL_OK;
+								 res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+								 }
+								 */
+
+								this._postUpdate(err, obj, req, function() {
+									if(err === null) {
+										res.statusCode = statusCodes.ALL_OK;
+										res.end(this._renderJson(req, res, this._serializeObject(obj, req)));
+									} else {
+
+										if( err instanceof errors.ObjectAlreadyExists) {
+											res.statusCode = statusCodes.DUPLICATE_ENTRY;
+											res.end(err.message);
+
+										} else if( err instanceof errors.ValidationError) {
+											res.statusCode = statusCodes.BAD_REQUEST;
+											res.end(this._renderJson(req, res, obj.validationErrors));
+
+										} else {
+											res.statusCode = statusCodes.INTERNAL_ERROR;
+											res.end('Internal error')
+										}
+									}
+								}.bind(this));
+							}.bind(this));
 						}.bind(this));
 					}.bind(this));
 				}.bind(this));
@@ -526,10 +576,11 @@ exports._getSort = function(sort, req) {
 }
 
 exports._getDefaultSort = function() {
-	return ['_score',{
-	"createDate" : {
-	"order" : "desc"
-	}}];
+	return ['_score', {
+		"createDate" : {
+			"order" : "desc"
+		}
+	}];
 
 	return [{
 		"createDate" : {
