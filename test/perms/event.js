@@ -68,6 +68,8 @@ vows.describe('Event API permissions').addBatch({
 							where : [{
 								valueString : "Pau"
 							}],
+							when : [{startTime:'2011-12-09'}],
+							eventStatus: 'confirmed',
 							category : "/category/34b74b021369bb23e67f22bad8f1229a"
 						}
 					}), this.callback);
@@ -147,6 +149,8 @@ vows.describe('Event API permissions').addBatch({
 							where : [{
 								valueString : "Pau"
 							}],
+							when : [{startTime:'2011-12-09'}],
+							eventStatus: 'confirmed',
 							category : "/category/34b74b021369bb23e67f22bad8f1229a"
 						}
 					}), this.callback);
@@ -186,6 +190,8 @@ vows.describe('Event API permissions').addBatch({
 						where : [{
 							valueString : "Pau"
 						}],
+						when : [{startTime:'2011-12-09'}],
+						eventStatus: 'confirmed',
 						category : "/category/34b74b021369bb23e67f22bad8f1229a"
 					}
 				}), this.callback);
@@ -210,6 +216,8 @@ vows.describe('Event API permissions').addBatch({
 						where : [{
 							valueString : "Pau"
 						}],
+						when : [{startTime:'2011-12-09'}],
+						eventStatus: 'confirmed',
 						category : "/category/34b74b021369bb23e67f22bad8f1229a"
 					}
 				}), this.callback);
