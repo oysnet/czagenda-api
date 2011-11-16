@@ -79,6 +79,9 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 		                }
 					},
 					"category" :  {"type" : "string", "index" : "not_analyzed"},
+					"childEvents" :  {"type" : "string", "index" : "not_analyzed"},
+					"parentEvent" :  {"type" : "string", "index" : "not_analyzed"},
+					
 					"where": {				
 						"properties": {
 							"geoPt": {
