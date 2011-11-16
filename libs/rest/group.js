@@ -100,7 +100,7 @@ RestGroup.prototype._postCreate = function(err, obj, req, callback) {
 				}
 				
 				callback(err);
-			});
+			}, false);
 		});
 	});
 
