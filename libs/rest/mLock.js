@@ -13,8 +13,12 @@ exports.requireLock = function (req, res, next) {
 			res.end('Document is Locked');
 			return;
 		}
-
-		req.locks = [lock];
+		
+		if (typeof(req.locks) == 'undefined') {
+			req.locks = [lock];
+		} else {
+			req.locks.push(lock);
+		}
 		next();
 	});
 		
