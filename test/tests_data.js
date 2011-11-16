@@ -95,7 +95,9 @@ exports.event_1 = {
 		title : 'title event 1',
 		links : [{rel:"describedby", href:"/schema/event"}],
 		where : [{valueString:"Pau"}],
-		category : "/category/34b74b021369bb23e67f22bad8f1229a"
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		when:[{startTime:"2001-12-09"}],
+		eventStatus : "confirmed"
 	},
 	agenda : null
 }
@@ -113,7 +115,9 @@ exports.event_2 = {
 		title : 'title event 2',
 		links : [{rel:"describedby", href:"/schema/event"}],
 		where : [{valueString:"Pau"}],
-		category : "/category/34b74b021369bb23e67f22bad8f1229a"
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		when:[{startTime:"2001-12-09"}],
+		eventStatus : "confirmed"
 	},
 	agenda : null
 }
@@ -131,7 +135,9 @@ exports.event_3 = {
 		title : 'title event 3',
 		links : [{rel:"describedby", href:"/schema/event"}],
 		where : [{valueString:"Pau"}],
-		category : "/category/34b74b021369bb23e67f22bad8f1229a"
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		when:[{startTime:"2001-12-09"}],
+		eventStatus : "confirmed"
 	},
 	agenda : null
 }
@@ -310,6 +316,7 @@ exports.schema_2 ={
 	sample : '',
 	template : '',
 	author:"/user/test",
+	description : null,
 	schema : {
 		id : '/schema/name-schema-2'
 	}
@@ -325,6 +332,7 @@ exports.schema_3 = {
 	sample : 'sample data',
 	template : 'template data',
 	author:"/user/test",
+	description : null,
 	schema : {
 		id :  '/schema/name-schema-3',
 		description : 'schema description'
@@ -341,6 +349,7 @@ exports.schema_4 = {
 	sample : 'sample data',
 	template : 'template data',
 	author:"/user/test",
+	description : null,
 	schema : {
 		id :  '/schema/name-schema-4',
 		description : 'schema description'

@@ -54,7 +54,7 @@ BasePermission.prototype.updateComputedValue = function(clazz, attr, add, callba
 	}, function(err, obj) {
 
 		if(err !== null) {
-			log.critical('BasePermission.prototype.updateComputedValue: unable to load applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
+			log.critical('BasePermission.prototype.updateComputedValue: unable to load applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo,JSON.stringify(err));
 			callback();
 			return;
 		}
@@ -79,7 +79,8 @@ BasePermission.prototype.updateComputedValue = function(clazz, attr, add, callba
 		}
 		obj.save(function(err) {
 			if(err !== null) {
-				log.critical('BasePermission.prototype.updateComputedValue: unable to save applyOn object', this.applyOn, add == true ? 'add' : 'del', this.grantTo);
+				console.log(obj.validationErrors)
+				log.critical('BasePermission.prototype.updateComputedValue: unable to save applyOn object', this.applyOn, add == true ? 'add' : 'del',  this.grantTo, JSON.stringify(err));
 			}
 			callback();
 		}, true);

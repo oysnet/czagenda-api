@@ -10,7 +10,7 @@ var date_re = new RegExp("^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}
 var number_re = new RegExp("^[0-9]+$");
 var eventid_re = new RegExp("^\/event\/[a-z0-9]+$");
 
-var data_keys = ['name', 'status', 'sample', 'template', 'final', 'createDate', 'updateDate', 'id', 'schema', 'author'].sort();
+var data_keys = ['name', 'status', 'sample', 'template', 'final', 'createDate', 'updateDate', 'id', 'schema', 'author', 'description'].sort();
 
 // CREATION
 var create_test_data = {
@@ -29,6 +29,7 @@ var create_test_data_expected = {
 	template: 'template data',
 	'final' : false,
 	status: 'PROPOSAL',
+	description : null,
 	schema: {
 		'extends' : {'$ref' : '/schema/event'}
 	},
@@ -72,6 +73,7 @@ var update_test_data_expected = {
 	status : 'PROPOSAL',
 	sample : 'sample data',
 	template : 'template data',
+	description : null,
 	schema : {
 		description : 'schema description'
 	},
