@@ -110,6 +110,27 @@ var create_invalid_test_data_expected_3 = {
 	errors : []
 };
 
+var create_invalid_test_data_4 = {
+	event : {
+		title : "event that fail to validate because of schema ",
+		links : [{
+			rel : "describedby",
+			href : "/schema/organization"
+		}],
+		eventStatus : 'confirmed',
+		when : [{startTime:'2010-1-02'}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a"
+	}
+}
+
+var create_invalid_test_data_expected_4 = {
+	items : {
+		 'event.links': [ 'Link with rel=describedby must be a subschema of /schema/event-abstract' ]
+	},
+	errors : []
+};
+
+
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
 
@@ -395,7 +416,21 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_invalid_test_data_expected_3)
 		}
 	},
-
+	
+	'CREATE INVALID 4' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_invalid_test_data_4), this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_4)
+		}
+	},
+	
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();

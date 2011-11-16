@@ -27,9 +27,11 @@ function Event() {
 		disapprovedBy : []
 	};
 	Base.call(this, 'event');
-	
-	this.initialData = {agenda : null}
-	
+
+	this.initialData = {
+		agenda : null
+	}
+
 }
 
 util.inherits(Event, Base);
@@ -66,17 +68,17 @@ Event.prototype.hasPerm = function(perm, user, callback) {
 			break;
 
 		case 'write':
-			
+
 			// on agenda we need to check perms on initial agenda and current agenda
-			
+
 			if(this.hasWritePerm(user) === true) {
 
 				if(this.agenda === null && this.initialData.agenda === null) {
 					callback(null, true);
 				} else {
-					
+
 					// if there wan no initial agenda or if current == initial
-					
+
 					if(this.initialData.agenda === null || this.initialData.agenda == this.agenda) {
 						models.Agenda.get({
 							id : this.agenda
@@ -90,7 +92,7 @@ Event.prototype.hasPerm = function(perm, user, callback) {
 
 						}.bind(this));
 					} else {
-						
+
 						// we need to check perms on two agendas
 						models.Agenda.get({
 							id : this.initialData.agenda
@@ -166,12 +168,9 @@ Event.prototype._validate = function(callback) {
 	if(this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true) === true && this.agenda !== null) {
 		keys.push('agenda');
 	}
-	
-	
-	
+
 	var schema = null;
-	
-	
+
 	if(this.event === null) {
 		this.addValidationError('event', 'required');
 	} else if( typeof (this.event.links) === 'undefined') {
@@ -185,11 +184,16 @@ Event.prototype._validate = function(callback) {
 				if( typeof (schema) === 'undefined') {
 					this.addValidationError('event.links', 'Link with rel=describedby doesn\'t match any schema: ' + this.event.links[i].href);
 				} else {
-					
-					var report = validator.approvedEnvironment.getEnv().validate(this.event, schema);
-					if(report.errors.length > 0) {
-						this.parseJSVErrors(report.errors);
+
+					if(validator.approvedEnvironment.isSubschema(this.event.links[i].href, '/schema/event-abstract') === false) {
+						this.addValidationError('event.links', 'Link with rel=describedby must be a subschema of /schema/event-abstract');
+					} else {
+						var report = validator.approvedEnvironment.getEnv().validate(this.event, schema);
+						if(report.errors.length > 0) {
+							this.parseJSVErrors(report.errors);
+						}
 					}
+
 				}
 				found = true;
 				break;
@@ -201,17 +205,15 @@ Event.prototype._validate = function(callback) {
 		}
 
 	}
-	
-	if (typeof(this.event.category) !== 'undefined') {
+
+	if( typeof (this.event.category) !== 'undefined') {
 		keys.push('event.category');
 	}
-	
-	
+
 	this.validateExists(keys, callback);
 }
 
 Event.prototype._generateHash = function() {
-
 	h = crypto.createHash('md5')
 	h.update(this._type);
 	h.update(JSON.stringify(this.event))
@@ -227,25 +229,23 @@ Event.prototype._preSave = function(callback) {
 
 		//this._data.event.id = this._data.id;
 	}
-	
-	if (typeof(this._data.event.tags) !== 'undefined') {
-		
+
+	if( typeof (this._data.event.tags) !== 'undefined') {
+
 		var tags = [];
 		var lowerTags = [];
-		this._data.event.tags.forEach(function (tag) {
+		this._data.event.tags.forEach(function(tag) {
 			var lowerTag = tag.toLowerCase();
-			if (lowerTags.indexOf(lowerTag) === -1) {
+			if(lowerTags.indexOf(lowerTag) === -1) {
 				lowerTags.push(lowerTag);
 				tags.push(tag);
 			}
 		});
-		this._data.event.tags = tags;	
+		this._data.event.tags = tags;
 	}
-	
+
 	callback(null);
 }
-
-
 
 Event.get = function(options, callback) {
 	Base.get(options, Event, function(err, obj) {
