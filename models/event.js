@@ -3,6 +3,7 @@ var util = require("util"), crypto = require('crypto');
 var settings = require('../settings.js');
 var validator = require('../libs/schemas/validator');
 var models = require('../models');
+var async = require('async');
 
 function Event() {
 	this._attributs = {
@@ -161,15 +162,12 @@ Event.prototype.hasPerm = function(perm, user, callback) {
 
 Event.prototype._validate = function(callback) {
 
-	//this.validateRegexp('author', '^/user/[\-_\.0-9a-zA-Z]+$', false);
-	//this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true);
-
 	var keys = [];
 
 	if(this.validateRegexp('agenda', '^/agenda/[\-_\.0-9a-z]+$', true) === true && this.agenda !== null) {
 		keys.push('agenda');
 	}
-	
+
 	var schema = null;
 
 	if(this.event === null) {
@@ -207,15 +205,53 @@ Event.prototype._validate = function(callback) {
 
 	}
 
+	var methods = [];
+
 	if( typeof (this.event.category) !== 'undefined') {
 		keys.push('event.category');
 	}
-	
+
 	if( typeof (this.event.parentEvent) !== 'undefined') {
 		keys.push('event.parentEvent');
 	}
-	
-	this.validateExists(keys, callback);
+
+	methods.push( function(cb) {
+		this.validateExists(keys, cb);
+	}.bind(this));
+
+	if( typeof (this.event.parentEvent) != 'undefined') {
+		methods.push( function(cb) {
+
+			Event.get({
+				id : this.event.parentEvent
+			}, function(err, obj) {
+
+				if(err !== null) {
+					this.addValidationError('event.parentEvent', 'Object doesn\'t exist');
+					
+				} else if( typeof (obj.event.childSchema) == 'undefined') {
+					this.addValidationError('event.parentSchema', 'must define an event.childSchema attribute');
+
+				} else if(validator.approvedEnvironment.isSubschema(this.event.links[i].href, obj.event.childSchema) === false) {
+					this.addValidationError('event.links', 'Link with rel=describedby must be a subschema of ' + obj.event.childSchema);
+				}
+
+				cb();
+
+			}.bind(this))
+
+		}.bind(this));
+	}
+
+	async.parallel(methods, function(err) {
+
+		if( typeof (err) == 'undefined') {
+			err = null;
+		}
+
+		callback(err);
+
+	})
 }
 
 Event.prototype._generateHash = function() {
@@ -259,7 +295,7 @@ Event.get = function(options, callback) {
 		if(err === null) {
 			obj.initialData = {
 				agenda : obj.agenda,
-				parentEvent : typeof(obj.event.parentEvent) != 'undefined' ? obj.event.parentEvent : null
+				parentEvent : typeof (obj.event.parentEvent) != 'undefined' ? obj.event.parentEvent : null
 			}
 		}
 
