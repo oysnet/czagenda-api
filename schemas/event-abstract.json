@@ -16,31 +16,86 @@
 			"required": true
 		},
 		"eventStatus": {
-			"description": "Extensible enum",
+			"description": "The event status",
 			"type": "string",
-			"enum": ["canceled", "confirmed", "tentative"]
+			"enum": ["canceled", "confirmed", "tentative"],
+			"required": true
 		},
-		"tags": {
+		
+		"languages" : {
+			"description": "ISO 639-2 language code",
 			"type": "array",
 			"required": false,
+			"minItems": 1,
 			"items": {
 				"type": [
 					{
-						"type" : "string",
-						"maxLength" : 128
+						"type": "string",
+						"maxLength": 3,
+						"minLength" : 3
+					}
+				]
+			}
+		},
+		
+		"logo" : {
+			"description": "An URL to a logo for the event",
+			"type": "string",
+			"required": false
+		},
+		
+		"childEvents": {
+			"description": "List of sub events if the current event is a master event",
+			"type": "array",
+			"required": false,
+			"minItems": 1,
+			"items": {
+				"type": [
+					{
+						"type": "string",
+						"pattern": "^\\/event\\/[0-9a-z]+$"
+					}
+				]
+			}
+		},
+
+		"parentEvent": {
+			"description": "The master event if the current event is a sub event",
+			"type": "string",
+			"pattern": "^\\/event\\/[0-9a-z]+$",
+			"required": false
+		},
+
+		"childSchema": {
+			"description": "Id of the schema of which all sub events schema must inherit from",
+			"type": "string",
+			"pattern": "^\\/schema\\/.+$",
+			"required": false
+		},
+
+		"tags": {
+			"type": "array",
+			"required": false,
+			"minItems": 1,
+			"items": {
+				"type": [
+					{
+						"type": "string",
+						"maxLength": 128
 					}
 				]
 			}
 		},
 		"category": {
-			"description" : "Id of the category",
+			"description": "Id of the category",
 			"type": "string",
 			"required": true,
-			"pattern" : "^\\/category\\/[0-9a-z]+$"
+			"pattern": "^\\/category\\/[0-9a-z]+$"
 		},
 		"when": {
 			"description": "Event time. The startTime and endTime attributes must both be set, although for all-day events those attributes are only dates, with no times.",
 			"type": "array",
+			"required": true,
 			"minItems": 1,
 			"items": {
 				"type": [
@@ -92,10 +147,11 @@
 				]
 			}
 		},
+
 		"where": {
 			"description": "Location of the event",
 			"type": "array",
-			"required": true,
+			"required": false,
 			"minItems": 1,
 			"items": {
 				"$ref": "/schema/localization"
@@ -105,10 +161,55 @@
 		"who": {
 			"type": "array",
 			"required": false,
+			"minItems": 1,
 			"items": {
 				"type": [
 					{
 						"$ref": "/schema/who"
+					}
+				]
+			}
+		},
+
+		"contacts": {
+			"type": "array",
+			"required": false,
+			"minItems": 1,
+			"items": {
+				"type": [
+					{
+						"description": "An entity associated with the containing entity. The type of the association is determined by the rel attribute.",
+						"type": "object",
+						"properties": {
+
+							"rel": {
+								"description": "Specifies the kind of contact",
+								"type": "string",
+								"required": true,
+								"enum": ["registration", "information", "press"]
+							},
+
+							"link": {
+								"type": "string",
+								"required": false								
+							},
+							"email": {
+								"type": "string",
+								"required": false
+							},
+							"phone": {
+								"type": "string",
+								"required": false								
+							},
+							"fax": {
+								"type": "string",
+								"required": false
+							},
+							"additionalInformations": {
+								"type": "string",
+								"required": false
+							}
+						}
 					}
 				]
 			}

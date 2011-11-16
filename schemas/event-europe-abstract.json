@@ -1,0 +1,57 @@
+{
+	"description": "Event",
+	"type": "object",
+	"extends": {
+		"$ref": "/schema/event-abstract"
+	},
+	"properties": {
+		
+		"subtitle" : {
+			"type": "string",
+			"required": false
+		},
+		
+		"shortDescription" : {
+			"type": "string",
+			"required": false
+		},
+		
+		"website" : {
+			"description": "A link to a website about the event",
+			"required" : false,
+			"type" : "string"
+		},
+		
+		"place" : {
+			"description": "Additional information about the event location",
+			"type" : "object",
+			"required" : true,
+			"properties" : {
+				"name" : {
+					"type" : "string",
+					"required" : true
+				},
+				"logo" : {
+					"type" : "string",
+					"required" : false
+				},
+				"additionalInformations" : {
+					"type" : "string",
+					"required" : false
+				}
+			}
+		},
+		
+		"where": {
+			"description": "Location of the event",
+			"type": "array",
+			"required": false,
+			"minItems": 1,
+			"maxItems": 1,
+			"items": {
+				"$ref": "/schema/localization"
+			}
+		}
+		
+	}
+}

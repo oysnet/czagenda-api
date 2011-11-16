@@ -60,6 +60,14 @@ var SCHEMAS = [{
 	"name" : "person",
 	"final" : true,
 	"file" : "person.json"
+},{
+	"name" : "event-europe",
+	"final" : false,
+	"file" : "event-europe-abstract.json"
+},{
+	"name" : "event-europe",
+	"final" : true,
+	"file" : "event-europe.json"
 }]
 
 var createSchema = function() {

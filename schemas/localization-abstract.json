@@ -10,6 +10,11 @@
 			"type": "string",
 			"required": false
 		},
+		"street" : {
+			"description": "Street number and street",
+			"type": "string",
+			"required": false
+		},
 		"admin_level_2": {
 			"description": "Administrative level such as region, state, etc...",
 			"type": "string",

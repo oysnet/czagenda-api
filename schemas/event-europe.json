@@ -1,0 +1,6 @@
+{
+	"description": "Event",
+	"type": "object",
+	"extends": {"$ref" : "/schema/event-europe-abstract" },
+	"additionalProperties": false
+}

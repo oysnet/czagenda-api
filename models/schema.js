@@ -16,7 +16,7 @@ function Schema() {
 		template : null,
 		status : this.constructor.PROPOSAL,
 		name : null,
-		"description" : null,
+		description : null,
 		author : null
 	};
 	Base.call(this, 'schema');
@@ -28,11 +28,11 @@ Schema.APPROVED = 'APPROVED';
 
 util.inherits(Schema, Base);
 
-Schema.publicAttributes = Base.publicAttributes.concat(['schema', 'final', 'sample', 'template', 'status', 'name', 'author']);
+Schema.publicAttributes = Base.publicAttributes.concat(['schema', 'final', 'sample', 'template', 'status', 'name', 'author', 'description']);
 Schema.staffAttributes = Schema.publicAttributes.concat(Base.staffAttributes);
 Schema.metaAttributes = ['schema'];
 
-Schema.publicWriteAttributes = ['schema', 'name', 'sample', 'template'];
+Schema.publicWriteAttributes = ['schema', 'name', 'sample', 'template', 'description'];
 Schema.staffWriteAttributes = Schema.publicWriteAttributes.concat(['final', 'status', 'name']);
 
 
@@ -271,7 +271,6 @@ Schema.prototype._postDel = function(err, next) {
 			next();
 		})
 	}
-	
 }
 
 Schema.get = function(options, callback) {

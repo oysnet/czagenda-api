@@ -7,8 +7,7 @@
 		"type": {
 			"description": "Extensible enum",
 			"type": "string",
-			"required" : true,
-			"enum" : ["person", "organization"]
+			"required" : true
 		},
 		"where": {
 			"description": "Location of the event",
@@ -18,6 +17,12 @@
 			"items": {
 				"$ref": "/schema/localization"
 			}
+		},
+		
+		"website" : {
+			"description": "A link to a website about the entity",
+			"required" : false,
+			"type" : "string"
 		}
 	}
 }
