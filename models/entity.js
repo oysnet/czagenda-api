@@ -16,9 +16,7 @@ function Entity() {
 		computedWriteGroupsPerms : []
 	};
 	Base.call(this, 'entity');
-	
-	
-	
+
 }
 
 util.inherits(Entity, Base);
@@ -37,8 +35,6 @@ Entity.prototype._validate = function(callback) {
 
 	//var keys = [];
 
-	
-
 	var schema = null;
 
 	if(this.entity === null) {
@@ -54,11 +50,15 @@ Entity.prototype._validate = function(callback) {
 				if( typeof (schema) === 'undefined') {
 					this.addValidationError('entity.links', 'Link with rel=describedby doesn\'t match any schema: ' + this.entity.links[i].href);
 				} else {
-
-					var report = validator.approvedEnvironment.getEnv().validate(this.entity, schema);
-					if(report.errors.length > 0) {
-						this.parseJSVErrors(report.errors);
+					if(validator.approvedEnvironment.isSubschema(this.entity.links[i].href, '/schema/entity-abstract') === false) {
+						this.addValidationError('entity.links', 'Link with rel=describedby must be a subschema of /schema/entity-abstract');
+					} else {
+						var report = validator.approvedEnvironment.getEnv().validate(this.entity, schema);
+						if(report.errors.length > 0) {
+							this.parseJSVErrors(report.errors);
+						}
 					}
+
 				}
 				found = true;
 				break;
@@ -70,33 +70,31 @@ Entity.prototype._validate = function(callback) {
 		}
 
 	}
-	
+
 	callback(null);
 	//this.validateExists(keys, callback);
 }
 
+Entity.prototype.hasPerm = function(perm, user, callback) {
 
-Entity.prototype.hasPerm = function (perm, user, callback) {
-	
 	switch (perm) {
 		case 'read':
 		case 'create':
 			callback(null, true);
 			break;
-					
+
 		case 'write':
 		case 'del':
 			callback(null, this.hasWritePerm(user));
 			break;
-			
+
 		default:
 			return false;
-		
+
 	}
 }
 
 Entity.prototype._generateHash = function() {
-	
 	h = crypto.createHash('md5')
 	h.update(this._type);
 	h.update(JSON.stringify(this.entity))

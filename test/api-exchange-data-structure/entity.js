@@ -45,6 +45,11 @@ var create_invalid_test_data_2 = {
 var create_invalid_test_data_expected_2 = { items : { '/entity/where/0/valueString': [ 'a string is required' ] }, errors : []};
 
 
+var create_invalid_test_data_3 = {
+	entity : {type : "organization", name : "entity that fail to validate against schema",links : [{rel:"describedby", href:"/schema/event"}]}
+}
+var create_invalid_test_data_expected_3 = {items : { 'entity.links': [ 'Link with rel=describedby must be a subschema of /schema/entity-abstract' ]}, errors : []};
+
 // UPDATE
 var update_test_data_in_database = tests_data.entity_1;
 
@@ -245,6 +250,22 @@ vows.describe('Entity API exchanged data structure').addBatch({
 		'check validation errors' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.deepEqual(data, create_invalid_test_data_expected_2)
+		}
+	},
+	
+	'CREATE INVALID 3' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/entity', JSON.stringify(create_invalid_test_data_3), this.callback);
+		},
+		
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_3)
 		}
 	},
 	
