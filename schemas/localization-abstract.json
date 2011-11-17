@@ -15,12 +15,16 @@
 			"type": "string",
 			"required": false
 		},
-		"admin_level_2": {
+		"zipCode" : {
+			"type": "string",
+			"required": false
+		},
+		"adminLevel2": {
 			"description": "Administrative level such as region, state, etc...",
 			"type": "string",
 			"required": false
 		},
-		"admin_level_3": {
+		"adminLevel_3": {
 			"description": "Administrative level such as department, metropolitan area, etc...",
 			"type": "string",
 			"required": false
