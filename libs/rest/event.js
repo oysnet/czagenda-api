@@ -401,7 +401,7 @@ RestEvent.prototype._postUpdate = function(err, obj, req, callback) {
 	// delete current event from parent event childEvents
 	if(obj.initialData.parentEvent !== null && obj.initialData.parentEvent != obj.event.parentEvent) {
 		methods.push(function(cb) {
-			models.event.get({
+			models.Event.get({
 				id : obj.initialData.parentEvent
 			}, function(err, parent) {
 				if(err !== null) {
@@ -414,7 +414,11 @@ RestEvent.prototype._postUpdate = function(err, obj, req, callback) {
 						cb();
 					} else if(parent.event.childEvents.indexOf(obj.id) !== -1) {
 						parent.event.childEvents.splice(parent.event.childEvents.indexOf(obj.id), 1);
-
+						
+						if (parent.event.childEvents.length===0) {
+							delete parent.event.childEvents;
+						}
+						
 						parent.save(function(err) {
 
 							if(err !== null) {
@@ -555,7 +559,11 @@ RestEvent.prototype._postDel = function(err, obj, req, callback) {
 						cb();
 					} else if(parent.event.childEvents.indexOf(obj.id) !== -1) {
 						parent.event.childEvents.splice(parent.event.childEvents.indexOf(obj.id), 1);
-
+						
+						if (parent.event.childEvents.length===0) {
+							delete parent.event.childEvents;
+						}
+						
 						parent.save(function(err) {
 
 							if(err !== null) {
