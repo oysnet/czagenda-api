@@ -41,7 +41,15 @@
 		"logo" : {
 			"description": "An URL to a logo for the event",
 			"type": "string",
-			"required": false
+			"required": false,
+			"pattern" : "^http:\\/\\/.+$"
+		},
+		
+		"website" : {
+			"description": "A link to a website about the event",
+			"required" : false,
+			"type" : "string",
+			"pattern" : "^http:\\/\\/.+$"
 		},
 		
 		"childEvents": {
@@ -191,11 +199,13 @@
 
 							"link": {
 								"type": "string",
-								"required": false								
+								"required": false,
+								"pattern" : "^http:\\/\\/.+$"							
 							},
 							"email": {
 								"type": "string",
-								"required": false
+								"required": false,
+								"pattern" : "^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$"
 							},
 							"phone": {
 								"type": "string",

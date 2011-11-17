@@ -7,7 +7,7 @@
 			"description" : "Specifies the relationship between the containing entity and the contained entity. ",
 			"type": "string",
 			"required": false,
-			"enum" : ["attendee", "organizer", "performer", "speaker"]
+			"enum" : ["attendee", "organizer", "performer", "speaker", "partner"]
 		},
 		
 		"href": {
@@ -18,7 +18,7 @@
 		},
 		
 		"valueString": {
-			"description" : "A simple string value that can be used as a representation of this person.",
+			"description" : "A simple string value that can be used as a representation of this entity.",
 			"type": "string",			
 			"required": false
 		}

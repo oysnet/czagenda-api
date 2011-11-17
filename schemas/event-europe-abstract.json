@@ -16,14 +16,8 @@
 			"required": false
 		},
 		
-		"website" : {
-			"description": "A link to a website about the event",
-			"required" : false,
-			"type" : "string"
-		},
-		
 		"place" : {
-			"description": "Additional information about the event location",
+			"description": "Additional informations about the event location",
 			"type" : "object",
 			"required" : true,
 			"properties" : {

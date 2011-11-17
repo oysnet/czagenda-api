@@ -4,90 +4,19 @@ var env = JSV.createEnvironment("json-schema-draft-03");
 env.createSchema({
 	"additionalProperties" : false,
 	"properties" : {
-		"text-base-abstract" : {
+		"email" : {
 			"type" : "string",
-			"required" : true
+			"required" : true,
+			"pattern" : "^[A-Za-z0-9._-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$"
 		}
 	}
-}, undefined, "/base-abstract");
-
-
-env.createSchema({
-	"additionalProperties" : false,
-	"properties" : {
-		"textcommon" : {
-			"type" : "string",
-			"required" : true
-		}
-	}
-}, undefined, "/common");
-
-
-env.createSchema({
-	"type": "object",
-	"extends": {"$ref" : "/base-abstract" },
-	"additionalProperties" : false,
-	"properties" : {
-		"text-event-abstract" : {
-			"type" : "string",
-			"required" : true
-		},
-		"where-eent-abstract": {
-			"description": "Location of the event",
-			"type": "array",
-			"required": true,
-			"minItems": 1,
-			"items": {
-				"$ref": "/common"
-			}
-		}
-
-	}
-}, undefined, "/event-abstract");
-
-env.createSchema({
-	"type": "object",
-	"extends": {"$ref" : "/event-abstract" },
-	"additionalProperties" : false,
-	"properties" : {
-		"text-event" : {
-			"type" : "string",
-			"required" : true
-		}
-
-	}
-}, undefined, "/event");
-
-env.createSchema({
-	"type": "object",
-	"extends": {"$ref" : "/base-abstract" },
-	"additionalProperties" : false,
-	"properties" : {
-		"text-entity" : {
-			"type" : "string",
-			"required" : true
-		},
-		"where-entity": {
-			"description": "Location of the event",
-			"type": "array",
-			"required": true,
-			"minItems": 1,
-			"items": {
-				"$ref": "/common"
-			}
-		}
-	}
-}, undefined, "/entity");
+}, undefined, "/schema1");
 
 
 
-console.log('validate event')
-schema = env.findSchema("/event");
-var report = env.validate({}, schema);
-console.log(report.errors)
 
 
-console.log('validate eentity')
-schema = env.findSchema("/entity");
-var report = env.validate({}, schema);
+
+schema = env.findSchema("/schema1");
+var report = env.validate({"email" : "to?to@toto.com"}, schema);
 console.log(report.errors)
