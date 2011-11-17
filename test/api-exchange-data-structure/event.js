@@ -296,6 +296,7 @@ var update_test_data_2 = {
 var get_test_data_in_database = tests_data.event_2;
 
 var delete_test_data_in_database = tests_data.event_3;
+var delete_test_data_2_in_database = tests_data.event_subevent_2;
 
 vows.describe('Event API exchanged data structure').addBatch({
 
@@ -920,6 +921,31 @@ vows.describe('Event API exchanged data structure').addBatch({
 		'check statusCode is 204' : function(err, res, data) {
 			assert.equal(res.statusCode, statusCode.DELETED);
 		}
+	},
+	
+	'DELETE SUBEVENT' : {
+		topic : function() {
+			rest = new Rest();
+			rest.del('/api' + delete_test_data_2_in_database, this.callback);
+		},
+		'check statusCode is 204' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.DELETED);
+		},
+		
+		'check parent event' : {
+			topic : function(res, data) {
+				rest = new Rest();
+				rest.get('/api' + tests_data.event_master_successful_4, this.callback);
+
+			},
+			'check statusCode is 200' : function(err, res, data) {
+				assert.equal(res.statusCode, statusCode.ALL_OK);
+			},
+			'check event.childEvents' : function(err, res, data) {
+				var data = JSON.parse(data);
+				assert.equal(typeof(data.event.childEvents), 'undefined');
+			}
+		},
 	}
 
 }).export(module);
