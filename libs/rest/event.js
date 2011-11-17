@@ -478,7 +478,7 @@ RestEvent.prototype._preDel = function(obj, req, callback) {
 				},
 				"filter" : {
 					"term" : {
-						"event.childEvents" : id
+						"event.parentEvent" : id
 					}
 				}
 			}
@@ -546,7 +546,7 @@ RestEvent.prototype._postDel = function(err, obj, req, callback) {
 	if( typeof (obj.event.parentEvent) != 'undefined') {
 		methods.push(function(cb) {
 
-			models.event.get({
+			models.Event.get({
 				id : obj.event.parentEvent
 			}, function(err, parent) {
 				if(err !== null) {
