@@ -25,7 +25,9 @@ var create_test_data = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}]
+		when : [{
+			startTime : '2001-09-12'
+		}]
 	}
 }
 
@@ -42,8 +44,50 @@ var create_test_data_expected = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
 		category : "/category/34b74b021369bb23e67f22bad8f1229a"
+	},
+	agenda : null
+}
+
+var create_test_data_2 = {
+	event : {
+		title : "event title",
+		eventStatus : 'confirmed',
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		links : [{
+			rel : "describedby",
+			href : "/schema/event"
+		}],
+		where : [{
+			valueString : "Pau"
+		}],
+		parentEvent : tests_data.event_master_successful_1,
+		when : [{
+			startTime : '2001-09-12'
+		}]
+	}
+}
+
+var create_test_data_2_expected = {
+	author : '/user/test',
+	event : {
+		title : "event title",
+		eventStatus : 'confirmed',
+		links : [{
+			rel : "describedby",
+			href : "/schema/event"
+		}],
+		where : [{
+			valueString : "Pau"
+		}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		parentEvent : tests_data.event_master_successful_1
 	},
 	agenda : null
 }
@@ -118,14 +162,16 @@ var create_invalid_test_data_4 = {
 			href : "/schema/organization"
 		}],
 		eventStatus : 'confirmed',
-		when : [{startTime:'2010-1-02'}],
+		when : [{
+			startTime : '2010-1-02'
+		}],
 		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	}
 }
 
 var create_invalid_test_data_expected_4 = {
 	items : {
-		 'event.links': [ 'Link with rel=describedby must be a subschema of /schema/event-abstract' ]
+		'event.links' : ['Link with rel=describedby must be a subschema of /schema/event-abstract']
 	},
 	errors : []
 };
@@ -142,14 +188,16 @@ var create_invalid_test_data_5 = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
 		parentEvent : tests_data.event_master_fail_1
 	}
 }
 
 var create_invalid_test_data_expected_5 = {
 	items : {
-		 'event.parentSchema': [ 'must define an event.childSchema attribute' ]
+		'event.parentSchema' : ['must define an event.childSchema attribute']
 	},
 	errors : []
 };
@@ -166,14 +214,16 @@ var create_invalid_test_data_6 = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
 		parentEvent : tests_data.event_master_fail_2
 	}
 }
 
 var create_invalid_test_data_expected_6 = {
 	items : {
-		'event.links': [ 'Link with rel=describedby must be a subschema of /schema/organization' ]
+		'event.links' : ['Link with rel=describedby must be a subschema of /schema/organization']
 	},
 	errors : []
 };
@@ -192,7 +242,9 @@ var update_test_data = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
 		category : "/category/34b74b021369bb23e67f22bad8f1229a"
 	}
 }
@@ -214,7 +266,9 @@ var update_test_data_expected = {
 		where : [{
 			valueString : "Pau"
 		}],
-		when : [{startTime : '2001-09-12'}],
+		when : [{
+			startTime : '2001-09-12'
+		}],
 		category : "/category/34b74b021369bb23e67f22bad8f1229a",
 		eventStatus : 'confirmed'
 	},
@@ -422,6 +476,218 @@ vows.describe('Event API exchanged data structure').addBatch({
 
 	},
 
+	'CREATE SUBEVENT' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_test_data_2), this.callback);
+		},
+		'check statusCode is 201' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.CREATED);
+		},
+		'check createDate' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(date_re.test(data.createDate), true);
+		},
+		'check updateDate' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.createDate, data.updateDate);
+		},
+		'check writeUsers' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.writeUsers, data.id + '/perms/wu');
+		},
+		'check readUsers' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.readUsers, data.id + '/perms/ru');
+		},
+		'check writeGroups' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.writeGroups, data.id + '/perms/wg');
+		},
+		'check readGroups' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.readGroups, data.id + '/perms/rg');
+		},
+		'check id' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(eventid_re.test(data.id), true);
+		},
+		'check response structure' : function(err, res, data) {
+			var data = JSON.parse(data);
+			delete data.createDate;
+			delete data.updateDate;
+			delete data.writeGroups;
+			delete data.readGroups;
+			delete data.writeUsers;
+			delete data.readUsers;
+			delete data.updateDate;
+			delete data.id;
+
+			assert.deepEqual(data, create_test_data_2_expected);
+		},
+		'check parent event' : {
+			topic : function(res, data) {
+				
+				var data = JSON.parse(data);
+				rest = new Rest();
+				rest.get('/api' + data.event.parentEvent, this.callback.bind(this, data));
+
+			},
+			'check statusCode is 200' : function(subevent, err, res, data) {
+				assert.equal(res.statusCode, statusCode.ALL_OK);
+			},
+			
+			'check event.childEvents' : function(subevent, err, res, data) {
+				var data = JSON.parse(data);
+				assert.deepEqual(data.event.childEvents, [subevent.id]);
+			}
+		},
+
+		'check default perms' : {
+
+			'write groups' : {
+
+				topic : function(res, data) {
+
+					setTimeout( function(data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.writeGroups, this.callback);
+					}.bind(this, data), 2000);
+
+				},
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				'check total_rows value is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 0);
+				},
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				'check rows length is 0' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 0);
+				}
+			},
+			'write users' : {
+
+				topic : function(res, data) {
+					setTimeout( function(data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.writeUsers, this.callback);
+					}.bind(this, data), 2000);
+				},
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				'check total_rows value is 1' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 1);
+				},
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				'check rows length is 1' : function(err, res, data) {
+
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 1);
+				},
+				'check rows first item ' : function(err, res, data) {
+					var data = JSON.parse(data);
+
+					assert.equal(data.rows[0].grantTo, "/user/test");
+				}
+			},
+			'read groups' : {
+
+				topic : function(res, data) {
+					setTimeout( function(data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.readGroups, this.callback);
+					}.bind(this, data), 2000);
+				},
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				'check total_rows value is 1' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 1);
+				},
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				'check rows length is 1' : function(err, res, data) {
+
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 1);
+				},
+				'check rows first item ' : function(err, res, data) {
+					var data = JSON.parse(data);
+
+					assert.equal(data.rows[0].grantTo, "/group/all");
+				}
+			},
+
+			'read users' : {
+
+				topic : function(res, data) {
+					setTimeout( function(data) {
+						var data = JSON.parse(data);
+						rest = new Rest();
+						rest.get('/api' + data.readUsers, this.callback);
+					}.bind(this, data), 2000);
+				},
+				'check statusCode is 200' : function(err, res, data) {
+					assert.equal(res.statusCode, statusCode.ALL_OK);
+				},
+				'check total_rows is an integer' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.equal(number_re.test(data.total_rows), true);
+				},
+				'check total_rows value is 2' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.strictEqual(data.total_rows, 2);
+				},
+				'check rows is an array' : function(err, res, data) {
+					var data = JSON.parse(data);
+					assert.notEqual(data.rows.constructor.toString().indexOf("Array"), -1);
+				},
+				'check rows length is 2' : function(err, res, data) {
+
+					var data = JSON.parse(data);
+					assert.equal(data.rows.length, 2);
+				},
+				'check rows first and second item ' : function(err, res, data) {
+					var data = JSON.parse(data);
+
+					var users = [data.rows[0].grantTo, data.rows[1].grantTo].sort()
+
+					assert.deepEqual(users, ['/user/all', '/user/test']);
+				}
+			}
+		}
+
+	},
+
 	'CREATE INVALID' : {
 		topic : function() {
 			rest = new Rest();
@@ -463,7 +729,7 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_invalid_test_data_expected_3)
 		}
 	},
-	
+
 	'CREATE INVALID 4' : {
 		topic : function() {
 			rest = new Rest();
@@ -477,7 +743,7 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_invalid_test_data_expected_4)
 		}
 	},
-	
+
 	'CREATE INVALID 5' : {
 		topic : function() {
 			rest = new Rest();
@@ -491,7 +757,7 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_invalid_test_data_expected_5)
 		}
 	},
-	
+
 	'CREATE INVALID 6' : {
 		topic : function() {
 			rest = new Rest();
@@ -505,7 +771,7 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, create_invalid_test_data_expected_6)
 		}
 	},
-	
+
 	'UPDATE' : {
 		topic : function() {
 			rest = new Rest();
