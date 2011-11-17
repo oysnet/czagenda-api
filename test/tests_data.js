@@ -147,6 +147,9 @@ exports.event_forbidden_2 = "/event/b7344ee057a39399a94827a8338c0c23";
 exports.event_group_access_1 = "/event/b5737c7b02fb4c027ee5fbfde0274051";
 exports.event_group_access_2 = "/event/6891dad3d922b0c01b1330ab0138c6b2";
 
+exports.event_master_fail_1 = "/event/76c539cb3aa818074d51d2d40757a03e";
+exports.event_master_fail_2 = "/event/19d81417c48fc4266018f4ed94db71af";
+exports.event_master_successful_1 = "/event/428d45710f8099fa8c63999386bbe7cf";
 
 // ###############################################################################
 // 		ENTITY

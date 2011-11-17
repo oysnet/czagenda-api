@@ -130,6 +130,53 @@ var create_invalid_test_data_expected_4 = {
 	errors : []
 };
 
+var create_invalid_test_data_5 = {
+	event : {
+		title : "event title fail master 1",
+		eventStatus : 'confirmed',
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		links : [{
+			rel : "describedby",
+			href : "/schema/event"
+		}],
+		where : [{
+			valueString : "Pau"
+		}],
+		when : [{startTime : '2001-09-12'}],
+		parentEvent : tests_data.event_master_fail_1
+	}
+}
+
+var create_invalid_test_data_expected_5 = {
+	items : {
+		 'event.parentSchema': [ 'must define an event.childSchema attribute' ]
+	},
+	errors : []
+};
+
+var create_invalid_test_data_6 = {
+	event : {
+		title : "event title fail master 1",
+		eventStatus : 'confirmed',
+		category : "/category/34b74b021369bb23e67f22bad8f1229a",
+		links : [{
+			rel : "describedby",
+			href : "/schema/event"
+		}],
+		where : [{
+			valueString : "Pau"
+		}],
+		when : [{startTime : '2001-09-12'}],
+		parentEvent : tests_data.event_master_fail_2
+	}
+}
+
+var create_invalid_test_data_expected_6 = {
+	items : {
+		'event.links': [ 'Link with rel=describedby must be a subschema of /schema/organization' ]
+	},
+	errors : []
+};
 
 // UPDATE
 var update_test_data_in_database = tests_data.event_1;
@@ -428,6 +475,34 @@ vows.describe('Event API exchanged data structure').addBatch({
 		'check validation errors' : function(err, res, data) {
 			var data = JSON.parse(data);
 			assert.deepEqual(data, create_invalid_test_data_expected_4)
+		}
+	},
+	
+	'CREATE INVALID 5' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_invalid_test_data_5), this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_5)
+		}
+	},
+	
+	'CREATE INVALID 6' : {
+		topic : function() {
+			rest = new Rest();
+			rest.post('/api/event', JSON.stringify(create_invalid_test_data_6), this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		'check validation errors' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, create_invalid_test_data_expected_6)
 		}
 	},
 	
