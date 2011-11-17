@@ -297,6 +297,9 @@ var get_test_data_in_database = tests_data.event_2;
 
 var delete_test_data_in_database = tests_data.event_3;
 var delete_test_data_2_in_database = tests_data.event_subevent_2;
+var delete_test_data_3_in_database =  tests_data.event_master_successful_5;
+
+var delete_test_data_3_response_expected = {"errors":"Integrity error","documents":[tests_data.event_subevent_3]}
 
 vows.describe('Event API exchanged data structure').addBatch({
 
@@ -946,6 +949,21 @@ vows.describe('Event API exchanged data structure').addBatch({
 				assert.equal(typeof(data.event.childEvents), 'undefined');
 			}
 		},
-	}
+	},
+	
+	'DELETE TEST INTEGRITY' : {
+		topic : function() {
+			rest = new Rest();
+			rest.del('/api' + delete_test_data_3_in_database, this.callback);
+		},
+		'check statusCode is 400' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.BAD_REQUEST);
+		},
+		'check response structure' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.deepEqual(data, delete_test_data_3_response_expected);
+		},
+		
+	},
 
 }).export(module);
