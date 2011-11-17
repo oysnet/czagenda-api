@@ -150,6 +150,9 @@ exports.event_group_access_2 = "/event/6891dad3d922b0c01b1330ab0138c6b2";
 exports.event_master_fail_1 = "/event/76c539cb3aa818074d51d2d40757a03e";
 exports.event_master_fail_2 = "/event/19d81417c48fc4266018f4ed94db71af";
 exports.event_master_successful_1 = "/event/428d45710f8099fa8c63999386bbe7cf";
+exports.event_master_successful_2 = "/event/d5fe6d835f16fb81f6fdd4da37c5c308";
+exports.event_master_successful_3 = "/event/2305c45114c6449dbe5fe46249ce8217";
+exports.event_subevent_1 = "/event/c6afce8b7f209f7a7bfe32125f3efba4";
 
 // ###############################################################################
 // 		ENTITY

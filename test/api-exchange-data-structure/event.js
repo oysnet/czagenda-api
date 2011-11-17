@@ -275,6 +275,23 @@ var update_test_data_expected = {
 	agenda : null
 }
 
+var update_test_data_2_in_database = tests_data.event_subevent_1;
+var update_test_data_2 = {
+	"event" : {
+		"title" : "event for subevent change master test",
+		"links" : [{
+			"rel" : "describedby",
+			"href" : "/schema/event"
+		}],
+		"when" : [{
+			"startTime" : "2011-12-09"
+		}],
+		"eventStatus" : "confirmed",
+		"category" : "/category/34b74b021369bb23e67f22bad8f1229a",
+		"parentEvent" : tests_data.event_master_successful_3
+	}
+}
+
 // GET
 var get_test_data_in_database = tests_data.event_2;
 
@@ -527,7 +544,7 @@ vows.describe('Event API exchanged data structure').addBatch({
 		},
 		'check parent event' : {
 			topic : function(res, data) {
-				
+
 				var data = JSON.parse(data);
 				rest = new Rest();
 				rest.get('/api' + data.event.parentEvent, this.callback.bind(this, data));
@@ -536,7 +553,6 @@ vows.describe('Event API exchanged data structure').addBatch({
 			'check statusCode is 200' : function(subevent, err, res, data) {
 				assert.equal(res.statusCode, statusCode.ALL_OK);
 			},
-			
 			'check event.childEvents' : function(subevent, err, res, data) {
 				var data = JSON.parse(data);
 				assert.deepEqual(data.event.childEvents, [subevent.id]);
@@ -792,7 +808,56 @@ vows.describe('Event API exchanged data structure').addBatch({
 			assert.deepEqual(data, update_test_data_expected);
 		}
 	},
+	
+	'UPDATE SUBEVENT CHANGE MASTER' : {
+		topic : function() {
+			rest = new Rest();
+			rest.put('/api' + update_test_data_2_in_database, JSON.stringify(update_test_data_2), this.callback);
+		},
+		
+		'check statusCode is 200' : function(err, res, data) {
+			assert.equal(res.statusCode, statusCode.ALL_OK);
+		},
+		'check event.parentEvent' : function(err, res, data) {
+			var data = JSON.parse(data);
+			assert.equal(data.event.parentEvent, tests_data.event_master_successful_3);
+		},
+		
+		'check old parent event' : {
+			topic : function(res, data) {
 
+				var data = JSON.parse(data);
+				rest = new Rest();
+				rest.get('/api' + tests_data.event_master_successful_2, this.callback);
+
+			},
+			'check statusCode is 200' : function(err, res, data) {
+				assert.equal(res.statusCode, statusCode.ALL_OK);
+			},
+			'check event.childEvents' : function(err, res, data) {
+				var data = JSON.parse(data);
+				assert.equal(typeof(data.event.childEvents), 'undefined');
+			}
+		},
+		
+		'check new parent event' : {
+			topic : function(res, data) {
+
+				var data = JSON.parse(data);
+				rest = new Rest();
+				rest.get('/api' + data.event.parentEvent, this.callback.bind(this, data));
+
+			},
+			'check statusCode is 200' : function(subevent, err, res, data) {
+				assert.equal(res.statusCode, statusCode.ALL_OK);
+			},
+			'check event.childEvents' : function(subevent, err, res, data) {
+				var data = JSON.parse(data);
+				assert.deepEqual(data.event.childEvents, [subevent.id]);
+			}
+		}
+	},
+	
 	'GET' : {
 		topic : function() {
 			rest = new Rest();
