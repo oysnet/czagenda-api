@@ -7,8 +7,8 @@ var async = require('async');
 
 function Event() {
 	this._attributs = {
-		approved : [],
-		disapproved : [],
+		//approved : [],
+		//disapproved : [],
 		agenda : null,
 		event : null,
 		author : null,
@@ -38,7 +38,7 @@ function Event() {
 
 util.inherits(Event, Base);
 
-Event.publicAttributes = Base.publicAttributes.concat(['event', 'author', 'writeGroups', 'readGroups', 'writeUsers', 'readUsers', 'agenda']);
+Event.publicAttributes = Base.publicAttributes.concat(['event', 'author', 'writeGroups', 'readGroups', 'writeUsers', 'readUsers', 'agenda', 'approvedBy', 'disapprovedBy' ]);
 Event.staffAttributes = Event.publicAttributes.concat(Base.staffAttributes);
 Event.metaAttributes = ['event'];
 
