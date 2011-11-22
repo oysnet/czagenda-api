@@ -24,7 +24,7 @@
 			"type": "string",
 			"required": false
 		},
-		"adminLevel_3": {
+		"adminLevel3": {
 			"description": "Administrative level such as department, metropolitan area, etc...",
 			"type": "string",
 			"required": false
