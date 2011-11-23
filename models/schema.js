@@ -46,7 +46,7 @@ Schema.prototype.hasPerm = function (perm, user, callback) {
 		
 		case 'write':
 		case 'del':
-			callback(null, this.status !== Schema.APPROVED && (user.isStaff === true || user.isSuperuser === true || user.id === this.author));
+			callback(null, user.isSuperuser === true || (this.status !== Schema.APPROVED && (user.isStaff === true || user.id === this.author)));
 			break;
 			
 		default:
@@ -195,7 +195,7 @@ Schema.prototype.__addKey = function(key, broadcast, callback) {
 
 		if(err !== null) {
 			log.critical('REDIS SCHEMAS: error on sadd ', key, this.id, err)
-		} else if(res === 1 && broadcast === true) {
+		} else if(broadcast === true) {
 			validator.approvedEnvironment.envChange();
 		}
 		
