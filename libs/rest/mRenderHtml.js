@@ -63,6 +63,13 @@ exports._renderHtml = function(req, res, jsonAttr) {
 										}
 									} else {
 										
+										if (schema.template === null) {
+											res.charset = 'UTF-8';
+											res.header('Content-Type', 'text/html');
+											res.end("no template available");
+											return;
+										}
+										
 										try {
 											var tpl = this._getTemplateFromString(schema.template);
 										} catch (e) {

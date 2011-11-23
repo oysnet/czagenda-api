@@ -6,6 +6,7 @@ Changelog
 Features
 
 * add /api/event/:id/_html method to render event as html according to event's schema template
+* add /api/schema/:id/_html method to render schema sample as html according to schema template
 * allow superuser to update schema even if schema status is APPROVED
 
 Bug fixes
