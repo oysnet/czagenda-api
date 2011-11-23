@@ -1,1 +1,4 @@
-'{"event" : {"id" : "/event/295384e87e6c0761caec6995a7922f44","title" : "title event 1","links" : [{"rel":"describedby", "href":"/schema/event"}],"where" : [{"valueString":"Pau"}]}}'
+var de = require("jinjs").defaultEnvironment;
+tpl = eval(de.getTemplateSourceFromString("{{toto}}"));
+
+exports.tpl = tpl;
