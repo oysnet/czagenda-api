@@ -96,28 +96,34 @@ function oauthRequestParameterString(req) {
 	return paramString;
 }
 
+exports.sendError = function (message, res) {
+	res.statusCode = 403;
+	res.setHeader('Content-Type', 'text/plain');
+    res.end("Forbidden");
+}
+
 exports.verifySignature = function (lookup, redisClient) {
 	return function (req, res, next) {
 		// Make sure we're dealing with the right version
 		if (req.oauthParams['oauth_version'] != undefined
 		    && req.oauthParams['oauth_version'] != '1.0')
-		    return next(new exports.OAuthError("unsupported OAuth version"));
+		    return exports.sendError("unsupported OAuth version", res);
 		    
 		// Verify that the timestamp and nonce pair hasn't been used already
 		var timestamp = parseInt(req.oauthParams['oauth_timestamp'], 10);
 		var nonce = req.oauthParams['oauth_nonce'];
 		if (!timestamp || !nonce)
-			return next(new exports.OAuthError("missing OAuth timestamp or nonce"));
+			return exports.sendError("missing OAuth timestamp or nonce", res);
 		
 		var replayCutoff = Math.floor(Date.now() / 1000) - ReplayExpiry;
 		if (timestamp < replayCutoff)
-			return next(new exports.OAuthError("OAuth request too old"));			
+			return exports.sendError("OAuth request too old");			
 
 		if (redisClient) {
 			var replayKey = "OAuth " + timestamp + " " + nonce;
 			redisClient.setnx(replayKey, "SEEN", function (err, res) {
 				if (res == 0)
-					return next(new exports.OAuthError("OAuth request has been used before"));
+					return exports.sendError("OAuth request has been used before", res);
 
 				if (err)
 					console.log("Failed to validate OAuth nonce/timestamp " + err);
@@ -163,7 +169,7 @@ exports.verifySignature = function (lookup, redisClient) {
 		}
 		function verifySignature() {
 			if (!clientSecret && !tokenSecret)
-				return next(new exports.OAuthError("unknown OAuth client or token"));
+				return exports.sendError("unknown OAuth client or token", res);
 		
 			// Construct the base string for signature generation
 			var baseStringURI = oauthBaseStringURI(req);
@@ -176,17 +182,17 @@ exports.verifySignature = function (lookup, redisClient) {
 			// Verify the signature
 			if (req.oauthParams['oauth_signature_method'] == 'PLAINTEXT') {
 				if (req.oauthParams['oauth_signature'] != key)
-					return next(new exports.OAuthError("failed OAuth PLAINTEXT verification"));
+					return exports.sendError("failed OAuth PLAINTEXT verification", res);
 
 			} else if (req.oauthParams['oauth_signature_method'] == 'HMAC-SHA1') {
 				var hmac = crypto.createHmac('sha1', key);
 				hmac.update(baseString);
 
 				if (req.oauthParams['oauth_signature'] != hmac.digest('base64'))
-					return next(new exports.OAuthError("failed OAuth HMAC-SHA1 verification"));
+					return exports.sendError("failed OAuth HMAC-SHA1 verification", res);
 	
 			} else {
-				return next(new exports.OAuthError("unsupported or missing OAuth signature method"));
+				return exports.sendError("unsupported or missing OAuth signature method", res);
 			}
 			
 			return next();
