@@ -103,8 +103,15 @@ RestSchema.prototype.renderHtml = function(req, res) {
 									res.end('Internal error');
 									return;
 								}
-
-								var data = JSON.parse(obj.sample);
+								
+								try {
+									var data = JSON.parse(obj.sample);
+								} catch (e) {
+									res.statusCode = statusCodes.INTERNAL_ERROR;
+									res.end('Error while parsing sample json');
+									return;
+								}
+								
 								
 								if (data.id.indexOf('/event/') !== -1) {
 									jsonAttr = 'event'
