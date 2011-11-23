@@ -41,7 +41,7 @@ function Rest (config) {
 	this.consumer_secret = config.consumer_secret;
 	
 	
-	var OAuth= require('node-oauth').OAuth;
+	var OAuth= require('oauth').OAuth;
 	this.client= new OAuth("","",this.consumer,this.consumer_secret,"1.0",null,"HMAC-SHA1")
 	                  
 	
