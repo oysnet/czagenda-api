@@ -11,6 +11,7 @@ var models = require('../../models');
 var async = require('async');
 var statusCodes = require('../statusCodes');
 var mModelSearch = require('./mModelSearch');
+var mRenderHtml = require('./mRenderHtml');
 var Lock = require('../lock');
 
 var RestEvent = exports.RestEvent = function(server) {
@@ -56,7 +57,11 @@ var RestEvent = exports.RestEvent = function(server) {
 
 	this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireParentLock.bind(this))
 	this._urls.post[this._urlPrefix].middleware.push(this.requireParentLock.bind(this))
-
+	
+	this._urls.get[this._urlPrefix + '/:id/_html'] = {
+		fn : this.renderHtml
+	};
+	
 	this._initServer();
 }
 util.inherits(RestEvent, RestOAuthModel);
@@ -64,6 +69,11 @@ util.inherits(RestEvent, RestOAuthModel);
 for(k in mModelSearch) {
 	RestEvent.prototype[k] = mModelSearch[k];
 }
+
+for(k in mRenderHtml) {
+	RestEvent.prototype[k] = mRenderHtml[k];
+}
+
 
 RestEvent.prototype.searchFields = {
 	'agenda' : 'term',
@@ -750,5 +760,8 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 		};
 	}
 	return query;
+}
 
+RestEvent.prototype.renderHtml = function (req, res) {
+	this._renderHtml(req, res, 'event');
 }
