@@ -1,3 +1,4 @@
+
 var RestOAuthModel = require('./oAuthModel.js').RestOAuthModel;
 var util = require("util");
 var Schema = require('../../models/schema.js').Schema;
@@ -6,6 +7,8 @@ var models = require('../../models');
 var statusCodes = require('../statusCodes');
 var de = require("jinjs").defaultEnvironment;
 var mRenderHtml = require('./mRenderHtml');
+
+
 
 var RestSchema = exports.RestSchema = function(server) {
 	RestOAuthModel.call(this, 'schema', Schema, server);
@@ -99,6 +102,7 @@ RestSchema.prototype.renderHtml = function(req, res) {
 								try {
 									var tpl = this._getTemplateFromString(obj.template);
 								} catch (e) {
+									console.log(JSON.stringify(e))
 									res.statusCode = statusCodes.INTERNAL_ERROR;
 									res.end('Internal error');
 									return;

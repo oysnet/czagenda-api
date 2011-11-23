@@ -1,3 +1,5 @@
+require('./libs/jinjsFilters')
+
 var spawn = require('child_process').spawn,
     cluster = require('cluster'),
     start = process.argv[process.argv.length - 1] === 'start',
