@@ -1,6 +1,17 @@
 Changelog
 =========
 
+## v0.1.1.1 - XXXXXXXXXXXXXX
+
+Features
+
+* add /api/event/:id/_html method to render event as html according to event's schema template
+* allow superuser to update schema even if schema status is APPROVED
+
+Bug fixes
+
+* when schema is updated, environement is not reloaded
+
 ## v0.1.1.0 - November 17, 2011
 
 Features
