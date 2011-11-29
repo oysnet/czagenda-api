@@ -19,7 +19,7 @@
 		"place" : {
 			"description": "Additional informations about the event location",
 			"type" : "object",
-			"required" : true,
+			"required" : false,
 			"properties" : {
 				"name" : {
 					"type" : "string",
