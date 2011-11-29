@@ -41,7 +41,8 @@ for(k in mRenderHtml) {
 RestSchema.prototype.searchFields = {
 	'name' : 'term',
 	'createDate' : 'datetime',
-	'updateDate' : 'datetime'
+	'updateDate' : 'datetime',
+	'final' : 'boolean'
 }
 
 RestSchema.prototype.sortFields = {
