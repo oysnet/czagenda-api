@@ -177,6 +177,20 @@ exports.getTermSearchPart = function(field, args) {
 
 }
 
+exports.getIdsSearchPart = function(field, args) {
+
+	var q = null;
+	
+		q = {
+			ids : {}
+		};
+		q.ids.values = args;
+	
+
+	return q;
+
+}
+
 exports.getTextSearchPart = function(field, args) {
 	var q = null;
 
@@ -319,7 +333,16 @@ exports._getQueryFromRequest = function(req, callback) {
 					break;
 
 				default:
-					filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
+				
+					if (field == 'id') {
+						filter.and.push(this.getIdsSearchPart(field, searchQuery[field]))
+						
+						
+					} else {
+						filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
+					}
+				
+					
 					break;
 
 			}
