@@ -19,12 +19,12 @@
 			"type": "string",
 			"required": false
 		},
-		"adminLevel2": {
+		"adminLevel1": {
 			"description": "Administrative level such as region, state, etc...",
 			"type": "string",
 			"required": false
 		},
-		"adminLevel3": {
+		"adminLevel2": {
 			"description": "Administrative level such as department, metropolitan area, etc...",
 			"type": "string",
 			"required": false
