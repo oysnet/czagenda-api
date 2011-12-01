@@ -52,14 +52,14 @@ Base.prototype.hasPerm = function (perm, user, callback) {
 Base.prototype.hasWritePerm = function (user) {
 	return 	user.isStaff === true ||
 			user.isSuperuser === true ||
-			this.computedWriteUsers.indexOf(user.id) !== -1 ||
+			this.computedWriteUsers.indexOf(user.id) !== -1 || this.computedWriteUsers.indexOf('/user/all') !== -1 || this.computedWriteGroups.indexOf('/group/all') !== -1 ||
 			utils.haveOneCommonValue(this.computedWriteGroups, user.groups) === true
 }
 
 Base.prototype.hasReadPerm = function (user) {
 	return 	user.isStaff === true ||
 			user.isSuperuser === true ||
-			this.computedReadUsers.indexOf(user.id) !== -1 ||
+			this.computedReadUsers.indexOf(user.id) !== -1 || this.computedReadUsers.indexOf('/user/all') !== -1 || this.computedReadGroups.indexOf('/group/all') !== -1 ||
 			utils.haveOneCommonValue(this.computedReadGroups, user.groups) === true
 }
 
