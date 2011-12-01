@@ -74,7 +74,7 @@ exports._renderHtml = function(req, res, jsonAttr) {
 											var tpl = this._getTemplateFromString(schema.template);
 										} catch (e) {
 											res.statusCode = statusCodes.INTERNAL_ERROR;
-											res.end('Internal error');
+											res.end('Error while compiling template');
 											return;
 										}
 										
@@ -87,7 +87,13 @@ exports._renderHtml = function(req, res, jsonAttr) {
 										
 										res.charset = 'UTF-8';
 										res.header('Content-Type', 'text/html');
-										res.end(tpl.render(context));
+										try{
+											res.end(tpl.render(context));
+										} catch (e) {
+											res.statusCode = statusCodes.INTERNAL_ERROR;
+											res.end('Error while rendering template');
+											return;
+										}
 										
 									}
 								}.bind(this))
