@@ -97,7 +97,7 @@ function oauthRequestParameterString(req) {
 }
 
 exports.sendError = function (message, res) {
-	res.statusCode = 403;
+	res.statusCode = 401;
 	res.setHeader('Content-Type', 'text/plain');
     res.end("Forbidden");
 }
