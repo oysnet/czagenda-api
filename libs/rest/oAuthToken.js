@@ -8,6 +8,8 @@ var mModelUrls = require('./mModelUrls');
 var mPermissions = require('./mPermissions');
 var mLock = require('./mLock');
 var mModelSearch = require('./mModelSearch');
+var log = require('czagenda-log').from(__filename);
+var statusCodes = require('../statusCodes');
 
 function RestOAuthToken(server) {
 
@@ -34,7 +36,7 @@ function RestOAuthToken(server) {
 	};
 
 	this._urls.get[this._urlPrefix + '/:id'] = {
-		middleware : modelMiddleware,
+		middleware :  [this._verifySignature, this.getUserPermsAndGroups, this.ownerOrStaff],
 		fn : this.read
 	};
 
@@ -123,6 +125,19 @@ RestOAuthToken.prototype.sortFields = {
 	'createDate' : 'createDate',
 	'updateDate' : 'updateDate',
 	'name' : 'name.untouched'
+}
+
+RestOAuthToken.prototype.ownerOrStaff = function (req, res, next) {
+	
+	if (req.user.isStaff === true || req.user.isSuperuser || req.oauthParams['oauth_token'] === req.params.id) {
+		log.debug('check ownerOrStaff, granted');
+		next();
+	} else {
+		log.debug('check ownerOrStaff, forbidden');
+		res.statusCode = statusCodes.FORBIDDEN;
+		res.end('Insufficient privileges');
+	}
+		
 }
 
 RestOAuthToken.prototype._getDefaultMiddleware = function() {
