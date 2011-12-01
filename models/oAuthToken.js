@@ -12,7 +12,7 @@ function OAuthToken () {
 util.inherits(OAuthToken, Base);
 
 OAuthToken.publicAttributes = Base.publicAttributes.concat([]);
-OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes).concat([['key', 'secret', 'isApproved', 'consumer']]);
+OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes).concat([['user', 'key', 'secret', 'isApproved', 'consumer']]);
 
 OAuthToken.publicWriteAttributes = []; 
 OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];
@@ -27,12 +27,12 @@ OAuthToken.prototype._validate = function (callback) {
 	this.validateBoolean('callbackConfirmed', false);
 
 //	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
-	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
+	//this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
 	
 	
 	var keys = [];
 		
-	if (this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
+	if (this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true) === true && this.user !== null) {
 		keys.push('user');
 	}
 	
