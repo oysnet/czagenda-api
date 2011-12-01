@@ -4,6 +4,7 @@ var utils = require('../libs/utils.js');
 var settings = require('../settings.js');
 var log = require('czagenda-log').from(__filename);
 var redis = require('../libs/redis-client');
+var models = require('../models');
 
 function Membership() {
 	this._attributs = {
@@ -16,19 +17,56 @@ function Membership() {
 util.inherits(Membership, Base);
 
 Membership.publicAttributes = Base.publicAttributes.concat(['group', 'user']);
-Membership.staffAttributes = Membership.publicAttributes.concat(Base.staffAttributes);
+Membership.staffAttributes = Membership.publicAttributes
+		.concat(Base.staffAttributes);
 
 Membership.publicWriteAttributes = ['user', 'group'];
 Membership.staffWriteAttributes = Membership.publicWriteAttributes;
+
+Membership.prototype.hasPerm = function(perm, user, callback) {
+
+	switch (perm) {
+		case 'read' :
+			callback(null, false);
+			break;
+
+		case 'create' :
+		case 'del' :
+
+			if (user.isStaff === true || user.isSuperuser === true) {
+				callback(null, true);
+			} else {
+				models.Group.get({
+							id : this.group
+						}, function(err, obj) {
+							if (err !== null) {
+								callback(err);
+							} else {
+								callback(null, obj.hasWritePerm(user));
+							}
+						}.bind(this));
+			}
+
+			break;
+
+		case 'write' :
+			callback(null, false);
+			break;
+
+		default :
+			callback(null, false);
+
+	}
+}
 
 Membership.prototype._validate = function(callback) {
 
 	var keys = [];
 
-	if(this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false) === true) {
+	if (this.validateRegexp('group', '^/group/[\-_\.0-9a-z]+$', false) === true) {
 		keys.push('group');
 	}
-	if(this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
+	if (this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false) === true) {
 		keys.push('user');
 	}
 
@@ -47,53 +85,67 @@ Membership.prototype._generateHash = function() {
 
 Membership.prototype._postSave = function(err, next) {
 
-	if(err === null) {
+	if (err === null) {
 
 		var multi = redis.redisClient.multi();
-		multi.sadd(redis.USER_GROUP_PREFIX + this.user, this.group, function(err, res) {
+		multi.sadd(redis.USER_GROUP_PREFIX + this.user, this.group, function(
+						err, res) {
 
-			if(err !== null) {
-				log.critical('REDIS USER GROUP: error on sadd ', redis.USER_GROUP_PREFIX + this.user, this.group)
-			}
+					if (err !== null) {
+						log
+								.critical('REDIS USER GROUP: error on sadd ',
+										redis.USER_GROUP_PREFIX + this.user,
+										this.group)
+					}
 
-		}.bind(this));
+				}.bind(this));
 
-		multi.sadd(redis.USER_MEMBERSHIP_PREFIX + this.user, this.id, function(err, res) {
+		multi.sadd(redis.USER_MEMBERSHIP_PREFIX + this.user, this.id, function(
+						err, res) {
 
-			if(err !== null) {
-				log.critical('REDIS USER GROUP: error on sadd ', redis.USER_MEMBERSHIP_PREFIX + this.user, this.id)
-			}
+					if (err !== null) {
+						log.critical('REDIS USER GROUP: error on sadd ',
+								redis.USER_MEMBERSHIP_PREFIX + this.user,
+								this.id)
+					}
 
-		}.bind(this));
+				}.bind(this));
 
 		multi.exec(function(err, replies) {
-			next();
-		});
+					next();
+				});
 	} else {
 		next();
 	}
 }
 
 Membership.prototype._postDel = function(err, next) {
-	if(err === null || err instanceof errors.ObjectDoesNotExist) {
-		
+	if (err === null || err instanceof errors.ObjectDoesNotExist) {
+
 		var multi = redis.redisClient.multi();
-		
-		multi.srem(redis.USER_GROUP_PREFIX + this.user, this.group, function(err, res) {
-			if(err !== null) {
-				log.critical('REDIS USER GROUP: error on srem ', redis.USER_GROUP_PREFIX + this.user, this.group)
-			}
-		}.bind(this));
-		
-		multi.srem(redis.USER_MEMBERSHIP_PREFIX + this.user, this.id, function(err, res) {
-			if(err !== null) {
-				log.critical('REDIS USER GROUP: error on srem ', redis.USER_MEMBERSHIP_PREFIX + this.user, this.id)
-			}
-		}.bind(this))
+
+		multi.srem(redis.USER_GROUP_PREFIX + this.user, this.group, function(
+						err, res) {
+					if (err !== null) {
+						log
+								.critical('REDIS USER GROUP: error on srem ',
+										redis.USER_GROUP_PREFIX + this.user,
+										this.group)
+					}
+				}.bind(this));
+
+		multi.srem(redis.USER_MEMBERSHIP_PREFIX + this.user, this.id, function(
+						err, res) {
+					if (err !== null) {
+						log.critical('REDIS USER GROUP: error on srem ',
+								redis.USER_MEMBERSHIP_PREFIX + this.user,
+								this.id)
+					}
+				}.bind(this))
 
 		multi.exec(function(err, replies) {
-			next();
-		});
+					next();
+				});
 
 	} else {
 		next();
@@ -106,7 +158,8 @@ Membership.get = function(options, callback) {
 }
 
 Membership.search = function(query, attrs, callback) {
-	Base.search(query, settings.elasticsearch.index, 'membership', attrs, Membership, callback)
+	Base.search(query, settings.elasticsearch.index, 'membership', attrs,
+			Membership, callback)
 }
 
 Membership.count = function(query, callback) {
