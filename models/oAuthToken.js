@@ -11,7 +11,7 @@ function OAuthToken () {
 
 util.inherits(OAuthToken, Base);
 
-OAuthToken.publicAttributes = Base.publicAttributes.concat([]);
+OAuthToken.publicAttributes = Base.publicAttributes.concat(['user']);
 OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes).concat([['user', 'key', 'secret', 'isApproved', 'consumer']]);
 
 OAuthToken.publicWriteAttributes = []; 
@@ -25,10 +25,6 @@ OAuthToken.prototype._validate = function (callback) {
 	this.validateBoolean('isApproved', false);
 	this.validateString('callback', true, null, 255);
 	this.validateBoolean('callbackConfirmed', false);
-
-//	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
-	//this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', true);	
-	
 	
 	var keys = [];
 		
