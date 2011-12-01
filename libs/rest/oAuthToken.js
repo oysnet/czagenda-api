@@ -7,6 +7,7 @@ var mOAuth = require('./mOAuth');
 var mModelUrls = require('./mModelUrls');
 var mPermissions = require('./mPermissions');
 var mLock = require('./mLock');
+var mModelSearch = require('./mModelSearch');
 
 function RestOAuthToken(server) {
 
@@ -69,7 +70,17 @@ function RestOAuthToken(server) {
 		middleware : [this._verifyRequestTokenSignature],
 		fn : this.accessToken
 	};
+	
+	this._urls.get[this._urlPrefix + '/_search'] = {
+		fn : this.search,
+		middleware : modelMiddleware
+	};
 
+	this._urls.post[this._urlPrefix + '/_search'] = {
+		fn : this.search,
+		middleware : modelMiddleware
+	};
+	
 	this._initServer();
 }
 
@@ -93,6 +104,25 @@ for(k in mPermissions) {
 // mixin mLock
 for(k in mLock) {
 	RestOAuthToken.prototype[k] = mLock[k];
+}
+
+for(k in mModelSearch) {
+	RestOAuthToken.prototype[k] = mModelSearch[k];
+}
+
+RestOAuthToken.prototype.searchFields = {
+	'user' : 'term',
+	'consumer' : 'term',
+	'createDate' : 'datetime',
+	'updateDate' : 'datetime',
+	'name' : 'text',
+	'description' : 'text'
+}
+
+RestOAuthToken.prototype.sortFields = {
+	'createDate' : 'createDate',
+	'updateDate' : 'updateDate',
+	'name' : 'name.untouched'
 }
 
 RestOAuthToken.prototype._getDefaultMiddleware = function() {
@@ -119,6 +149,7 @@ RestOAuthToken.prototype.requestToken = function(req, res) {
 				res.end(err.message);
 
 			} else if( err instanceof models.errors.ValidationError) {
+				console.log(JSON.stringify(obj))
 				res.statusCode = statusCode.BAD_REQUEST;
 				res.end(JSON.stringify(obj.validationErrors));
 
