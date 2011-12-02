@@ -34,6 +34,7 @@ Membership.prototype.hasPerm = function(perm, user, callback) {
 			
 			if (this.user === user.id) {
 				callback(null, true);
+				return;
 			}
 		
 		case 'create' :
