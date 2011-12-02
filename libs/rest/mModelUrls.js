@@ -40,7 +40,56 @@ exports.populateModelUrls = function() {
 		middleware : [],
 		fn : this.del
 	};
+	this._urls.get[this._urlPrefix + '/:id/_hasperm/:perm'] = {
+		middleware : [],
+		fn : this.hasPerm
+	};
 }
+
+exports.hasPerm = function(req, res) {
+	
+	var perm = req.params.perm;
+	var perms = ['read', 'write', 'del'];
+	if (perms.indexOf(perm) === -1) {
+		res.statusCode = statusCodes.BAD_REQUEST;
+		res.end('Ask perm for ' + perms.join(', '))
+		return;
+	}
+	
+	this._clazz.get({
+		id : this._urlPrefix + "/" + req.params.id
+	}, function(err, obj) {
+
+		if(err !== null) {
+			if( err instanceof errors.ObjectDoesNotExist) {
+				res.statusCode = statusCodes.NOT_FOUND;
+				res.end('Not found')
+			} else {
+				res.statusCode = statusCodes.INTERNAL_ERROR;
+				res.end('Internal error')
+			}
+		} else {
+			
+			
+			
+			// check permissions
+			obj.hasPerm(perm, req.user, function(err, hasPerm) {
+
+				if(err !== null) {
+					res.statusCode = statusCodes.INTERNAL_ERROR;
+					res.end('Internal error');
+					return;
+				} 
+
+				res.statusCode = statusCodes.ALL_OK;
+				res.end(this._renderJson(req, res, {perm : perm, grant : hasPerm}));
+
+			}.bind(this));
+		}
+
+	}.bind(this));
+}
+
 /**
  * populate an object with other object attributes
  */
