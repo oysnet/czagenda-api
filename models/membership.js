@@ -29,9 +29,15 @@ Membership.prototype.hasPerm = function(perm, user, callback) {
 		case 'read' :
 			callback(null, false);
 			break;
-
-		case 'create' :
+		
 		case 'del' :
+			
+			if (this.user === user.id) {
+				callback(null, true);
+			}
+		
+		case 'create' :
+		
 
 			if (user.isStaff === true || user.isSuperuser === true) {
 				callback(null, true);
