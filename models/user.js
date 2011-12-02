@@ -5,6 +5,7 @@ var utils = require('../libs/utils.js');
 var errors = require('./errors.js');
 var redis = require('../libs/redis-client');
 var log = require('czagenda-log').from(__filename);
+var crypto = require('crypto');
 
 function User() {
 	this._attributs = {
@@ -18,18 +19,19 @@ function User() {
 		isSuperuser : false,
 		lastSeen : null,
 		joinedDate : null,
-		groups : null
+		groups : null,
+		gravatar : null
 	};
 	Base.call(this, 'user');
 }
 
-User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastSeen', 'joinedDate', 'groups']);
+User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'lastName', 'isActive', 'isStaff', 'isSuperuser', 'lastSeen', 'joinedDate', 'groups', 'gravatar']);
 
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 
-User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email',  'isActive'];
+User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email',  'isActive', 'password'];
 
-User.staffWriteAttributes = User.publicWriteAttributes.concat(['password', 'isStaff', 'isSuperuser']);
+User.staffWriteAttributes = User.publicWriteAttributes.concat([ 'isStaff', 'isSuperuser']);
 
 
 util.inherits(User, Base);
@@ -66,8 +68,8 @@ User.prototype._validate = function(callback) {
 }
 
 User.prototype._generateHash = function() {
-	c = require('crypto')
-	h = c.createHash('md5')
+	
+	h = crypto.createHash('md5')
 	h.update(this._type);
 	h.update(this.email);
 	this._data['hash'] = h.digest('hex')
@@ -82,7 +84,12 @@ User.prototype._preSave = function(callback) {
 		this._data.groups = this._data.id + '/groups';
 		this._data.joinedDate = this._data.createDate;
 	}
-
+	
+	h = crypto.createHash('md5')
+	h.update(this.email);
+	
+	this._data.gravatar = h.digest('hex');
+	
 	callback(null);
 }
 
