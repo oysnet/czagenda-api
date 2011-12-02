@@ -9,20 +9,20 @@ exports.search = function(req, res) {
 
 	this._getQueryFromRequest(req, function(err, query) {
 
-		if(err !== null) {
+				if (err !== null) {
 
-			if( err instanceof restError.BadRequest) {
-				res.statusCode = statusCodes.BAD_REQUEST;
-				res.end(err.message)
-			} else {
-				res.statusCode = statusCodes.INTERNAL_ERROR;
-				res.end('Internal error')
-			}
+					if (err instanceof restError.BadRequest) {
+						res.statusCode = statusCodes.BAD_REQUEST;
+						res.end(err.message)
+					} else {
+						res.statusCode = statusCodes.INTERNAL_ERROR;
+						res.end('Internal error')
+					}
 
-		} else {
-			this._search(req, res, this._setPermsOnQuery(req, query));
-		}
-	}.bind(this));
+				} else {
+					this._search(req, res, this._setPermsOnQuery(req, query));
+				}
+			}.bind(this));
 }
 
 exports.unescape = function(str) {
@@ -38,7 +38,7 @@ exports.getSearchQuery = function(req) {
 	var qString = null;
 	var rawData = null;
 
-	if(req.method === 'POST') {
+	if (req.method === 'POST') {
 		rawData = req.body;
 	} else {
 		rawData = req.query;
@@ -46,7 +46,7 @@ exports.getSearchQuery = function(req) {
 
 	var q = {};
 
-	if( typeof (rawData.q) !== 'undefined') {
+	if (typeof(rawData.q) !== 'undefined') {
 		qString = rawData.q.trim();
 
 		// parse query : text field:.. field:...
@@ -54,29 +54,30 @@ exports.getSearchQuery = function(req) {
 		var re = new RegExp(/[a-z0-9\.]+:/gi);
 		var fields = [];
 
-		if(re.test(qString) === true) {
+		if (re.test(qString) === true) {
 			qString.match(re).forEach(function(v) {
-				fields.push(v.substr(0, v.length - 1))
-			});
+						fields.push(v.substr(0, v.length - 1))
+					});
 			var qArray = qString.split(re);
 
 			// first element is fulltext query
-			if(qString.search(re) !== 0) {
+			if (qString.search(re) !== 0) {
 				q.fulltext = qArray[0].trim();
 				qArray = qArray.splice(1);
 			} else {
 				qArray = qArray.splice(1);
 			}
 
-			for(var i = 0, l = qArray.length; i < l; i++) {
-				if(fields.length !== qArray.length) {
-					log.warning('getSearchQuery error ' + qString, JSON.stringify(fields), JSON.stringify(qArray))
+			for (var i = 0, l = qArray.length; i < l; i++) {
+				if (fields.length !== qArray.length) {
+					log.warning('getSearchQuery error ' + qString, JSON
+									.stringify(fields), JSON.stringify(qArray))
 					req.res.statusCode = statusCodes.BAD_REQUEST;
 					req.res.end(qString);
 					return;
 				}
 
-				if( typeof (q[fields[i]]) === 'undefined') {
+				if (typeof(q[fields[i]]) === 'undefined') {
 					q[fields[i]] = [];
 				}
 
@@ -96,13 +97,13 @@ exports.getSearchQuery = function(req) {
 exports.getDatetimeSearchPart = function(field, args) {
 
 	var q = null;
-	if(args.length > 1) {
+	if (args.length > 1) {
 		q = {
 			"or" : []
 		}
-		args.forEach( function(arg) {
-			q.or.push(this.getDatetimeSearchPart(field, [arg]));
-		}.bind(this))
+		args.forEach(function(arg) {
+					q.or.push(this.getDatetimeSearchPart(field, [arg]));
+				}.bind(this))
 
 	} else {
 		var dateRe = '[0-9]{4}-[0-9]{2}-[0-9]{2}';
@@ -110,40 +111,48 @@ exports.getDatetimeSearchPart = function(field, args) {
 		var dateReRange = /^\[[ ]*([^ ]+)[ ]+TO[ ]+([^ ]+)[ ]*\]$/g
 		var range = null;
 
-		if(( range = dateReRange.exec(args[0])) !== null) {
+		if ((range = dateReRange.exec(args[0])) !== null) {
 
 			var from = range[1];
 			var to = range[2];
 
-			if(to == 'NOW') {
+			if (to == 'NOW') {
 				to = (new Date()).toISOString();
 			}
 
-			if(from == 'NOW') {
+			if (from == 'NOW') {
 				from = (new Date()).toISOString();
 			}
 			q = {
 				range : {}
 			};
 
-			if(to == '*') {
+			if (to == '*') {
 				q.range[field] = {
-					"gte" : from.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T00:00:00.000Z')
+					"gte" : from.replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T00:00:00.000Z')
 				}
-			} else if(from == '*') {
+			} else if (from == '*') {
 				q.range[field] = {
-					"lte" : to.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T23:59:59.999Z')
+					"lte" : to.replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T23:59:59.999Z')
 				}
 			} else {
 				q.range[field] = {
 					"include_lower" : true,
 					"include_upper" : true,
-					"from" : from.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T00:00:00.000Z'),
-					"to" : to.replace(/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g, '$1T23:59:59.999Z')
+					"from" : from.replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T00:00:00.000Z'),
+					"to" : to.replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T23:59:59.999Z')
 				}
 			}
 
-		} else if(dateReExact.test(args[0])) {
+		} else if (dateReExact.test(args[0])) {
 			q = {
 				term : {}
 			};
@@ -161,7 +170,7 @@ exports.getDatetimeSearchPart = function(field, args) {
 exports.getTermSearchPart = function(field, args) {
 
 	var q = null;
-	if(args.length > 1) {
+	if (args.length > 1) {
 		q = {
 			terms : {}
 		};
@@ -180,12 +189,11 @@ exports.getTermSearchPart = function(field, args) {
 exports.getIdsSearchPart = function(field, args) {
 
 	var q = null;
-	
-		q = {
-			ids : {}
-		};
-		q.ids.values = args;
-	
+
+	q = {
+		ids : {}
+	};
+	q.ids.values = args;
 
 	return q;
 
@@ -194,13 +202,13 @@ exports.getIdsSearchPart = function(field, args) {
 exports.getTextSearchPart = function(field, args) {
 	var q = null;
 
-	if(args.length > 1) {
+	if (args.length > 1) {
 		q = {
 			"or" : []
 		}
-		args.forEach( function(arg) {
-			q.or.push(this.getTextSearchPart(field, [arg]));
-		}.bind(this))
+		args.forEach(function(arg) {
+					q.or.push(this.getTextSearchPart(field, [arg]));
+				}.bind(this))
 	} else {
 		q = {
 			"query" : {
@@ -220,16 +228,17 @@ exports.getTextSearchPart = function(field, args) {
 exports.getGeoSearchPart = function(field, args, req) {
 	var q = null;
 
-	if(args.length > 1) {
+	if (args.length > 1) {
 		q = {
 			"or" : []
 		}
-		args.forEach( function(arg) {
-			q.or.push(this.getGeoSearchPart(field, [arg]));
-		}.bind(this))
+		args.forEach(function(arg) {
+					q.or.push(this.getGeoSearchPart(field, [arg]));
+				}.bind(this))
 	} else {
 
-		if(( bbox = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*)\]/)) !== null) {
+		if ((bbox = args[0]
+				.match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*)\]/)) !== null) {
 			q = {
 				"geo_bounding_box" : {}
 			}
@@ -237,7 +246,8 @@ exports.getGeoSearchPart = function(field, args, req) {
 				"top_left" : [parseFloat(bbox[2]), parseFloat(bbox[2])],
 				"bottom_right" : [parseFloat(bbox[3]), parseFloat(bbox[4])]
 			}
-		} else if(( distance = args[0].match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
+		} else if ((distance = args[0]
+				.match(/\[([\-\+]?[0-9]{1,2}[\.0-9]*) ([\-\+]?[0-9]{1,2}[\.0-9]*) DISTANCE ([0-9]+(km|mi|miles))\]/)) !== null) {
 
 			req.geoDistanceQuery = {
 				field : field,
@@ -260,7 +270,7 @@ exports.getGeoSearchPart = function(field, args, req) {
 
 exports.getBooleanSearchPart = function(field, args) {
 	var q = null;
-	if(args.length > 1) {
+	if (args.length > 1) {
 		q = {
 			terms : {}
 		};
@@ -275,7 +285,6 @@ exports.getBooleanSearchPart = function(field, args) {
 	return q;
 }
 
-
 exports._getQueryFromRequest = function(req, callback) {
 
 	var searchQuery = this.getSearchQuery(req);
@@ -284,16 +293,16 @@ exports._getQueryFromRequest = function(req, callback) {
 	var filter = null;
 
 	// create full text search
-	if( typeof (searchQuery.fulltext) !== 'undefined') {
+	if (typeof(searchQuery.fulltext) !== 'undefined') {
 		query = {
 			"query_string" : {
 				"query" : searchQuery.fulltext,
 				"analyze_wildcard" : true,
 				"auto_generate_phrase_queries" : true
-				
+
 			}
 		}
-		if(this.fulltextFields !== null) {
+		if (this.fulltextFields !== null) {
 			query.query_string.fields = this.fulltextFields;
 		}
 		delete searchQuery.fulltext;
@@ -302,9 +311,9 @@ exports._getQueryFromRequest = function(req, callback) {
 	try {
 
 		// create filter search
-		for(field in searchQuery) {
+		for (field in searchQuery) {
 
-			if(filter === null) {
+			if (filter === null) {
 				filter = {
 					"and" : []
 				}
@@ -312,37 +321,48 @@ exports._getQueryFromRequest = function(req, callback) {
 
 			switch (this.searchFields[field]) {
 
-				case 'term':
-					filter.and.push(this.getTermSearchPart(field, searchQuery[field]))
+				case 'term' :
+					filter.and.push(this.getTermSearchPart(field,
+							searchQuery[field]))
 					break;
 
-				case 'text':
-					filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
+				case 'text' :
+					filter.and.push(this.getTextSearchPart(field,
+							searchQuery[field]))
 					break;
 
-				case 'datetime':
-					filter.and.push(this.getDatetimeSearchPart(field, searchQuery[field]))
+				case 'datetime' :
+					filter.and.push(this.getDatetimeSearchPart(field,
+							searchQuery[field]))
 					break;
 
-				case 'geo':
-					filter.and.push(this.getGeoSearchPart(field, searchQuery[field], req))
+				case 'geo' :
+					filter.and.push(this.getGeoSearchPart(field,
+							searchQuery[field], req))
 					break;
 
-				case 'boolean':
-					filter.and.push(this.getBooleanSearchPart(field, searchQuery[field]))
+				case 'boolean' :
+					filter.and.push(this.getBooleanSearchPart(field,
+							searchQuery[field]))
 					break;
 
-				default:
-				
+				default :
+
 					if (field == 'id') {
-						filter.and.push(this.getIdsSearchPart(field, searchQuery[field]))
-						
-						
+						filter.and.push(this.getIdsSearchPart(field,
+								searchQuery[field]))
+
+					} else if (["computedWriteGroups", "computedWriteUsers",
+							"computedReadGroups", "computedReadUsers"]
+							.indexOf(field) !== -1) {
+						filter.and.push(this.getTermSearchPart(field,
+								searchQuery[field]))
+
 					} else {
-						filter.and.push(this.getTextSearchPart(field, searchQuery[field]))
+						filter.and.push(this.getTextSearchPart(field,
+								searchQuery[field]))
 					}
-				
-					
+
 					break;
 
 			}
@@ -353,19 +373,19 @@ exports._getQueryFromRequest = function(req, callback) {
 		return;
 	}
 
-	if(query === null) {
+	if (query === null) {
 		query = {
 			"match_all" : {}
 		}
 	}
 
-	if(filter === null) {
+	if (filter === null) {
 		query = {
 			"query" : query
 		};
 	} else {
 
-		if(filter.and.length === 1) {
+		if (filter.and.length === 1) {
 			filter = filter.and[0];
 		}
 		query = {
