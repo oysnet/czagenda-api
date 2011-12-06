@@ -22,8 +22,8 @@ OAuthConsumer.staffWriteAttributes = ['name', 'description', 'status', 'user'];
 OAuthConsumer.prototype._validate = function (callback) {
 	this.validateString('name', false, 5, 255);
 	this.validateString('description', false, null, 1024);
-	this.validateString('key', false, null, 18);
-	this.validateString('secret', false, null, 32);
+	//this.validateString('key', false, null, 18);
+	//this.validateString('secret', false, null, 32);
 	this.validateChoice('status', ['PENDING', 'ACCEPTED', 'CANCELED', 'REJECTED']);
 	this.validateRegexp('user', '^/user/[\-_\.0-9a-zA-Z]+$', false);	
 	
