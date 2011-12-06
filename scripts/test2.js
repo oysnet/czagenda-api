@@ -1,97 +1,163 @@
-var re = new RegExp(/[a-z0-9\.]+:/gi);
-var reBool = /[)( ]*or[)( ]*$/
-
-var qFields = [];
-var qValues = []
-
-// a or b and c == (a or b) and c
-// 				== a or (b and c)
-var qString = ['crit1:h', 'and','(','crit6:val6','crit7:val7','crit8:val8', ')']
-var qString = ['crit1:val1', 'or','(','crit6:val6','and','crit7:val7','and','crit8:val8', ')']
-var qString = ['crit1:','va','and','l1', 'or','(','crit6:','val6','and','crit7:','val7','and','crit8:','val8', ')']
-
-var output =[]
-var ostack=[]
-
-for (var i= 0;i<qString.length;i++){
-	var token = qString[i];
-	if(token == 'or' || token == 'and') {
-		ostack.push(token);
-	}else if (token == '(') {
-		ostack.push(token);
-	} else if(token.charAt(token.length-1) == ':') {
-		ostack.push(token);
-	}
-	else if (token == ')') {
-		var o = ''
-		o = ostack.pop()
-		while(o != '(') {
-			output.push(o)
-			o = ostack.pop()
+function Token(value, next) {
+	this.value = value
+	if (value == 'or' || value == 'and') {
+		if (next == '(' || next == ')' || next.charAt(next.length - 1) == ':') {
+			this.precedence = 0
+		} else {
+			this.precedence = 2
 		}
+		this.type = 'operator'
+
+	} else if (value == '(') {
+		this.type = 'lp'
+	} else if (value.charAt(value.length - 1) == ':') {
+		this.type = 'operator'
+		this.precedence = 1
+	} else if (value == ')') {
+		this.type = 'rp'
 	} else {
-		output.push(token)	
+		this.type = 'value'
 	}
 }
-for(var i=ostack.length-1;i>=0;i--) {
+
+var s = 'crit1:           va and l1 or ((crit6:val6 and crit9:val9 and (crit10:val10 or crit11:val11)) and crit7:val7 ooo and crit8: val8)';
+
+var t = []
+var tmp = '';
+for (var i = 0, l = s.length; i < l; i++) {
+	var c = s.charAt(i);
+	if (c === ':') {
+		t.push(tmp + ':');
+		tmp = ''
+	} else if (c === ' ' && i > 1 && s.charAt(i - 1) === ' ') {
+		continue;
+	} else if (c === ' ' && i > 1 && s.charAt(i - 1) !== ':') {
+		t.push(tmp);
+		tmp = ''
+	} else if (c === '(' || c === ')') {
+		if (tmp !== '') {
+			t.push(tmp);
+		}
+		tmp = ''
+		t.push(c);
+	} else {
+		tmp += c;
+	}
+}
+if (tmp !== '') {
+	t.push(tmp);
+}
+
+function isValue(value) {
+	if (value == 'or' || value == 'and' || value == '(' || value == ')'
+			|| value.charAt(value.length - 1) == ':') {
+		return false
+	} else {
+		return true;
+	}
+}
+var qString = []
+for (var i = 0, l = t.length; i < l; i++) {
+	if (i > 1 && isValue(t[i - 1]) && isValue(t[i])) {
+		qString.push('or')
+	}
+	qString.push(t[i])
+}
+
+var output = []
+
+var ostack = []
+console.log(qString);
+for (var i = 0; i < qString.length; i++) {
+	if (i < qString.length - 2) {
+		var next = qString[i + 1]
+	} else {
+		var next = null;
+	}
+
+	var token = new Token(qString[i], next);
+
+	if (token.type == 'operator') {
+		while (ostack.length > 0
+				&& token.precedence <= ostack[ostack.length - 1].precedence) {
+			output.push(ostack.pop());
+		}
+		ostack.push(token);
+
+	} else if (token.type == 'lp') {
+		ostack.push(token);
+	}
+
+	else if (token.type == 'rp') {
+		var o = ''
+
+		o = ostack.pop()
+
+		while (o.type != 'lp') {
+
+			output.push(o)
+
+			o = ostack.pop()
+
+		}
+
+	} else {
+
+		output.push(token)
+
+	}
+
+}
+
+for (var i = ostack.length - 1; i >= 0; i--) {
 	output.push(ostack[i]);
 }
 
-console.log(output)
-
-var o = { or: [{and : [{crit6:val6, crit7:val7}]}, {crit1:val1}]}
-
-qString.match(re).forEach(function(v) {
-	qFields.push(v.substr(0, v.length - 1))
-});
-var qValues = qString.split(re);
-
-// first element is fulltext query
-if(qString.search(re) !== 0) {
-	//q.fulltext = qValues[0].trim();
-	qValues = qValues.splice(1);
-} else {
-	qValues = qValues.splice(1);
-}
-
-var query = [];
-var currentGroup = null;
-
-for(var i = 0, l = qFields.length; i < l; i++) {
-
-	if(currentGroup === null) {
-		currentGroup = {};
-	}
-
-	var value = qValues[i].trim();
-	
-	var bool = null;
-	if(( bool = value.match(reBool)) !== null) {
-		bool = bool[0];
-		bool = bool.toLowerCase();
-		value = value.replace(bool, '');
-
-		if(bool.indexOf(')') !== -1) {
-			// stop group
-		}
-
-		if(bool.indexOf('(') !== -1) {
-			// start group
-		}
-
-		var operator = 'and';
-		if(bool.indexOf('or') !== -1) {
-			operator = 'or';
-		}
-		
-		
+var stack = [];
+for (var i = 0, l = output.length; i < l; i++) {
+	token = output[i];
+	if (token.type == 'value') {
+		stack.push(token.value);
 	} else {
-		currentGroup[qFields[i]] = value;
-	}
+		if (token.value == 'or') {
+			if (token.precedence == 2) {
+				r = stack.pop() + ' or ' + stack.pop()
+			} else {
+				var t0 = stack.pop();
+				var t1 = stack.pop();
+				if (typeof(t1) == 'object' && typeof(t1.or) != 'undefined') {
+					t1.or.push(t0);
+					r = t1;
+				} else {
+					r = {
+						or : [t0, t1]
+					};
+				}
+			}
+		} else if (token.value == 'and') {
+			if (token.precedence == 2) {
+				r = stack.pop() + ' and ' + stack.pop()
+			} else {
+				var t0 = stack.pop();
+				var t1 = stack.pop();
+				if (typeof(t1) == 'object' && typeof(t1.and) != 'undefined') {
+					t1.and.push(t0);
+					r = t1;
+				} else {
+					r = {
+						and : [t0, t1]
+					};
+				}
+			}
+		}
 
+		else {
+			r = {}
+			r[token.value.substring(0, token.value.length - 1)] = stack.pop();
+		}
+		stack.push(r)
+	}
 }
 
-console.log('qFields');
-console.log(qFields);
-console.log('qValues');
-console.log(qValues);
+console.log(output)
+console.log(JSON.stringify(stack, null, "  "))
