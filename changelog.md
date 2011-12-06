@@ -7,6 +7,10 @@ Features
 
 * add boolean operator between criterions in search
 
+bug fixes
+
+* no need to validate key and secret on OAuthConsumer since they are not defined by users
+
 ## v0.1.1.1 - December 2, 2011
 
 Features
