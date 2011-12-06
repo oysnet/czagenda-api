@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Types of documents &mdash; Citizens Agenda v0.1 documentation</title>
+    <title>Types of documents &mdash; Citizens Agenda 0.1 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
+    <link rel="top" title="Citizens Agenda 0.1 documentation" href="index.html" />
     <link rel="next" title="Schemas" href="schemas.html" />
     <link rel="prev" title="RESTful API" href="rest.html" /> 
   </head>
@@ -39,7 +42,7 @@
         <li class="right" >
           <a href="rest.html" title="RESTful API"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Citizens Agenda 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -57,7 +60,7 @@
 <li><a class="reference internal" href="#doc-user"><em>user</em></a></li>
 <li><a class="reference internal" href="#doc-group"><em>group</em></a></li>
 <li><a class="reference internal" href="#doc-schema"><em>schema</em></a></li>
-<li><em class="xref std std-ref">agenda</em></li>
+<li><a class="reference internal" href="#doc-agenda"><em>agenda</em></a></li>
 <li><a class="reference internal" href="#doc-category"><em>category</em></a></li>
 </ul>
 </div></blockquote>
@@ -91,6 +94,17 @@
 </div>
 <div class="section" id="email-string">
 <h3><tt class="docutils literal"><span class="pre">email</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#email-string" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">To be the user or to have a staff account is required to write/update this attribute</p>
+</div>
+</div>
+<div class="section" id="password-string">
+<h3><tt class="docutils literal"><span class="pre">password</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#password-string" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">To be the user or to have a staff account is required to write/update this attribute</p>
+</div>
 </div>
 <div class="section" id="isactive-boolean">
 <h3><tt class="docutils literal"><span class="pre">isActive</span> <span class="pre">(Boolean)</span></tt><a class="headerlink" href="#isactive-boolean" title="Permalink to this headline">¶</a></h3>
@@ -116,8 +130,8 @@
 </div>
 <p>True if the user is a super user. Super users have no restrictions when accessing the admin interface.</p>
 </div>
-<div class="section" id="lastlogin-datetime">
-<h3><tt class="docutils literal"><span class="pre">lastLogin</span> <span class="pre">(Datetime)</span></tt><a class="headerlink" href="#lastlogin-datetime" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="lastseen-datetime">
+<h3><tt class="docutils literal"><span class="pre">lastSeen</span> <span class="pre">(Datetime)</span></tt><a class="headerlink" href="#lastseen-datetime" title="Permalink to this headline">¶</a></h3>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
 <p class="last">Read only</p>
@@ -313,6 +327,31 @@
 <p>Contains an URI to get write user permissions.</p>
 </div>
 </div>
+<div class="section" id="type-agenda">
+<span id="doc-agenda"></span><h2>Type <em>agenda</em><a class="headerlink" href="#type-agenda" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="id9">
+<h3><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id9" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id10">
+<h3><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt><a class="headerlink" href="#id10" title="Permalink to this headline">¶</a></h3>
+</div>
+<div class="section" id="id11">
+<h3><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id11" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
+<p>Contains an URI to get write group permissions.</p>
+</div>
+<div class="section" id="id12">
+<h3><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt><a class="headerlink" href="#id12" title="Permalink to this headline">¶</a></h3>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Read only</p>
+</div>
+<p>Contains an URI to get write user permissions.</p>
+</div>
+</div>
 <div class="section" id="type-membership">
 <h2>Type <em>membership</em><a class="headerlink" href="#type-membership" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="user-string">
@@ -345,10 +384,11 @@
 <li><a class="reference internal" href="#firstname-string"><tt class="docutils literal"><span class="pre">firstName</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#lastname-string"><tt class="docutils literal"><span class="pre">lastName</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#email-string"><tt class="docutils literal"><span class="pre">email</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#password-string"><tt class="docutils literal"><span class="pre">password</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#isactive-boolean"><tt class="docutils literal"><span class="pre">isActive</span> <span class="pre">(Boolean)</span></tt></a></li>
 <li><a class="reference internal" href="#isstaff-boolean"><tt class="docutils literal"><span class="pre">isStaff</span> <span class="pre">(Boolean)</span></tt></a></li>
 <li><a class="reference internal" href="#issuperuser-boolean"><tt class="docutils literal"><span class="pre">isSuperuser</span> <span class="pre">(Boolean)</span></tt></a></li>
-<li><a class="reference internal" href="#lastlogin-datetime"><tt class="docutils literal"><span class="pre">lastLogin</span> <span class="pre">(Datetime)</span></tt></a></li>
+<li><a class="reference internal" href="#lastseen-datetime"><tt class="docutils literal"><span class="pre">lastSeen</span> <span class="pre">(Datetime)</span></tt></a></li>
 <li><a class="reference internal" href="#datejoined-datetime"><tt class="docutils literal"><span class="pre">dateJoined</span> <span class="pre">(Datetime)</span></tt></a></li>
 <li><a class="reference internal" href="#groups-string"><tt class="docutils literal"><span class="pre">groups</span> <span class="pre">(String)</span></tt></a></li>
 </ul>
@@ -390,6 +430,13 @@
 <li><a class="reference internal" href="#users-string"><tt class="docutils literal"><span class="pre">users</span> <span class="pre">(String)</span></tt></a></li>
 <li><a class="reference internal" href="#id7"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
 <li><a class="reference internal" href="#id8"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#type-agenda">Type <em>agenda</em></a><ul>
+<li><a class="reference internal" href="#id9"><tt class="docutils literal"><span class="pre">title</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#id10"><tt class="docutils literal"><span class="pre">description</span> <span class="pre">(String)</span></tt></a></li>
+<li><a class="reference internal" href="#id11"><tt class="docutils literal"><span class="pre">writeGroups</span> <span class="pre">(List)</span></tt></a></li>
+<li><a class="reference internal" href="#id12"><tt class="docutils literal"><span class="pre">writeUsers</span> <span class="pre">(List)</span></tt></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#type-membership">Type <em>membership</em></a><ul>
@@ -441,12 +488,12 @@
         <li class="right" >
           <a href="rest.html" title="RESTful API"
              >previous</a> |</li>
-        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Citizens Agenda 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Oxys SARL.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>

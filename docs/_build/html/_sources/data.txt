@@ -55,7 +55,11 @@ These documents holds informations about registered users.
 		
 ``email (String)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	
+.. warning:: To be the user or to have a staff account is required to write/update this attribute
+
+``password (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. warning:: To be the user or to have a staff account is required to write/update this attribute
 
 	
 ``isActive (Boolean)``
@@ -82,7 +86,7 @@ True if the user is a staff member. Only staff members can access the admin inte
 True if the user is a super user. Super users have no restrictions when accessing the admin interface.
 	
 
-``lastLogin (Datetime)``
+``lastSeen (Datetime)``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 	
 .. warning:: Read only
@@ -293,6 +297,31 @@ Contains an URI to get write group permissions.
 
 Contains an URI to get write user permissions.
 
+.. _doc_agenda:
+
+Type *agenda*
+^^^^^^^^^^^^^^^^^^^^^^^^^	
+	
+``title (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``description (String)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+``writeGroups (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
+
+Contains an URI to get write group permissions.
+
+``writeUsers (List)``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. warning:: Read only
+
+Contains an URI to get write user permissions.
 
 Type *membership*
 ^^^^^^^^^^^^^^^^^^^^^^^^^

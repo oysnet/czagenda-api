@@ -379,7 +379,10 @@ Agenda base uri is /agenda
 	}
 	
 	Note that id was generated from the provided title.
-
+	
+	.. warning:: Agenda is used on event to restrict creation, update and deletion. 
+							 To do an operation on an event that is part of an agenda you must have write access on the agenda.
+	
 Category
 ^^^^^^^^^
 

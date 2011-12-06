@@ -3,13 +3,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
+
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>RESTful API &mdash; Citizens Agenda v0.1 documentation</title>
+    <title>RESTful API &mdash; Citizens Agenda 0.1 documentation</title>
+    
     <link rel="stylesheet" href="_static/default.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '',
@@ -22,7 +25,7 @@
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
-    <link rel="top" title="Citizens Agenda v0.1 documentation" href="index.html" />
+    <link rel="top" title="Citizens Agenda 0.1 documentation" href="index.html" />
     <link rel="next" title="Types of documents" href="data.html" />
     <link rel="prev" title="Start with oauth and account registration" href="start.html" /> 
   </head>
@@ -39,7 +42,7 @@
         <li class="right" >
           <a href="start.html" title="Start with oauth and account registration"
              accesskey="P">previous</a> |</li>
-        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Citizens Agenda 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -219,7 +222,7 @@
 <span class="go">          &quot;isActive&quot;: false,</span>
 <span class="go">          &quot;isStaff&quot;: false,</span>
 <span class="go">          &quot;isSuperuser&quot;: false,</span>
-<span class="go">          &quot;lastLogin&quot;: null,</span>
+<span class="go">          &quot;lastSeen&quot;: null,</span>
 <span class="go">          &quot;dateJoined&quot;: null,</span>
 <span class="go">          &quot;groups&quot;: &quot;/user/johndoe/groups&quot;</span>
 <span class="go">        }</span>
@@ -246,7 +249,7 @@
 <span class="go">          &quot;isActive&quot;: false,</span>
 <span class="go">          &quot;isStaff&quot;: false,</span>
 <span class="go">          &quot;isSuperuser&quot;: false,</span>
-<span class="go">          &quot;lastLogin&quot;: null,</span>
+<span class="go">          &quot;lastSeen&quot;: null,</span>
 <span class="go">          &quot;dateJoined&quot;: null,</span>
 <span class="go">          &quot;groups&quot;: &quot;/user/johndoe/groups&quot;</span>
 <span class="go">        }</span>
@@ -425,6 +428,11 @@
 </pre></div>
 </div>
 <p>Note that id was generated from the provided title.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Agenda is used on event to restrict creation, update and deletion.
+To do an operation on an event that is part of an agenda you must have write access on the agenda.</p>
+</div>
 </div></blockquote>
 </li>
 </ol>
@@ -872,7 +880,7 @@
 <dd><ul class="first last simple">
 <li>createDate</li>
 <li>updateDate</li>
-<li>lastLogin</li>
+<li>lastSeen</li>
 <li>joinedDate</li>
 <li>login</li>
 <li>firstName</li>
@@ -995,12 +1003,12 @@
         <li class="right" >
           <a href="start.html" title="Start with oauth and account registration"
              >previous</a> |</li>
-        <li><a href="index.html">Citizens Agenda v0.1 documentation</a> &raquo;</li> 
+        <li><a href="index.html">Citizens Agenda 0.1 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
         &copy; Copyright 2011, Oxys SARL.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.0.8.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
     </div>
   </body>
 </html>
