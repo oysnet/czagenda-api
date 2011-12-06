@@ -1,6 +1,12 @@
 Changelog
 =========
 
+## v0.1.1.2 - December 6, 2011
+
+Features
+
+* add boolean operator between criterions in search
+
 ## v0.1.1.1 - December 2, 2011
 
 Features

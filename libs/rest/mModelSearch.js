@@ -1,6 +1,7 @@
 var statusCodes = require('../statusCodes');
 var restError = require('./errors');
 var log = require('czagenda-log').from(__filename);
+var shuntingYard = require('../shuntingYard');
 
 exports.searchFields = {};
 exports.fulltextFields = null;
@@ -44,6 +45,14 @@ exports.getSearchQuery = function(req) {
 		rawData = req.query;
 	}
 
+	if (typeof(rawData.q) !== 'undefined') {
+		qString = rawData.q.trim();
+		return shuntingYard.parseSearchString(qString);
+	}
+
+	return {};
+
+	/*
 	var q = {};
 
 	if (typeof(rawData.q) !== 'undefined') {
@@ -90,7 +99,7 @@ exports.getSearchQuery = function(req) {
 
 	}
 
-	return q;
+	return q;*/
 
 }
 
@@ -285,118 +294,133 @@ exports.getBooleanSearchPart = function(field, args) {
 	return q;
 }
 
+exports.getFulltextSearchPart = function(field, args) {
+
+	query = {
+		"query_string" : {
+			"query" : args,
+			"analyze_wildcard" : true,
+			"auto_generate_phrase_queries" : true
+
+		}
+	}
+	if (this.fulltextFields !== null) {
+		query.query_string.fields = this.fulltextFields;
+	}
+
+	return {
+		query : query
+	};
+
+}
+
+exports.constructQueryFields = function(query) {
+
+
+	var keys = Object.keys(query);
+	if (keys.length > 1) {
+		throw new Error('query has more than one key')
+	}
+
+	if (keys.length === 0) {
+		return query;
+	}
+
+	var k = keys[0];
+
+	if (["and", "or"].indexOf(k) !== -1) {
+
+		for (var i = 0, l = query[k].length; i < l; i++) {
+			query[k][i] = this.constructQueryFields(query[k][i])
+		}
+
+		return query;
+
+	} else {
+
+		var field = k;
+		switch (this.searchFields[field]) {
+
+			case 'term' :
+				return this.getTermSearchPart(field, [query[field]]);
+				break;
+
+			case 'text' :
+				return this.getTextSearchPart(field, [query[field]]);
+				break;
+
+			case 'datetime' :
+				return this.getDatetimeSearchPart(field, [query[field]]);
+				break;
+
+			case 'geo' :
+				return this.getGeoSearchPart(field, [query[field]], req);
+				break;
+
+			case 'boolean' :
+				return this.getBooleanSearchPart(field, [query[field]]);
+				break;
+
+			default :
+
+				if (field === "fulltext") {
+					return this.getFulltextSearchPart(field, [query[field]]);
+				} else if (field == 'id') {
+					return this.getIdsSearchPart(field, [query[field]]);
+
+				} else if (["computedWriteGroups", "computedWriteUsers",
+						"computedReadGroups", "computedReadUsers"]
+						.indexOf(field) !== -1) {
+					return this.getTermSearchPart(field, [query[field]]);
+
+				} else {
+					return this.getTextSearchPart(field, [query[field]]);
+				}
+
+		}
+
+	}
+
+}
+
 exports._getQueryFromRequest = function(req, callback) {
 
 	var searchQuery = this.getSearchQuery(req);
-
 	var query = null;
 	var filter = null;
-
-	// create full text search
-	if (typeof(searchQuery.fulltext) !== 'undefined') {
-		query = {
-			"query_string" : {
-				"query" : searchQuery.fulltext,
-				"analyze_wildcard" : true,
-				"auto_generate_phrase_queries" : true
-
-			}
-		}
-		if (this.fulltextFields !== null) {
-			query.query_string.fields = this.fulltextFields;
-		}
-		delete searchQuery.fulltext;
-	}
-
+	
 	try {
 
-		// create filter search
-		for (field in searchQuery) {
-
-			if (filter === null) {
-				filter = {
-					"and" : []
-				}
-			}
-
-			switch (this.searchFields[field]) {
-
-				case 'term' :
-					filter.and.push(this.getTermSearchPart(field,
-							searchQuery[field]))
-					break;
-
-				case 'text' :
-					filter.and.push(this.getTextSearchPart(field,
-							searchQuery[field]))
-					break;
-
-				case 'datetime' :
-					filter.and.push(this.getDatetimeSearchPart(field,
-							searchQuery[field]))
-					break;
-
-				case 'geo' :
-					filter.and.push(this.getGeoSearchPart(field,
-							searchQuery[field], req))
-					break;
-
-				case 'boolean' :
-					filter.and.push(this.getBooleanSearchPart(field,
-							searchQuery[field]))
-					break;
-
-				default :
-
-					if (field == 'id') {
-						filter.and.push(this.getIdsSearchPart(field,
-								searchQuery[field]))
-
-					} else if (["computedWriteGroups", "computedWriteUsers",
-							"computedReadGroups", "computedReadUsers"]
-							.indexOf(field) !== -1) {
-						filter.and.push(this.getTermSearchPart(field,
-								searchQuery[field]))
-
-					} else {
-						filter.and.push(this.getTextSearchPart(field,
-								searchQuery[field]))
-					}
-
-					break;
-
-			}
-		}
+		query = this.constructQueryFields(searchQuery);
+	
 
 	} catch (e) {
+
 		callback(e);
+
+		log.warning('constructQueryFields error ', JSON.stringify(e))
+
 		return;
 	}
 
-	if (query === null) {
+	if (Object.keys(query).length === 0) {
 		query = {
-			"match_all" : {}
-		}
-	}
-
-	if (filter === null) {
-		query = {
-			"query" : query
+			"query" : {
+				"match_all" : {}
+			}
 		};
 	} else {
-
-		if (filter.and.length === 1) {
-			filter = filter.and[0];
-		}
 		query = {
 			"query" : {
 				"filtered" : {
-					"query" : query,
-					"filter" : filter
+					"query" : {
+						"match_all" : {}
+					},
+					"filter" : query
 				}
 			}
 		}
 	}
-
+	
 	callback(null, query);
 }
