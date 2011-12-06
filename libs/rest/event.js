@@ -55,25 +55,26 @@ var RestEvent = exports.RestEvent = function(server) {
 		fn : this.search
 	};
 
-	this._urls.put[this._urlPrefix + '/:id'].middleware.push(this.requireParentLock.bind(this))
-	this._urls.post[this._urlPrefix].middleware.push(this.requireParentLock.bind(this))
-	
+	this._urls.put[this._urlPrefix + '/:id'].middleware
+			.push(this.requireParentLock.bind(this))
+	this._urls.post[this._urlPrefix].middleware.push(this.requireParentLock
+			.bind(this))
+
 	this._urls.get[this._urlPrefix + '/:id/_html'] = {
 		fn : this.renderHtml
 	};
-	
+
 	this._initServer();
 }
 util.inherits(RestEvent, RestOAuthModel);
 
-for(k in mModelSearch) {
+for (k in mModelSearch) {
 	RestEvent.prototype[k] = mModelSearch[k];
 }
 
-for(k in mRenderHtml) {
+for (k in mRenderHtml) {
 	RestEvent.prototype[k] = mRenderHtml[k];
 }
-
 
 RestEvent.prototype.searchFields = {
 	'agenda' : 'term',
@@ -107,23 +108,24 @@ RestEvent.prototype.sortFields = {
 
 RestEvent.prototype.requireParentLock = function(req, res, next) {
 
-	if( typeof (req.body.event) !== 'undefined' && typeof (req.body.event.parentEvent) !== 'undefined') {
+	if (typeof(req.body.event) !== 'undefined'
+			&& typeof(req.body.event.parentEvent) !== 'undefined') {
 		var lock = new Lock(req.body.event.parentEvent);
 		lock.acquire(function(err, locked) {
 
-			if(err !== null || locked === false) {
-				res.statusCode = statusCodes.LOCKED;
-				res.end('Document is Locked');
-				return;
-			}
+					if (err !== null || locked === false) {
+						res.statusCode = statusCodes.LOCKED;
+						res.end('Document is Locked');
+						return;
+					}
 
-			if( typeof (req.locks) == 'undefined') {
-				req.locks = [lock];
-			} else {
-				req.locks.push(lock);
-			}
-			next();
-		});
+					if (typeof(req.locks) == 'undefined') {
+						req.locks = [lock];
+					} else {
+						req.locks.push(lock);
+					}
+					next();
+				});
 	} else {
 		next();
 	}
@@ -132,24 +134,25 @@ RestEvent.prototype.requireParentLock = function(req, res, next) {
 
 RestEvent.prototype._getDefaultSort = function() {
 	return [{
-		"event.when.startTime" : {
-			"order" : "desc",
-			"missing" : "_last"
-		}
-	}, {
-		"createDate" : {
-			"order" : "desc"
-		}
-	}]
+				"event.when.startTime" : {
+					"order" : "desc",
+					"missing" : "_last"
+				}
+			}, {
+				"createDate" : {
+					"order" : "desc"
+				}
+			}]
 }
 
 RestEvent.prototype._populateObject = function(obj, data, req, res) {
 
-	if(obj.author === null) {
+	if (obj.author === null) {
 		obj.author = req.user.id;
 	}
 
-	return RestOAuthModel.prototype._populateObject.call(this, obj, data, req, res);
+	return RestOAuthModel.prototype._populateObject.call(this, obj, data, req,
+			res);
 
 }
 
@@ -178,17 +181,20 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 		p.save(function(err, p) {
 
-			if(err === null) {
+			if (err === null) {
 				req.preCreateObjects.push(p);
 			}
 
 			// trivial but it's what we want...
-			if( err instanceof models.errors.ObjectAlreadyExists) {
+			if (err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
 			}
 
-			if(err !== null) {
-				log.warning('RestAgenda.prototype.create: unable to create permission EventWriteUser on ', req.user.id, obj.getId(), err)
+			if (err !== null) {
+				log
+						.warning(
+								'RestAgenda.prototype.create: unable to create permission EventWriteUser on ',
+								req.user.id, obj.getId(), err)
 				cb(new models.errors.InternalError('Unable to create permission, aborting'));
 			} else {
 				cb(null);
@@ -209,17 +215,20 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 		p.save(function(err, p) {
 
-			if(err === null) {
+			if (err === null) {
 				req.preCreateObjects.push(p);
 			}
 
 			// trivial but it's what we want...
-			if( err instanceof models.errors.ObjectAlreadyExists) {
+			if (err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
 			}
 
-			if(err !== null) {
-				log.warning('RestAgenda.prototype.create: unable to create permission EventReadUser on ', req.user.id, obj.getId(), err)
+			if (err !== null) {
+				log
+						.warning(
+								'RestAgenda.prototype.create: unable to create permission EventReadUser on ',
+								req.user.id, obj.getId(), err)
 				cb(new models.errors.InternalError('Unable to create permission, aborting'));
 			} else {
 				cb(null);
@@ -240,17 +249,20 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 		p.save(function(err, p) {
 
-			if(err === null) {
+			if (err === null) {
 				req.preCreateObjects.push(p);
 			}
 
 			// trivial but it's what we want...
-			if( err instanceof models.errors.ObjectAlreadyExists) {
+			if (err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
 			}
 
-			if(err !== null) {
-				log.warning('RestAgenda.prototype.create: unable to create permission EventReadUser on ', '/user/all', obj.getId(), err)
+			if (err !== null) {
+				log
+						.warning(
+								'RestAgenda.prototype.create: unable to create permission EventReadUser on ',
+								'/user/all', obj.getId(), err)
 				cb(new models.errors.InternalError('Unable to create permission, aborting'));
 			} else {
 				cb(null);
@@ -271,17 +283,20 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 		p.save(function(err, p) {
 
-			if(err === null) {
+			if (err === null) {
 				req.preCreateObjects.push(p);
 			}
 
 			// trivial but it's what we want...
-			if( err instanceof models.errors.ObjectAlreadyExists) {
+			if (err instanceof models.errors.ObjectAlreadyExists) {
 				err = null;
 			}
 
-			if(err !== null) {
-				log.warning('RestAgenda.prototype.create: unable to create permission EventReadGroup on ', '/group/all', obj.getId(), err)
+			if (err !== null) {
+				log
+						.warning(
+								'RestAgenda.prototype.create: unable to create permission EventReadGroup on ',
+								'/group/all', obj.getId(), err)
 				cb(new models.errors.InternalError('Unable to create permission, aborting'));
 			} else {
 				cb(null);
@@ -292,11 +307,11 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 	async.parallel(methods, function(err) {
 
-		if( typeof (err) === 'undefined') {
+		if (typeof(err) === 'undefined') {
 			err = null;
 		}
 
-		if(err !== null) {
+		if (err !== null) {
 
 			// rolling back
 			var rollbackMethods = [];
@@ -304,8 +319,11 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 				rollbackMethods.push(function(cb) {
 					toDelObj.del(function(err, obj) {
 
-						if(err !== null) {
-							log.warning('RestEvent.prototype._postCreate: rolling back failed', toDelObj.id)
+						if (err !== null) {
+							log
+									.warning(
+											'RestEvent.prototype._postCreate: rolling back failed',
+											toDelObj.id)
 						}
 
 						cb(err);
@@ -314,8 +332,8 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 			});
 
 			async.parallel(rollbackMethods, function(rollbackErr) {
-				callback(err);
-			});
+						callback(err);
+					});
 		} else {
 			callback(err);
 		}
@@ -325,42 +343,51 @@ RestEvent.prototype._preCreate = function(obj, req, callback) {
 
 RestEvent.prototype._postCreate = function(err, obj, req, callback) {
 
-	if(err === null) {
+	if (err === null) {
 
 		// update parent event.childEvents if needed
-		if( typeof (obj.event.parentEvent) !== 'undefined' && obj.event.parentEvent !== null) {
+		if (typeof(obj.event.parentEvent) !== 'undefined'
+				&& obj.event.parentEvent !== null) {
 			models.Event.get({
-				id : obj.event.parentEvent
-			}, function(err, parent) {
-				if( typeof (parent.event.childEvents) == 'undefined' || parent.event.childEvents.indexOf(obj.id) === -1) {
-					if( typeof (parent.event.childEvents) == 'undefined') {
-						parent.event.childEvents = [];
-					}
-					parent.event.childEvents.push(obj.id);
+						id : obj.event.parentEvent
+					}, function(err, parent) {
+						if (typeof(parent.event.childEvents) == 'undefined'
+								|| parent.event.childEvents.indexOf(obj.id) === -1) {
+							if (typeof(parent.event.childEvents) == 'undefined') {
+								parent.event.childEvents = [];
+							}
+							parent.event.childEvents.push(obj.id);
 
-					parent.save(function(err) {
-						if(err !== null) {
-							log.critical('RestEvent.prototype._postCreate: error while saving parent event', obj.id, parent.id, JSON.stringify(err));
+							parent.save(function(err) {
+								if (err !== null) {
+									log
+											.critical(
+													'RestEvent.prototype._postCreate: error while saving parent event',
+													obj.id, parent.id, JSON
+															.stringify(err));
+								}
+								callback();
+							});
+						} else {
+							callback();
 						}
-						callback();
-					});
-				} else {
-					callback();
-				}
-			})
+					})
 		} else {
 			callback();
 		}
 
-	} else if( typeof (req.preCreateObjects) !== 'undefined') {
+	} else if (typeof(req.preCreateObjects) !== 'undefined') {
 		// rolling back
 		var rollbackMethods = [];
 		req.preCreateObjects.forEach(function(toDelObj) {
 			rollbackMethods.push(function(callback) {
 				toDelObj.del(function(err, obj) {
 
-					if(err !== null) {
-						log.warning('RestEvent.prototype._postCreate: rolling back failed', toDelObj.id)
+					if (err !== null) {
+						log
+								.warning(
+										'RestEvent.prototype._postCreate: rolling back failed',
+										toDelObj.id)
 					}
 
 					callback(err);
@@ -369,32 +396,33 @@ RestEvent.prototype._postCreate = function(err, obj, req, callback) {
 		});
 
 		async.parallel(rollbackMethods, function(rollbackErr) {
-			callback();
-		});
+					callback();
+				});
 	}
 
 }
 
 RestEvent.prototype._preUpdate = function(obj, req, callback) {
 
-	if(obj.initialData.parentEvent !== null && obj.initialData.parentEvent != obj.event.parentEvent) {
+	if (obj.initialData.parentEvent !== null
+			&& obj.initialData.parentEvent != obj.event.parentEvent) {
 		// try to acquire a lock on original parent event
 		var lock = new Lock(obj.initialData.parentEvent);
 		lock.acquire(function(err, locked) {
 
-			if(err !== null || locked === false) {
-				req.res.statusCode = statusCodes.LOCKED;
-				req.res.end('Document is Locked');
-				return;
-			}
+					if (err !== null || locked === false) {
+						req.res.statusCode = statusCodes.LOCKED;
+						req.res.end('Document is Locked');
+						return;
+					}
 
-			if( typeof (req.locks) == 'undefined') {
-				req.locks = [lock];
-			} else {
-				req.locks.push(lock);
-			}
-			callback(null);
-		});
+					if (typeof(req.locks) == 'undefined') {
+						req.locks = [lock];
+					} else {
+						req.locks.push(lock);
+					}
+					callback(null);
+				});
 	} else {
 		callback(null);
 	}
@@ -402,74 +430,93 @@ RestEvent.prototype._preUpdate = function(obj, req, callback) {
 
 RestEvent.prototype._postUpdate = function(err, obj, req, callback) {
 
-	if(err !== null) {
+	if (err !== null) {
 		callback();
 		return;
 	}
 
 	var methods = [];
 	// delete current event from parent event childEvents
-	if(obj.initialData.parentEvent !== null && obj.initialData.parentEvent != obj.event.parentEvent) {
+	if (obj.initialData.parentEvent !== null
+			&& obj.initialData.parentEvent != obj.event.parentEvent) {
 		methods.push(function(cb) {
 			models.Event.get({
-				id : obj.initialData.parentEvent
-			}, function(err, parent) {
-				if(err !== null) {
-					log.critical('RestEvent.prototype._postUpdate unable to load parent event', obj.initialData.parentEvent, JSON.stringify(err))
-					cb();
-				} else {
-
-					if( typeof (parent.event.childEvents) == 'undefined') {
-						log.warning('RestEvent.prototype._postUpdate parent event has no attribute childEvents', obj.initialData.parentEvent);
-						cb();
-					} else if(parent.event.childEvents.indexOf(obj.id) !== -1) {
-						parent.event.childEvents.splice(parent.event.childEvents.indexOf(obj.id), 1);
-						
-						if (parent.event.childEvents.length===0) {
-							delete parent.event.childEvents;
-						}
-						
-						parent.save(function(err) {
-
-							if(err !== null) {
-								log.warning('RestEvent.prototype._postUpdate unable to save parent event', obj.initialData.parentEvent, JSON.stringify(err));
-							}
+						id : obj.initialData.parentEvent
+					}, function(err, parent) {
+						if (err !== null) {
+							log
+									.critical(
+											'RestEvent.prototype._postUpdate unable to load parent event',
+											obj.initialData.parentEvent, JSON
+													.stringify(err))
 							cb();
-						})
-					}
-				}
-			})
+						} else {
+
+							if (typeof(parent.event.childEvents) == 'undefined') {
+								log
+										.warning(
+												'RestEvent.prototype._postUpdate parent event has no attribute childEvents',
+												obj.initialData.parentEvent);
+								cb();
+							} else if (parent.event.childEvents.indexOf(obj.id) !== -1) {
+								parent.event.childEvents.splice(
+										parent.event.childEvents
+												.indexOf(obj.id), 1);
+
+								if (parent.event.childEvents.length === 0) {
+									delete parent.event.childEvents;
+								}
+
+								parent.save(function(err) {
+
+									if (err !== null) {
+										log
+												.warning(
+														'RestEvent.prototype._postUpdate unable to save parent event',
+														obj.initialData.parentEvent,
+														JSON.stringify(err));
+									}
+									cb();
+								})
+							}
+						}
+					})
 		})
 	}
 
-	if( typeof (obj.event.parentEvent) !== 'undefined') {
+	if (typeof(obj.event.parentEvent) !== 'undefined') {
 		methods.push(function(cb) {
 			models.Event.get({
-				id : obj.event.parentEvent
-			}, function(err, parent) {
-				if( typeof (parent.event.childEvents) == 'undefined' || parent.event.childEvents.indexOf(obj.id) === -1) {
-					if( typeof (parent.event.childEvents) == 'undefined') {
-						parent.event.childEvents = [];
-					}
-					parent.event.childEvents.push(obj.id);
+						id : obj.event.parentEvent
+					}, function(err, parent) {
+						if (typeof(parent.event.childEvents) == 'undefined'
+								|| parent.event.childEvents.indexOf(obj.id) === -1) {
+							if (typeof(parent.event.childEvents) == 'undefined') {
+								parent.event.childEvents = [];
+							}
+							parent.event.childEvents.push(obj.id);
 
-					parent.save(function(err) {
-						if(err !== null) {
-							log.critical('RestEvent.prototype._postUpdate: error while saving parent event', obj.id, parent.id, JSON.stringify(err));
+							parent.save(function(err) {
+								if (err !== null) {
+									log
+											.critical(
+													'RestEvent.prototype._postUpdate: error while saving parent event',
+													obj.id, parent.id, JSON
+															.stringify(err));
+								}
+								cb();
+							});
+						} else {
+							cb();
 						}
-						cb();
-					});
-				} else {
-					cb();
-				}
-			})
+					})
 		});
 	}
 
-	if(methods.length > 0) {
+	if (methods.length > 0) {
 		async.parallel(methods, function() {
-			callback();
-		});
+					callback();
+				});
 	} else {
 		callback();
 	}
@@ -497,99 +544,116 @@ RestEvent.prototype._preDel = function(obj, req, callback) {
 
 	this._checkIntegrity(query, req, function(err) {
 
-		if(err !== null) {
-			callback(err);
-			return;
-		}
-
-		if( typeof (obj.event.parentEvent) != 'undefined') {
-			// try to acquire a lock on parent event
-			var lock = new Lock(obj.event.parentEvent);
-			lock.acquire(function(err, locked) {
-
-				if(err !== null || locked === false) {
-					req.res.statusCode = statusCodes.LOCKED;
-					req.res.end('Document is Locked');
+				if (err !== null) {
+					callback(err);
 					return;
 				}
 
-				if( typeof (req.locks) == 'undefined') {
-					req.locks = [lock];
-				} else {
-					req.locks.push(lock);
-				}
-				callback(null);
-			});
-		} else {
-			callback(null);
-		}
+				if (typeof(obj.event.parentEvent) != 'undefined') {
+					// try to acquire a lock on parent event
+					var lock = new Lock(obj.event.parentEvent);
+					lock.acquire(function(err, locked) {
 
-	});
+								if (err !== null || locked === false) {
+									req.res.statusCode = statusCodes.LOCKED;
+									req.res.end('Document is Locked');
+									return;
+								}
+
+								if (typeof(req.locks) == 'undefined') {
+									req.locks = [lock];
+								} else {
+									req.locks.push(lock);
+								}
+								callback(null);
+							});
+				} else {
+					callback(null);
+				}
+
+			});
 }
 
 RestEvent.prototype._postDel = function(err, obj, req, callback) {
 
-	if(err !== null && !( err instanceof models.errors.ObjectDoesNotExist)) {
+	if (err !== null && !(err instanceof models.errors.ObjectDoesNotExist)) {
 		callback();
 		return;
 	}
 
 	var methods = [];
 
-	obj.computedWriteUsersPerms.forEach( function(id) {
-		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteUser'));
-	}.bind(this));
+	obj.computedWriteUsersPerms.forEach(function(id) {
+				methods.push(this._getPermDeleteMethod(obj, id,
+						'EventWriteUser'));
+			}.bind(this));
 
-	obj.computedWriteGroupsPerms.forEach( function(id) {
-		methods.push(this._getPermDeleteMethod(obj, id, 'EventWriteGroup'));
-	}.bind(this));
+	obj.computedWriteGroupsPerms.forEach(function(id) {
+				methods.push(this._getPermDeleteMethod(obj, id,
+						'EventWriteGroup'));
+			}.bind(this));
 
-	obj.computedReadUsersPerms.forEach( function(id) {
-		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadUser'));
-	}.bind(this));
+	obj.computedReadUsersPerms.forEach(function(id) {
+				methods.push(this
+						._getPermDeleteMethod(obj, id, 'EventReadUser'));
+			}.bind(this));
 
-	obj.computedReadGroupsPerms.forEach( function(id) {
-		methods.push(this._getPermDeleteMethod(obj, id, 'EventReadGroup'));
-	}.bind(this));
+	obj.computedReadGroupsPerms.forEach(function(id) {
+				methods.push(this._getPermDeleteMethod(obj, id,
+						'EventReadGroup'));
+			}.bind(this));
 
 	// add an async method to update parent event if needed
-	if( typeof (obj.event.parentEvent) != 'undefined') {
+	if (typeof(obj.event.parentEvent) != 'undefined') {
 		methods.push(function(cb) {
 
 			models.Event.get({
-				id : obj.event.parentEvent
-			}, function(err, parent) {
-				if(err !== null) {
-					log.critical('RestEvent.prototype._postDel unable to load parent event', obj.event.parentEvent, JSON.stringify(err))
-					cb();
-				} else {
-
-					if( typeof (parent.event.childEvents) == 'undefined') {
-						log.warning('RestEvent.prototype._postDel parent event has no attribute childEvents', obj.event.parentEvent);
-						cb();
-					} else if(parent.event.childEvents.indexOf(obj.id) !== -1) {
-						parent.event.childEvents.splice(parent.event.childEvents.indexOf(obj.id), 1);
-						
-						if (parent.event.childEvents.length===0) {
-							delete parent.event.childEvents;
-						}
-						
-						parent.save(function(err) {
-
-							if(err !== null) {
-								log.warning('RestEvent.prototype._postDel unable to save parent event', obj.event.parentEvent, JSON.stringify(err));
-							}
+						id : obj.event.parentEvent
+					}, function(err, parent) {
+						if (err !== null) {
+							log
+									.critical(
+											'RestEvent.prototype._postDel unable to load parent event',
+											obj.event.parentEvent, JSON
+													.stringify(err))
 							cb();
-						})
-					}
-				}
-			})
+						} else {
+
+							if (typeof(parent.event.childEvents) == 'undefined') {
+								log
+										.warning(
+												'RestEvent.prototype._postDel parent event has no attribute childEvents',
+												obj.event.parentEvent);
+								cb();
+							} else if (parent.event.childEvents.indexOf(obj.id) !== -1) {
+								parent.event.childEvents.splice(
+										parent.event.childEvents
+												.indexOf(obj.id), 1);
+
+								if (parent.event.childEvents.length === 0) {
+									delete parent.event.childEvents;
+								}
+
+								parent.save(function(err) {
+
+									if (err !== null) {
+										log
+												.warning(
+														'RestEvent.prototype._postDel unable to save parent event',
+														obj.event.parentEvent,
+														JSON.stringify(err));
+									}
+									cb();
+								})
+							}
+						}
+					})
 		})
 	}
 
 	async.parallel(methods, function() {
-		callback();
-	});
+				callback();
+			});
 }
 
 RestEvent.prototype.__moderate = function(req, res, moderate) {
@@ -599,7 +663,7 @@ RestEvent.prototype.__moderate = function(req, res, moderate) {
 	var lock = new Lock(id);
 	lock.acquire(function(err, locked) {
 
-		if(err !== null || locked === false) {
+		if (err !== null || locked === false) {
 			res.statusCode = statusCodes.LOCKED;
 			res.end('Document is Locked');
 			return;
@@ -608,77 +672,77 @@ RestEvent.prototype.__moderate = function(req, res, moderate) {
 		req.locks = [lock];
 
 		models.Event.get({
-			id : id
-		}, function(err, event) {
+					id : id
+				}, function(err, event) {
 
-			if(err !== null) {
-				if( err instanceof models.errors.ObjectDoesNotExist) {
-					res.statusCode = statusCodes.NOT_FOUND;
-					res.end('Not found')
-				} else {
-					res.statusCode = statusCodes.INTERNAL_ERROR;
-					res.end('Internal error')
-				}
-			} else {
-
-				moderate(event);
-
-				event.save(function(err, obj) {
-					if(err === null) {
-						res.statusCode = statusCodes.ALL_OK;
-						res.end();
+					if (err !== null) {
+						if (err instanceof models.errors.ObjectDoesNotExist) {
+							res.statusCode = statusCodes.NOT_FOUND;
+							res.end('Not found')
+						} else {
+							res.statusCode = statusCodes.INTERNAL_ERROR;
+							res.end('Internal error')
+						}
 					} else {
-						res.statusCode = statusCodes.INTERNAL_ERROR;
-						res.end('Internal error')
+
+						moderate(event);
+
+						event.save(function(err, obj) {
+									if (err === null) {
+										res.statusCode = statusCodes.ALL_OK;
+										res.end();
+									} else {
+										res.statusCode = statusCodes.INTERNAL_ERROR;
+										res.end('Internal error')
+									}
+								})
 					}
-				})
-			}
-		});
+				});
 	});
 }
 
 RestEvent.prototype.addApprove = function(req, res) {
 
 	this.__moderate(req, res, function(event) {
-		if(event.approvedBy.indexOf(req.user.id) === -1) {
-			event.approvedBy.push(req.user.id);
-		}
+				if (event.approvedBy.indexOf(req.user.id) === -1) {
+					event.approvedBy.push(req.user.id);
+				}
 
-		if(( pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
-			event.disapprovedBy.splice(pos, 1);
-		}
-	});
+				if ((pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
+					event.disapprovedBy.splice(pos, 1);
+				}
+			});
 }
 
 RestEvent.prototype.addDisapprove = function(req, res) {
 
 	this.__moderate(req, res, function(event) {
-		if(event.disapprovedBy.indexOf(req.user.id) === -1) {
-			event.disapprovedBy.push(req.user.id);
-		}
+				if (event.disapprovedBy.indexOf(req.user.id) === -1) {
+					event.disapprovedBy.push(req.user.id);
+				}
 
-		if(( pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
-			event.approvedBy.splice(pos, 1);
-		}
-	});
+				if ((pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
+					event.approvedBy.splice(pos, 1);
+				}
+			});
 }
 
 RestEvent.prototype.delApprove = function(req, res) {
 
 	this.__moderate(req, res, function(event) {
-		if(( pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
-			event.approvedBy.splice(pos, 1);
-		}
-	});
+				if ((pos = event.approvedBy.indexOf(req.user.id)) !== -1) {
+					event.approvedBy.splice(pos, 1);
+				}
+			});
 }
 
 RestEvent.prototype.delDisapprove = function(req, res) {
 
 	this.__moderate(req, res, function(event) {
-		if(( pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
-			event.disapprovedBy.splice(pos, 1);
-		}
-	});
+				if ((pos = event.disapprovedBy.indexOf(req.user.id)) !== -1) {
+					event.disapprovedBy.splice(pos, 1);
+				}
+			});
 }
 
 RestEvent.prototype.permsUserWrite = function(req, res) {
@@ -703,15 +767,15 @@ RestEvent.prototype.permsGroupRead = function(req, res) {
 
 RestEvent.prototype._setPermsOnQuery = function(req, q) {
 
-	var hasQueryAttribute = typeof (q.query) !== 'undefined';
+	var hasQueryAttribute = typeof(q.query) !== 'undefined';
 
-	if(hasQueryAttribute === true) {
+	if (hasQueryAttribute === true) {
 		q = q.query;
 	}
 
 	var query = {};
 
-	if( typeof (q.filtered) === 'undefined') {
+	if (typeof(q.filtered) === 'undefined') {
 
 		// assume that query is something like {match_all : {}}
 
@@ -720,7 +784,8 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 			filter : {
 				"or" : [{
 					terms : {
-						computedReadGroups : req.user.groups.concat(["/group/all"]),
+						computedReadGroups : req.user.groups
+								.concat(["/group/all"]),
 						"minimum_match" : 1
 					}
 				}, {
@@ -734,27 +799,40 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 
 	} else {
 
-		query.filtered = {
-			query : q.filtered.query,
-			filter : {
-				and : [{
-					"or" : [{
-						terms : {
-							computedReadGroups : req.user.groups.concat(["/group/all"]),
-							"minimum_match" : 1
-						}
-					}, {
-						terms : {
-							computedReadUsers : ["/user/all", req.user.id],
-							"minimum_match" : 1
-						}
-					}]
-				}, q.filtered.filter]
+		var restrictPart = {
+			"or" : [{
+				terms : {
+					computedReadGroups : req.user.groups.concat(["/group/all"]),
+					"minimum_match" : 1
+				}
+			}, {
+				terms : {
+					computedReadUsers : ["/user/all", req.user.id],
+					"minimum_match" : 1
+				}
+			}]
+		};
+
+		if (typeof(q.filtered.filter.and) !== 'undefined') {
+
+			query.filtered = {
+				query : q.filtered.query,
+				filter : q.filtered.filter
+			}
+			query.filtered.filter.and.push(restrictPart);
+
+		} else {
+
+			query.filtered = {
+				query : q.filtered.query,
+				filter : {
+					and : [restrictPart, q.filtered.filter]
+				}
 			}
 		}
 	}
 
-	if(hasQueryAttribute === true) {
+	if (hasQueryAttribute === true) {
 		query = {
 			query : query
 		};
@@ -762,6 +840,6 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 	return query;
 }
 
-RestEvent.prototype.renderHtml = function (req, res) {
+RestEvent.prototype.renderHtml = function(req, res) {
 	this._renderHtml(req, res, 'event');
 }
