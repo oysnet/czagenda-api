@@ -2,20 +2,25 @@
 
 if [ -z $1 ] 
 then
-echo "You must provde dbname as first argument";
+echo "You must provide dbname as first argument";
 exit 0;
 fi
 
+if [ -z $2 ] 
+then
+echo "You must provide server ip as second argument";
+exit 0;
+fi
 
-curl -XDELETE http://10.7.50.110:9200/$1;
+curl -XDELETE http://$2:9200/$1;
 
-#curl -XPUT http://10.7.50.110:9200/$1 -d '{"index" : {
-#    "number_of_shards" : 3,
-#    "number_of_replicas" : 2}}'
+curl -XPUT http://$2:9200/$1 -d '{"index" : {
+    "number_of_shards" : 3,
+    "number_of_replicas" : 2}}'
 
-curl -XPUT http://10.7.50.110:9200/$1
+#curl -XPUT http://$2:9200/$1
 
-curl -XPUT "http://10.7.50.110:9200/$1/oauth-token/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/oauth-token/_mapping" -d '{
 	"oauth-token": {
 		"properties" : {
 			"createDate" : {
@@ -31,7 +36,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/oauth-token/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/oauth-consumer/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/oauth-consumer/_mapping" -d '{
 	"oauth-consumer": {
 		"properties" : {
 			"createDate" : {
@@ -52,7 +57,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/oauth-consumer/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/event/_mapping" -d '{
 	"event": {
 		"properties" : {
 			"createDate" : {
@@ -113,7 +118,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/entity/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/entity/_mapping" -d '{
 	"entity": {
 		"properties" : {
 			"createDate" : {
@@ -160,7 +165,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/entity/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/agenda/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/agenda/_mapping" -d '{
 	"agenda": {
 		"properties" : {
 			"createDate" : {
@@ -182,7 +187,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/category/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/category/_mapping" -d '{
 	"category": {
 		"properties" : {
 			"createDate" : {
@@ -202,7 +207,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/category/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/group/_mapping" -d '{
 	"group": {
 		"properties" : {
 			"createDate" : {
@@ -224,7 +229,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/group/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/user/_mapping" -d '{
 	"user": {
 		"properties" : {
 			"createDate" : {
@@ -264,7 +269,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/user/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/membership/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/membership/_mapping" -d '{
 	"membership": {
 		"properties" : {
 			"createDate" : {
@@ -279,7 +284,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/membership/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/agenda-write-user/_mapping" -d '{
 	"agenda-write-user": {
 		"properties" : {
 			"createDate" : {
@@ -293,7 +298,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-user/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/agenda-write-group/_mapping" -d '{
 	"agenda-write-group": {
 		"properties" : {
 			"createDate" : {
@@ -308,7 +313,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/agenda-write-group/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/entity-write-user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/entity-write-user/_mapping" -d '{
 	"entity-write-user": {
 		"properties" : {
 			"createDate" : {
@@ -322,7 +327,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/entity-write-user/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/entity-write-group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/entity-write-group/_mapping" -d '{
 	"entity-write-group": {
 		"properties" : {
 			"createDate" : {
@@ -337,7 +342,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/entity-write-group/_mapping" -d '{
 	}
 }';
 
-curl -XPUT "http://10.7.50.110:9200/$1/group-write-user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/group-write-user/_mapping" -d '{
 	"group-write-user": {
 		"properties" : {
 			"createDate" : {
@@ -351,7 +356,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/group-write-user/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/group-write-group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/group-write-group/_mapping" -d '{
 	"group-write-group": {
 		"properties" : {
 			"createDate" : {
@@ -365,7 +370,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/group-write-group/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/event-write-user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/event-write-user/_mapping" -d '{
 	"event-write-user": {
 		"properties" : {
 			"createDate" : {
@@ -379,7 +384,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-write-user/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/event-write-group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/event-write-group/_mapping" -d '{
 	"event-write-group": {
 		"properties" : {
 			"createDate" : {
@@ -393,7 +398,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-write-group/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/event-read-user/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/event-read-user/_mapping" -d '{
 	"event-read-user": {
 		"properties" : {
 			"createDate" : {
@@ -407,7 +412,7 @@ curl -XPUT "http://10.7.50.110:9200/$1/event-read-user/_mapping" -d '{
 		}
 	}
 }';
-curl -XPUT "http://10.7.50.110:9200/$1/event-read-group/_mapping" -d '{
+curl -XPUT "http://$2:9200/$1/event-read-group/_mapping" -d '{
 	"event-read-group": {
 		"properties" : {
 			"createDate" : {
