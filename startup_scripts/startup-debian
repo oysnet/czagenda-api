@@ -1,0 +1,33 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          czagenda_api
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:
+# Short-Description: Start czagenda api
+### END INIT INFO
+
+PATH=/usr/local/bin:$PATH;
+
+. /lib/lsb/init-functions
+. /home/czagenda-api/startup_scripts/init-functions
+
+case "$1" in
+     start)
+        do_start;
+        ;;
+    restart)
+        do_restart;
+        ;;
+    reload|force-reload)
+        echo "Error: argument $1 not supported" >&2
+        exit 3
+        ;;
+    stop)
+        ;;
+    *)
+        echo "Usage: $0 start|stop" >&2
+        exit 3
+        ;;
+esac
