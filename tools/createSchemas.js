@@ -3,6 +3,7 @@ var approvedEnvironment = require('../libs/schemas/validator').approvedEnvironme
 var models = require('../models');
 var fs = require('fs');
 var log = require('czagenda-log').from(__filename);
+var path = require('path');
 
 var SCHEMAS = [{
 	"name" : "base",
@@ -82,7 +83,15 @@ var createSchema = function() {
 	schema['final'] = data['final'];
 	schema.status = 'APPROVED';
 	schema.schema = JSON.parse(fs.readFileSync("./schemas/" + data.file, 'utf8'));
-
+	
+	if (path.existsSync('./schemas/template/' + data.name) === true) {
+		schema.template = fs.readFileSync("./schemas/template/" + data.file + '.tpl', 'utf8');
+	}
+	
+	if (path.existsSync('./schemas/sample/' + data.name) === true) {
+		schema.sample = fs.readFileSync("./schemas/sample/" + data.file + '.json', 'utf8');
+	}
+	
 	schema.save(function(err, obj) {
 		
 		
