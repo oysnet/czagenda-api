@@ -85,11 +85,11 @@ var createSchema = function() {
 	schema.schema = JSON.parse(fs.readFileSync("./schemas/" + data.file, 'utf8'));
 	
 	if (path.existsSync('./schemas/template/' + data.name + '.tpl') === true) {
-		schema.template = fs.readFileSync("./schemas/template/" + data.file + '.tpl', 'utf8');
+		schema.template = fs.readFileSync("./schemas/template/" + data.name + '.tpl', 'utf8');
 	}
 	
 	if (path.existsSync('./schemas/sample/' + data.name + '.json') === true) {
-		schema.sample = fs.readFileSync("./schemas/sample/" + data.file + '.json', 'utf8');
+		schema.sample = fs.readFileSync("./schemas/sample/" + data.name + '.json', 'utf8');
 	}
 	
 	schema.save(function(err, obj) {
