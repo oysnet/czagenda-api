@@ -84,11 +84,11 @@ var createSchema = function() {
 	schema.status = 'APPROVED';
 	schema.schema = JSON.parse(fs.readFileSync("./schemas/" + data.file, 'utf8'));
 	
-	if (path.existsSync('./schemas/template/' + data.name) === true) {
+	if (path.existsSync('./schemas/template/' + data.name + '.tpl') === true) {
 		schema.template = fs.readFileSync("./schemas/template/" + data.file + '.tpl', 'utf8');
 	}
 	
-	if (path.existsSync('./schemas/sample/' + data.name) === true) {
+	if (path.existsSync('./schemas/sample/' + data.name + '.json') === true) {
 		schema.sample = fs.readFileSync("./schemas/sample/" + data.file + '.json', 'utf8');
 	}
 	
