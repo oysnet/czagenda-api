@@ -25,7 +25,7 @@ user.save(function(err, obj) {
 	} else {
 		
 		if( err instanceof models.errors.ObjectAlreadyExists) {
-			console.log('ObjectAlreadyExists');
+			console.log('A similar user already exists');
 
 		} else if( err instanceof models.errors.ValidationError) {
 			console.log( obj.validationErrors);
