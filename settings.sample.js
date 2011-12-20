@@ -5,7 +5,7 @@ exports.czdiscovery = {
 }
 
 exports.elasticsearch = {
-	index : 'agenda',
+	index : '%ES_INDEX%',
 	hosts : [{
 		'host' : '%ES_IP%',
 		'port' : 9200
