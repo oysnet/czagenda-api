@@ -13,7 +13,7 @@ user.isStaff = true;
 
 user.save(function(err, obj) {
 	if(err === null) {
-		console.log(obj.serialize(['id', 'login', 'email', 'isActive', 'isSuperuser', 'isStaff']))
+		
 		console.log('id: ' + obj.id);
 		console.log('login: ' + obj.login);
 		console.log('password: ' + obj.password);

@@ -29,7 +29,7 @@ consumer.save(function(err, obj) {
 
 		token.save(function(err, obj) {
 			if(err === null) {
-				console.log(obj.serialize(['id', 'key', 'secret']))
+				//console.log(obj.serialize(['id', 'key', 'secret']))
 				
 				token = obj.key;
 				secret = obj.secret;
@@ -38,6 +38,9 @@ consumer.save(function(err, obj) {
 				console.log("Consumer secret: " + consumerSecret);
 				console.log("Access token: " + token);
 				console.log("Access token: " + secret);
+				
+				redisClient.end();
+				process.exit(1)
 				
 			} else {
 
@@ -50,9 +53,12 @@ consumer.save(function(err, obj) {
 				} else {
 					console.log('Internal error')
 				}
+				
+				redisClient.end();
+				process.exit(0)
+				
 			}
 			
-			redisClient.end();
 
 		});
 
@@ -70,7 +76,8 @@ consumer.save(function(err, obj) {
 			console.log('Internal error')
 		}
 		
-		redisClient.end(); 
+		redisClient.end();
+		process.exit(0)
 	}
 
 });
