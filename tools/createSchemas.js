@@ -110,7 +110,7 @@ var createSchema = function() {
 				setTimeout(createSchema, 3000);
 			} else {
 				log.notice("All done");
-				setTimeout(process.exit, 1000);
+				setTimeout(function () {process.exit(1)}, 1000);
 			}
 
 		} else {
@@ -121,6 +121,7 @@ var createSchema = function() {
 			} else {
 				console.log('Internal error', data.name)
 			}
+			setTimeout(function () {process.exit(0)}, 1000);
 		}
 
 	});
