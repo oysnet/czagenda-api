@@ -20,7 +20,8 @@ user.save(function(err, obj) {
 		console.log('email: ' + obj.email);
 		console.log('isSuperuser: ' + obj.isSuperuser);
 		console.log('isStaff: ' + obj.isStaff);
-		
+		redisClient.end();
+		process.exit(1)
 	} else {
 		
 		if( err instanceof models.errors.ObjectAlreadyExists) {
@@ -32,9 +33,11 @@ user.save(function(err, obj) {
 		} else {
 			console.log( 'Internal error')
 		}
+		redisClient.end();
+		process.exit(0)
 	}
 	
-	redisClient.end();
+	
 	
 });
 
