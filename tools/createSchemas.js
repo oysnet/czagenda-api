@@ -101,6 +101,7 @@ var createSchema = function() {
 				setTimeout(createSchema, 3000);
 			} else {
 				log.notice("All done");
+				setTimeout(process.exit, 1000);
 			}
 
 		} else {
