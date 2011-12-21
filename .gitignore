@@ -2,5 +2,6 @@ node_modules
 settings.js
 pids/
 logs/
+scripts/
 .DS_Store
 .project
