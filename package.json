@@ -3,7 +3,7 @@
   "description": "Api server for czagenda",
   "version": "0.0.1",
   "homepage": "http://czagenda.org",
-  "repository": "git@git.oxys.net:czagenda",
+  "repository": "git@github.com:oxys-net/czagenda-api.git",
   "main": "server",
   "dependencies": {
       "cluster": "= 0.7.4",
