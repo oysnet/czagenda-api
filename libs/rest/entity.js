@@ -33,7 +33,11 @@ var RestEntity = exports.RestEntity = function(server) {
 	this._urls.post[this._urlPrefix + '/_search'] = {
 		fn : this.search
 	};
-
+	
+	this._urls.get[this._urlPrefix + '/:id/_html'] = {
+		fn : this.renderHtml
+	};
+	
 	this._initServer();
 }
 util.inherits(RestEntity, RestOAuthModel);
