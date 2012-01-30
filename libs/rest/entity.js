@@ -43,7 +43,7 @@ for(k in mModelSearch) {
 }
 
 for (k in mRenderHtml) {
-	RestEvent.prototype[k] = mRenderHtml[k];
+	RestEntity.prototype[k] = mRenderHtml[k];
 }
 
 RestEntity.prototype.searchFields = {	
