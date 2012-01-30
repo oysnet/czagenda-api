@@ -11,6 +11,7 @@ var models = require('../../models');
 var async = require('async');
 var statusCodes = require('../statusCodes');
 var mModelSearch = require('./mModelSearch');
+var mRenderHtml = require('./mRenderHtml');
 
 var RestEntity = exports.RestEntity = function(server) {
 
@@ -39,6 +40,10 @@ util.inherits(RestEntity, RestOAuthModel);
 
 for(k in mModelSearch) {
 	RestEntity.prototype[k] = mModelSearch[k];
+}
+
+for (k in mRenderHtml) {
+	RestEvent.prototype[k] = mRenderHtml[k];
 }
 
 RestEntity.prototype.searchFields = {	
