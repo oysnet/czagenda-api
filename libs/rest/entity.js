@@ -207,3 +207,7 @@ RestEntity.prototype.permsGroupWrite = function(req, res) {
 	var permClass = models.perms.getPermClass('entity', 'group', 'write'), grantToClass = models.Group;
 	this._perms(req, res, permClass, grantToClass);
 }
+
+RestEntity.prototype.renderHtml = function(req, res) {
+	this._renderHtml(req, res, 'entity');
+}
