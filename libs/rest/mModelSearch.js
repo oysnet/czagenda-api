@@ -160,15 +160,27 @@ exports.getDatetimeSearchPart = function(field, args) {
 							'$1T23:59:59.999Z')
 				}
 			}
-
+		
 		} else if (dateReExact.test(args[0])) {
+			
+			q.range[field] = {
+					"include_lower" : true,
+					"include_upper" : true,
+					"from" : args[0].replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T00:00:00.000Z'),
+					"to" : args[0].replace(
+							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
+							'$1T23:59:59.999Z')
+				}
+			
+		} else  {
+			
 			q = {
 				term : {}
 			};
 			q.term[field] = args[0];
-		} else {
-			throw new restError.BadRequest(field + ':' + args[0])
-		}
+		} 
 
 	}
 
