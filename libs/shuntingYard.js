@@ -46,6 +46,14 @@ function isKey(value) {
 
 }
 
+function isOpenSquareBracket(value) {
+	return value === '['
+}
+
+function isCloseSquareBracket(value) {
+	return value === ']'
+}
+
 function isOpenParenthesis(value) {
 	return value === '('
 }
@@ -54,15 +62,32 @@ function isCloseParenthesis(value) {
 	return value === ')'
 }
 
+
 function parseSearchString(s) {
 
 	// split searchString
 	var t = []
-
+	var inSquareBrackets = false;
 	var tmp = '';
 	for (var i = 0, l = s.length; i < l; i++) {
 		var c = s.charAt(i);
-		if (c === ':') {
+		if (isOpenSquareBracket(c)) {
+			if (tmp !== '') {
+
+				if (t.length === 0 && isValue(tmp)) {
+					t.push('fulltext:');
+				}
+				t.push(tmp);
+			}
+			inSquareBrackets = true;
+			tmp = '';
+		} else if (isCloseSquareBracket(c)) {
+			t.push('['+tmp+']');
+			tmp = '';
+			inSquareBrackets = false;
+		} else if(inSquareBrackets === true) {
+			tmp += c;
+		} else if (c === ':') {
 			t.push(tmp + ':');
 			tmp = ''
 		} else if (c === ' ' && i > 1 && s.charAt(i - 1) === ' ') {
@@ -79,7 +104,7 @@ function parseSearchString(s) {
 			}
 
 			tmp = ''
-		} else if (c === '(' || c === ')') {
+		} else if (isOpenParenthesis(c)|| isCloseParenthesis(c)) {
 			if (tmp !== '') {
 
 				if (t.length === 0 && isValue(tmp)) {
@@ -116,7 +141,6 @@ function parseSearchString(s) {
 		qString.push(t[i])
 	}
 	// generate tokens
-
 	var output = []
 
 	var ostack = []
