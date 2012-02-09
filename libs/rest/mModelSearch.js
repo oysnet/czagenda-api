@@ -162,7 +162,9 @@ exports.getDatetimeSearchPart = function(field, args) {
 			}
 		
 		} else if (dateReExact.test(args[0])) {
-			
+			q = {
+          range : {}
+      };
 			q.range[field] = {
 					"include_lower" : true,
 					"include_upper" : true,
