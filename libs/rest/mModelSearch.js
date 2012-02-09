@@ -177,11 +177,7 @@ exports.getDatetimeSearchPart = function(field, args) {
 				}
 			
 		} else  {
-			
-			q = {
-				term : {}
-			};
-			q.term[field] = args[0];
+			throw new restError.BadRequest(field + ':' + args[0])
 		} 
 
 	}
