@@ -337,12 +337,12 @@ exports.constructQueryFields = function(query) {
 		return query;
 
 	} else {
-
+		
 		var field = k;
 		switch (this.searchFields[field]) {
 
 			case 'term' :
-				return this.getTermSearchPart(field, [query[field]]);
+				return this.getTermSearchPart(field, query[field].split(/\s*,\s*/));
 				break;
 
 			case 'text' :
