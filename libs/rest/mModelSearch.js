@@ -248,7 +248,7 @@ exports.getTextSearchPart = function(field, args) {
 	return q;
 }
 
-exports.getGeoSearchPart = function(field, args) {
+exports.getGeoSearchPart = function(field, args, req) {
 	var q = null;
 
 	if (args.length > 1) {
@@ -328,7 +328,7 @@ exports.getFulltextSearchPart = function(field, args) {
 
 }
 
-exports.constructQueryFields = function(query) {
+exports.constructQueryFields = function(query, req) {
 
 
 	var keys = Object.keys(query);
@@ -345,7 +345,7 @@ exports.constructQueryFields = function(query) {
 	if (["and", "or"].indexOf(k) !== -1) {
 
 		for (var i = 0, l = query[k].length; i < l; i++) {
-			query[k][i] = this.constructQueryFields(query[k][i])
+			query[k][i] = this.constructQueryFields(query[k][i], req)
 		}
 
 		return query;
@@ -368,7 +368,7 @@ exports.constructQueryFields = function(query) {
 				break;
 
 			case 'geo' :
-				return this.getGeoSearchPart(field, [query[field]]);
+				return this.getGeoSearchPart(field, [query[field]], req);
 				break;
 
 			case 'boolean' :
@@ -405,7 +405,7 @@ exports._getQueryFromRequest = function(req, callback) {
 	
 	try {
 
-		query = this.constructQueryFields(searchQuery);
+		query = this.constructQueryFields(searchQuery, req);
 	
 
 	} catch (e) {
