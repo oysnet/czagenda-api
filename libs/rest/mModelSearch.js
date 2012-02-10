@@ -248,7 +248,7 @@ exports.getTextSearchPart = function(field, args) {
 	return q;
 }
 
-exports.getGeoSearchPart = function(field, args, req) {
+exports.getGeoSearchPart = function(field, args) {
 	var q = null;
 
 	if (args.length > 1) {
@@ -368,7 +368,7 @@ exports.constructQueryFields = function(query) {
 				break;
 
 			case 'geo' :
-				return this.getGeoSearchPart(field, [query[field]], req);
+				return this.getGeoSearchPart(field, [query[field]]);
 				break;
 
 			case 'boolean' :
