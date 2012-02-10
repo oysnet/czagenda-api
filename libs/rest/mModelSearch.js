@@ -324,7 +324,7 @@ exports.getFulltextSearchPart = function(field, args) {
 
 }
 
-exports.constructQueryFields = function(query) {
+exports.constructQueryFields = function(query, req) {
 
 
 	var keys = Object.keys(query);
@@ -341,7 +341,7 @@ exports.constructQueryFields = function(query) {
 	if (["and", "or"].indexOf(k) !== -1) {
 
 		for (var i = 0, l = query[k].length; i < l; i++) {
-			query[k][i] = this.constructQueryFields(query[k][i])
+			query[k][i] = this.constructQueryFields(query[k][i], req)
 		}
 
 		return query;
@@ -401,7 +401,7 @@ exports._getQueryFromRequest = function(req, callback) {
 	
 	try {
 
-		query = this.constructQueryFields(searchQuery);
+		query = this.constructQueryFields(searchQuery, req);
 	
 
 	} catch (e) {

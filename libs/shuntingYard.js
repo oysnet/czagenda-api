@@ -4,14 +4,14 @@ function Token(value, next) {
 		if (next == '(' || next == ')'
 				|| (next !== null && next.charAt(next.length - 1) == ':')) {
 			this.isInternal = false;
-			if (value == 'or') {					
+			if (value == 'or') {
 				this.precedence = 0
 			} else {
 				this.precedence = 1
 			}
 		} else {
 			this.isInternal = true;
-			if (value == 'or') {					
+			if (value == 'or') {
 				this.precedence = 20
 			} else {
 				this.precedence = 21
@@ -62,16 +62,44 @@ function isCloseParenthesis(value) {
 	return value === ')'
 }
 
+function isDoubleQuote(value) {
+	return value === '"'
+}
 
 function parseSearchString(s) {
 
 	// split searchString
 	var t = []
 	var inSquareBrackets = false;
+	var inDoubleQuote = false;
 	var tmp = '';
 	for (var i = 0, l = s.length; i < l; i++) {
 		var c = s.charAt(i);
-		if (isOpenSquareBracket(c)) {
+
+		if (isDoubleQuote(c)) {
+
+			if (inDoubleQuote === false) {
+
+				if (tmp !== '') {
+
+					if (t.length === 0 && isValue(tmp)) {
+						t.push('fulltext:');
+					}
+					t.push(tmp);
+				}
+				inDoubleQuote = true;
+				tmp = '';
+			} else {
+				
+				if (t.length === 0 && isValue(tmp)) {
+						t.push('fulltext:');
+					}
+				
+				t.push('"' + tmp + '"');
+				tmp = '';
+				inDoubleQuote = false;
+			}
+		} else if (isOpenSquareBracket(c)) {
 			if (tmp !== '') {
 
 				if (t.length === 0 && isValue(tmp)) {
@@ -82,10 +110,10 @@ function parseSearchString(s) {
 			inSquareBrackets = true;
 			tmp = '';
 		} else if (isCloseSquareBracket(c)) {
-			t.push('['+tmp+']');
+			t.push('[' + tmp + ']');
 			tmp = '';
 			inSquareBrackets = false;
-		} else if(inSquareBrackets === true) {
+		} else if (inSquareBrackets === true || inDoubleQuote === true) {
 			tmp += c;
 		} else if (c === ':') {
 			t.push(tmp + ':');
@@ -104,7 +132,7 @@ function parseSearchString(s) {
 			}
 
 			tmp = ''
-		} else if (isOpenParenthesis(c)|| isCloseParenthesis(c)) {
+		} else if (isOpenParenthesis(c) || isCloseParenthesis(c)) {
 			if (tmp !== '') {
 
 				if (t.length === 0 && isValue(tmp)) {
@@ -184,7 +212,8 @@ function parseSearchString(s) {
 		}
 
 	}
-
+	
+	
 	// apply shunting yard
 	for (var i = ostack.length - 1; i >= 0; i--) {
 		output.push(ostack[i]);
@@ -236,18 +265,19 @@ function parseSearchString(s) {
 			stack.push(r)
 		}
 	}
-	
+
 	if (stack.length > 1) {
+		console.log(stack)
 		throw new Error("shuntingYard has a stack length greater than 1")
 	}
-	
+
 	return stack.length === 1 ? stack[0] : {};
 }
 
 exports.parseSearchString = parseSearchString;
 
 /*
-var s = 'toto titi tata and crit1:va2  l1 or ((crit6:val6 and crit9:val9 and (crit10:val10 or crit11:val11)) and crit7:val7 ooo and crit8: val8)';
-//var s = '(crit1:val1) (crit1:val1)';
-console.log(JSON.stringify(parseSearchString(s), null, 2));
-*/
+ var s = 'toto titi tata and crit1:va2  l1 or ((crit6:val6 and crit9:val9 and (crit10:val10 or crit11:val11)) and crit7:val7 ooo and crit8: val8)';
+ //var s = '(crit1:val1) (crit1:val1)';
+ console.log(JSON.stringify(parseSearchString(s), null, 2));
+ */
