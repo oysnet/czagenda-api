@@ -77,7 +77,7 @@ function oauthRequestParameterString(req) {
 			
 	// Add encoded counterparts of OAuth header parameters
 	for (var key in req.oauthHeaderParams)
-		if (key.match(/^oauth_/)
+		if (key.match(/^x?oauth_/)
 		    && key != 'oauth_signature')
 		    params.push([ qs.escape(key), qs.escape(req.oauthHeaderParams[key]) ]);
 		    
@@ -97,6 +97,7 @@ function oauthRequestParameterString(req) {
 }
 
 exports.sendError = function (message, res) {
+	
 	res.statusCode = 401;
 	res.setHeader('Content-Type', 'text/plain');
     res.end("Forbidden");
@@ -187,7 +188,7 @@ exports.verifySignature = function (lookup, redisClient) {
 			} else if (req.oauthParams['oauth_signature_method'] == 'HMAC-SHA1') {
 				var hmac = crypto.createHmac('sha1', key);
 				hmac.update(baseString);
-
+		
 				if (req.oauthParams['oauth_signature'] != hmac.digest('base64'))
 					return exports.sendError("failed OAuth HMAC-SHA1 verification", res);
 	
@@ -202,7 +203,7 @@ exports.verifySignature = function (lookup, redisClient) {
 
 exports.verifyBody = function () {
 	return function (req, res, next) {
-		// signature verification fail with utf8, so we do't verify signature for json	
+		// signature verification fail with utf8, so we don't verify signature for json	
 		if (req.is('application/json')) {
 			return next();
 		}
