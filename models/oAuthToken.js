@@ -15,7 +15,7 @@ OAuthToken.publicAttributes = Base.publicAttributes.concat(['user']);
 OAuthToken.staffAttributes = OAuthToken.publicAttributes.concat(Base.staffAttributes).concat([['user', 'key', 'secret', 'isApproved', 'consumer']]);
 
 OAuthToken.publicWriteAttributes = []; 
-OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];
+OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'isApproved', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];
 
 OAuthToken.prototype._validate = function (callback) {
 	this.validateString('key', false, null, 18);
