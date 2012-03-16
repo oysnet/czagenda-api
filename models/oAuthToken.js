@@ -18,8 +18,8 @@ OAuthToken.publicWriteAttributes = [];
 OAuthToken.staffWriteAttributes = ['key', 'secret', 'verifier', 'isApproved', 'tokenType', 'tokenType', 'user', 'consumer', 'callback', 'callbackConfirmed'];
 
 OAuthToken.prototype._validate = function (callback) {
-	this.validateString('key', false, null, 18);
-	this.validateString('secret', false, null, 32);
+	this.validateString('key', true, null, 18);
+	this.validateString('secret', true, null, 32);
 	this.validateString('verifier', true, null, 10);
 	this.validateChoice('tokenType',[ 'REQUEST', 'ACCESS']);
 	this.validateBoolean('isApproved', false);
