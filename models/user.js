@@ -29,7 +29,7 @@ User.publicAttributes = Base.publicAttributes.concat(['login', 'firstName', 'las
 
 User.staffAttributes = User.publicAttributes.concat(Base.staffAttributes).concat(['email', 'password']);
 
-User.publicWriteAttributes = ['login', 'firstName', 'lastName', 'email',  'isActive', 'password'];
+User.publicWriteAttributes = ['firstName', 'lastName', 'email',  'isActive', 'password'];
 
 User.staffWriteAttributes = User.publicWriteAttributes.concat([ 'isStaff', 'isSuperuser']);
 
