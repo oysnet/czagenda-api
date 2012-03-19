@@ -79,6 +79,7 @@ for (k in mRenderHtml) {
 RestEvent.prototype.searchFields = {
 	'agenda' : 'term',
 	'author' : 'term',
+	'event.category' : 'term',
 	'createDate' : 'datetime',
 	'updateDate' : 'datetime',
 	'approvedBy' : 'term',
