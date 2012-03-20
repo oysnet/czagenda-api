@@ -55,6 +55,13 @@ var RestEvent = exports.RestEvent = function(server) {
 		fn : this.search
 	};
 
+	this._urls.get[this._urlPrefix + '/_facets'] = {
+		fn : this.facets
+	};
+	this._urls.post[this._urlPrefix + '/_facets'] = {
+		fn : this.facets
+	};
+
 	this._urls.put[this._urlPrefix + '/:id'].middleware
 			.push(this.requireParentLock.bind(this))
 	this._urls.post[this._urlPrefix].middleware.push(this.requireParentLock
@@ -110,6 +117,54 @@ RestEvent.prototype.sortFields = {
 	'distance' : 'distance'
 
 }
+
+RestEvent.prototype.setFacetingOnQuery = function(req, res, query) {
+
+	if (req.method === 'POST') {
+		rawData = req.body;
+	} else {
+		rawData = req.query;
+	}
+	var facets = null;
+	if (typeof(rawData.facets) !== 'undefined') {
+		facets = rawData.facets.split(',');
+
+	}
+
+	var allowedFacets = {
+
+		startTimeMonth : {
+			"date_histogram" : {
+				"field" : "event.when.startTime",
+				"interval" : "month"
+			}
+		},
+
+		country : {
+			"terms" : {
+				"field" : "event.where.country",
+				"all_terms" : true,
+				"size" : 200
+			}
+		}
+
+	}
+
+	if (facets !== null) {
+		query.facets = {};
+		for (var i = 0, l = facets.length; i < l; i++) {
+			var facet = facets[i].trim();
+			if (typeof(allowedFacets[facet]) !== 'undefined') {
+				query.facets[facet] = allowedFacets[facet];
+			}
+		}
+	} else {
+		query.facets = allowedFacets;
+	}
+	
+	return query;
+}
+
 
 RestEvent.prototype.requireParentLock = function(req, res, next) {
 

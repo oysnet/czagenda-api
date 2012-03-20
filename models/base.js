@@ -823,4 +823,64 @@ Base.search = function(query, index, type, attrs, clazz, callback) {
 
 }
 
+
+Base.facets = function(query, index, type,  clazz, callback) {
+
+	query.fields = [];
+	log.debug('Base.facets', index, type, JSON.stringify(query));
+	
+	var q = elasticSearchClient.search(index, type, query);
+	q.on('data', function(data) {
+
+		var data = JSON.parse(data);
+
+		if(data.status === 404) {
+			callback(new errors.IndexDoesNotExist(index))
+			return;
+		} else if( typeof (data.error) !== 'undefined') {
+			
+			log.warning("Faceting failed",index, type, JSON.stringify(query), JSON.stringify(data) )
+			
+			callback(new errors.UnknowError(this.id));
+			return;
+		}
+
+		var output = {
+			total_rows : data.hits.total,			
+			facets : {}
+		}
+
+		
+		for (facet in data.facets) {
+			
+			var key = null;
+			var values = null;
+			
+			switch(data.facets[facet]._type) {
+				case 'date_histogram':
+					output.facets[facet] = {values : []};
+					key = 'time';
+					values = data.facets[facet].entries;
+					break;
+					
+				case 'terms':
+					output.facets[facet] = {values : [], missing:data.facets[facet].missing, total:data.facets[facet].total, other:data.facets[facet].other};
+					key = 'term';
+					values = data.facets[facet].terms;
+					break;
+			}
+			
+			if (key !== null) {
+				for(var i = 0, l = values.length; i<l;i++) {
+					output.facets[facet] .values.push({value : values[i][key], count : values[i].count})
+				}
+			}
+		}
+		
+		callback(null, output);
+	}.bind(this));
+	q.exec();
+
+}
+
 exports.Base = Base;
