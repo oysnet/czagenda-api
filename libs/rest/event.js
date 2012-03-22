@@ -112,8 +112,8 @@ RestEvent.prototype.sortFields = {
 	'createDate' : 'createDate',
 	'updateDate' : 'updateDate',
 	'event.title' : 'event.title.untouched',
-	'event.when.startTime' : 'datetime',
-	'event.when.endTime' : 'datetime',
+	'event.when.startTime' : 'event.when.startTime',
+	'event.when.endTime' : 'event.when.endTime',
 	'distance' : 'distance'
 
 }
