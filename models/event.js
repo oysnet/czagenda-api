@@ -304,6 +304,10 @@ Event.get = function(options, callback) {
 	})
 }
 
+Event.facets = function(query, callback) {
+	Base.facets(query, settings.elasticsearch.index, 'event',  Event, callback)
+}
+
 Event.search = function(query, attrs, callback) {
 	Base.search(query, settings.elasticsearch.index, 'event', attrs, Event, callback)
 }

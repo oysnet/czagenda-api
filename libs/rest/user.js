@@ -60,7 +60,7 @@ RestUser.prototype.sortFields = {
 	'login' : 'login.untouched',
 	'firstName' : 'firstName.untouched',
 	'lastName' : 'lastName.untouched',
-	'lastSeen' : 'lastLogin',
+	'lastSeen' : 'lastSeen',
 	'joinedDate' : 'joinedDate'
 }
 
