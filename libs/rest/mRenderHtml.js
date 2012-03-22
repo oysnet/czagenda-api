@@ -1,6 +1,7 @@
 var models = require('../../models');
 var statusCodes = require('../statusCodes');
 var de = require("jinjs").defaultEnvironment;
+var log = require('czagenda-log').from(__filename);
 
 exports._renderHtml = function(req, res, jsonAttr) {
 
@@ -75,6 +76,7 @@ exports._renderHtml = function(req, res, jsonAttr) {
 										} catch (e) {
 											res.statusCode = statusCodes.INTERNAL_ERROR;
 											res.end('Error while compiling template');
+											log.error('COMPILING TEMPLATE', JSON.stringify(e))
 											return;
 										}
 										
@@ -92,6 +94,7 @@ exports._renderHtml = function(req, res, jsonAttr) {
 										} catch (e) {
 											res.statusCode = statusCodes.INTERNAL_ERROR;
 											res.end('Error while rendering template');
+											log.error('RENDERING TEMPLATE', JSON.stringify(e))
 											return;
 										}
 										
