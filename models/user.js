@@ -89,8 +89,16 @@ User.prototype._generateHash = function() {
 	h = crypto.createHash('md5')
 	h.update(this._type);
 	h.update(this.email);
-	h.update(this.firstName);
-	h.update(this.lastName);
+	
+	if (this.firstName !== null) {
+	 h.update(this.firstName);
+	}
+	
+	if (this.lastName !== null) {
+		h.update(this.lastName);
+	}
+	
+	
 	h.update(this.login);
 	this._data['hash'] = h.digest('hex')
 }
