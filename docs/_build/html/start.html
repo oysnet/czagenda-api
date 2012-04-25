@@ -63,7 +63,7 @@
 <p>Second step is to create a consumer that will be allowed to access the api, fill the form <a class="reference external" href="http://auth.czagenda.oxys.net/oauth/register/">here</a> and validate. You have now the token and the secret for your new consumer.</p>
 <p>Third step is to get access token and access secret for this consumer. Achieve this by using curl-oauth:</p>
 <blockquote>
-<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span> <span class="n">API</span><span class="o">=</span><span class="s">&quot;http://api-master.czagenda.oxys.net/api;</span>
+<div><div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">export</span> <span class="n">API</span><span class="o">=</span><span class="s">&quot;http://api.devel.czagenda.org/api;</span>
 <span class="go">        curl-oauth --domain cz-api \</span>
 <span class="go">          --request-token \</span>
 <span class="go">          --consumer-secret &lt;CONSUMER_SECRET&gt; \</span>

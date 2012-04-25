@@ -64,7 +64,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	*Request*
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/
 	
 	*Response*
 	
@@ -87,7 +87,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 
 	To get only the amount of documents, use
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/_count
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/_count
 	
 	Methods allowed are GET and POST. Search query syntax can also be applied on these urls.
 	
@@ -98,7 +98,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	*Request*
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>/
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>/
 	
 	*Response*
 	
@@ -112,7 +112,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	*Request*
 	
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/  -d '{
 			"an_attribute" : "a value", "another_attribute" : "another value" 
 		}'
 	
@@ -129,7 +129,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	*Request*
 	
-	>>> curl-oauth --domain cz-api --json -X PUT http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/  -d '{
+	>>> curl-oauth --domain cz-api --json -X PUT http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/  -d '{
 			"an_attribute" : "an updated value", "another_attribute" : "another value" 
 		}'
 	
@@ -146,7 +146,7 @@ curl-oauth is used in examples bellow to make request to the server. If you're n
 	
 	*Request*
 	
-	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
+	>>> curl-oauth --domain cz-api -X DELETE http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/<DOCUMENT_ID>
 		
 	*Response*
 	
@@ -165,7 +165,7 @@ User base uri is /user
 
 1. Create 
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/user/  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/user/  -d '{
 				"firstName" : "John", 
 				"lastName" : "Doe",
 				"email" : "john.doe@domain.com",
@@ -195,7 +195,7 @@ User base uri is /user
 	
 	You can make a request with partial data or with a complete data structure.
 	
-	>>> curl-oauth --domain cz-api --json -X PUT http://api-master.czagenda.oxys.net/user/johndoe?pretty=true  -d '{
+	>>> curl-oauth --domain cz-api --json -X PUT http://api.devel.czagenda.org/user/johndoe?pretty=true  -d '{
 			"firstName" : "Jack"
 		}'
 
@@ -220,7 +220,7 @@ User base uri is /user
 	
 2. Delete 
 	
-	>>> curl-oauth --domain cz-api --X DELETE http://api-master.czagenda.oxys.net/user/johndoe
+	>>> curl-oauth --domain cz-api --X DELETE http://api.devel.czagenda.org/user/johndoe
 	
 	Server response	with the 204 code and an empty body.
 	
@@ -232,7 +232,7 @@ Group base uri is /group
 
 1. Create
 		
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/group/?pretty=true  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/group/?pretty=true  -d '{
 			"title" : "My group", 
 			"description" : "Description of my first group"
 		}'
@@ -262,7 +262,7 @@ Membership base uri is /membership
 
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/membership/  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/membership/  -d '{
 				"user" :  "/user/johndoe",
 				"group" : "/group/my-group"
 			}'
@@ -284,7 +284,7 @@ Membership base uri is /membership
 
 	If you want to list all groups for a user just query the uri stored in the "group" attribute of the user document
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/user/johndoe/groups/
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/user/johndoe/groups/
 	
 	Server response
 	
@@ -305,7 +305,7 @@ Membership base uri is /membership
 	
 	If you want in the same query fetch the group document you can do it with the special query string parameter include_docs
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/user/johndoe/groups/?include_docs=true
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/user/johndoe/groups/?include_docs=true
 	
 	server response
 	
@@ -335,11 +335,11 @@ Membership base uri is /membership
 
 	You can fetch the group's members by requesting on the "users" attribute of the group document
 
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/groups/my-group/users/
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/groups/my-group/users/
 	
 	or 
 	
-	>>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/groups/my-group/users/?include_docs=true
+	>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/groups/my-group/users/?include_docs=true
 	
 4. Update
 	
@@ -349,7 +349,7 @@ Membership base uri is /membership
 
 	To delete a membership relation, proceed in the same way as others documents
 	
-	>>> curl-oauth --domain cz-api --X DELETE http://api-master.czagenda.oxys.net/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57
+	>>> curl-oauth --domain cz-api --X DELETE http://api.devel.czagenda.org/membership/0b3bcb3a4b4fd153e2373f7ec49f5a57
 	
 
 Agenda
@@ -359,7 +359,7 @@ Agenda base uri is /agenda
 
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/agenda/  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/agenda/  -d '{
 				"title" : "My private agenda",
 				"description" : "description of my private agenda"
 			}'
@@ -392,7 +392,7 @@ Category base uri is /category
 
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/category/  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/category/  -d '{
 				"title" : "A category",
 				"description" : "a description"
 			}'
@@ -417,7 +417,7 @@ Event base uri is /event
 	
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/event  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/event  -d '{
 			"event" : {
 				"title" : "My first event",
 				"where" : [{"valueString" : "Somewhere on earth planet !"}],
@@ -464,24 +464,24 @@ Event base uri is /event
 	
 	Approve an event
 	
-	>>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
+	>>> curl-oauth --domain cz-api -X POST http://api.devel.czagenda.org/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
 	
 	Disapprove an event
 
-	>>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
+	>>> curl-oauth --domain cz-api -X POST http://api.devel.czagenda.org/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
 
 	Remove an approval
 	
-	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
+	>>> curl-oauth --domain cz-api -X DELETE http://api.devel.czagenda.org/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/approve
 
 	Remove a disapproval
 	
-	>>> curl-oauth --domain cz-api -X DELETE http://api-master.czagenda.oxys.net/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
+	>>> curl-oauth --domain cz-api -X DELETE http://api.devel.czagenda.org/api/event/b31398e4e0de03ef76bb168e32e41948/moderate/disapprove
 
 
 	To fetch events that has been approved, a search request can be done like this. See :ref:`search <doc_search>` for more informations about searching.
 	
-	>>> curl-oauth --domain cz-api  -X DELETE http://api-master.czagenda.oxys.net/api/event/_search -d 'q=approvedBy:/user/johndoe'
+	>>> curl-oauth --domain cz-api  -X DELETE http://api.devel.czagenda.org/api/event/_search -d 'q=approvedBy:/user/johndoe'
 
 Entity
 ^^^^^^
@@ -490,7 +490,7 @@ Entity base uri is /entity
 	
 1. Create
 
-	>>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/entity  -d '{
+	>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/entity  -d '{
 			"entity" : {
 				"type" : "organization",
 				"name" : "My organization",
@@ -543,7 +543,7 @@ All documents types don't have all permissions types. More information can be fo
 
 To create a permission on a document:
 
->>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/perms/<DOCUMENT_TYPE>/<PERMISSION_CODE> -d '{
+>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/perms/<DOCUMENT_TYPE>/<PERMISSION_CODE> -d '{
 		"applyOn" : "<DOCUMENT_ID>",
 		"grantTo" : "<GROUP_OR_USER_ID>"
 	}'
@@ -559,7 +559,7 @@ Permissions types and code are:
 
 For example, to grant write privilege to group /group/my-group on an event document
 
->>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/perms/event/wg -d '{
+>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/perms/event/wg -d '{
 		"applyOn" : "/event/b31398e4e0de03ef76bb168e32e41948",
 		"grantTo" : "/group/my-group"
 	}'
@@ -573,11 +573,11 @@ Searches
 Documents searches are restricted to types event, agenda, group, entity and user.
 
 Searches urls are:
-	* http://api-master.czagenda.oxys.net/api/event/_search
-	* http://api-master.czagenda.oxys.net/api/agenda/_search
-	* http://api-master.czagenda.oxys.net/api/group/_search
-	* http://api-master.czagenda.oxys.net/api/entity/_search
-	* http://api-master.czagenda.oxys.net/api/user/_search	
+	* http://api.devel.czagenda.org/api/event/_search
+	* http://api.devel.czagenda.org/api/agenda/_search
+	* http://api.devel.czagenda.org/api/group/_search
+	* http://api.devel.czagenda.org/api/entity/_search
+	* http://api.devel.czagenda.org/api/user/_search	
 	
 Methods allowed are POST and GET.
 
@@ -767,7 +767,7 @@ from define the amount of documents to skip, size define the amount of documents
 
 For example
 
->>> curl-oauth --domain cz-api -X GET http://api-master.czagenda.oxys.net/api/<DOCUMENT_TYPE>/?from=10&size=5
+>>> curl-oauth --domain cz-api -X GET http://api.devel.czagenda.org/api/<DOCUMENT_TYPE>/?from=10&size=5
 
 This query will return documents from 10th to 15th 
 
@@ -823,15 +823,15 @@ Sample usages
 
 Query that retrieve events that took place in 2010 and contain "foundation", ordered by start date, paginated by 20 documents
 
->>> curl-oauth --domain cz-api -X GET 'http://api-master.czagenda.oxys.net/api/event/?from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
+>>> curl-oauth --domain cz-api -X GET 'http://api.devel.czagenda.org/api/event/?from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
 
 or
 
->>> curl-oauth --domain cz-api -X POST http://api-master.czagenda.oxys.net/api/event/ -d 'from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
+>>> curl-oauth --domain cz-api -X POST http://api.devel.czagenda.org/api/event/ -d 'from=0&size=20&q=foundation event.when.startTime:[2010-01-01 TO 2010-12-31]&sort=event.when.startTime'
 
 or 
 
->>> curl-oauth --domain cz-api --json -X POST http://api-master.czagenda.oxys.net/api/event/ -d '{
+>>> curl-oauth --domain cz-api --json -X POST http://api.devel.czagenda.org/api/event/ -d '{
 		"from":0, 
 		"size":20, 
 		"q":"foundation event.when.startTime:[2010-01-01 TO 2010-12-31]", 

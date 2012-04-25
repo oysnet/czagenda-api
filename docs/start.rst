@@ -19,7 +19,7 @@ Second step is to create a consumer that will be allowed to access the api, fill
 
 Third step is to get access token and access secret for this consumer. Achieve this by using curl-oauth:
 
-	>>> export API="http://api-master.czagenda.oxys.net/api;
+	>>> export API="http://api.devel.czagenda.org/api;
 		curl-oauth --domain cz-api \
 		  --request-token \
 		  --consumer-secret <CONSUMER_SECRET> \
