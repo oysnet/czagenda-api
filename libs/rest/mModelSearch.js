@@ -231,7 +231,7 @@ exports.getNotAnalyzedSearchPart = function(field, args) {
     }
     q.query.field[field] = {
       "query" : args[0],
-      "analyzer" : not_analyzed
+      "analyzer" : "not_analyzed"
     }
   }
 
