@@ -155,7 +155,7 @@ exports.getDatetimeSearchPart = function(field, args) {
 							'$1T23:59:59.999Z')
 				}
 			}
-		
+
 		} else if (dateReExact.test(args[0])) {
 			q = {
           range : {}
@@ -170,10 +170,10 @@ exports.getDatetimeSearchPart = function(field, args) {
 							/([0-9]{4}-[0-9]{2}-[0-9]{2}(?!T[^ ]+))/g,
 							'$1T23:59:59.999Z')
 				}
-			
+
 		} else  {
 			throw new restError.BadRequest(field + ':' + args[0])
-		} 
+		}
 
 	}
 
@@ -211,6 +211,31 @@ exports.getIdsSearchPart = function(field, args) {
 
 	return q;
 
+}
+
+exports.getNotAnalyzedSearchPart = function(field, args) {
+  var q = null;
+
+  if (args.length > 1) {
+    q = {
+      "or" : []
+    }
+    args.forEach(function(arg) {
+          q.or.push(this.getTextSearchPart(field, [arg]));
+        }.bind(this))
+  } else {
+    q = {
+      "query" : {
+        "field" : {}
+      }
+    }
+    q.query.field[field] = {
+      "query" : args[0],
+      "analyzer" : not_analyzed
+    }
+  }
+
+  return q;
 }
 
 exports.getTextSearchPart = function(field, args) {
@@ -342,13 +367,17 @@ exports.constructQueryFields = function(query, req) {
 		return query;
 
 	} else {
-		
+
 		var field = k;
 		switch (this.searchFields[field]) {
 
 			case 'term' :
 				return this.getTermSearchPart(field, query[field].split(/\s*,\s*/));
 				break;
+
+      case 'notAnalyzed' :
+        return this.getNotAnalyzedSearchPart(field, query[field].split(/\s*,\s*/));
+        break;
 
 			case 'text' :
 				return this.getTextSearchPart(field, [query[field]]);
@@ -393,11 +422,11 @@ exports._getQueryFromRequest = function(req, callback) {
 	var searchQuery = this.getSearchQuery(req);
 	var query = null;
 	var filter = null;
-	
+
 	try {
 
 		query = this.constructQueryFields(searchQuery, req);
-	
+
 
 	} catch (e) {
 
@@ -426,6 +455,6 @@ exports._getQueryFromRequest = function(req, callback) {
 			}
 		}
 	}
-	
+
 	callback(null, query);
 }
