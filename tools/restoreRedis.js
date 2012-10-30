@@ -3,165 +3,250 @@ var redisClient = redis.redisClient;
 var async = require('async');
 var Rest = require('../libs/rest-client-classic').Rest;
 var settings = require('../settings');
-var urls = ['/schema/base-abstract', '/schema/geo', '/schema/localization', '/schema/who', '/schema/event'];
+var urls = {}; //['/schema/base-abstract', '/schema/geo', '/schema/localization', '/schema/who', '/schema/event'];
 var log = require('czagenda-log').from(__filename);
 var methods = [];
+var users = {};
+var recordsProcessed = 0;
+
+var populateRedisQueue = function(cb, err, res, data) {
+
+
+
+    var data = JSON.parse(data),
+      dumps = [];
+
+    recordsProcessed += data.hits.hits.length;
+
+    log.notice('data fetched from elastic', recordsProcessed)
+
+    for(var i = 0, l = data.hits.hits.length; i < l; i++) {
+      var d = data.hits.hits[i];
+
+      //log.debug('found url ' + d._id)
+      urls[d._id] = null;
+      //urls.push(null);
+      if(d._type === 'user') {
+
+        methods.push(function(d, callback) {
+
+          redisClient.hmset(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser, function(err, nb) {
+
+            if(err !== null) {
+              log.critical(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser)
+            }
+
+            log.debug('added to ' + redis.USER_PREFIX + d._id)
+
+            callback(err);
+          });
+        }.bind(this, d))
+
+      } else if(d._type === 'membership') {
+
+        if(typeof(users[d._source.user]) === 'undefined') {
+          users[d._source.user] = [];
+        }
+        users[d._source.user].push({
+          group: d._source.group,
+          id: d._id
+        });
+
+      } else if(d._type === 'schema') {
+
+        log.debug('found schema url')
+
+        if(d._source.status === 'APPROVED') {
+          methods.push(function(id, callback) {
+
+            redisClient.sadd(redis.SCHEMA_APPROVED, id, function(err, nb) {
+
+              log.debug('added to ' + redis.SCHEMA_APPROVED + ' ' + id)
+
+              callback(err);
+            });
+          }.bind(this, d._id))
+        } else if(d._source.status === 'PROPOSAL') {
+          methods.push(function(id, author, callback) {
+
+            redisClient.sadd(redis.PREFIX_SCHEMA_PROPOSAL + author, id, function(err, nb) {
+
+              log.debug('added to ' + redis.PREFIX_SCHEMA_PROPOSAL + author + ' ' + id)
+
+              callback(err);
+            });
+          }.bind(this, d._id, d._source.author))
+        }
+
+      }
+    }
+
+
+    cb(err);
+  }
 
 var populateAsync = function(cb) {
 
-	log.notice('populateAsync start', settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port, settings.elasticsearch.index)
+    log.notice('populateAsync start', settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port, settings.elasticsearch.index)
 
-	var rest = new Rest(settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port), urls = [], users = {};
+    var rest = new Rest(settings.elasticsearch.hosts[0].host, settings.elasticsearch.hosts[0].port);
 
-	rest.post('/' + settings.elasticsearch.index + '/_search', JSON.stringify({
-		size : 1000000
-	}), function(err, res, data) {
+    var fetchDataMethods = [];
 
-		log.notice('data fetched from elastic')
+    rest.post('/' + settings.elasticsearch.index + '/_search', JSON.stringify({
+      size: 1
+    }), function(err, res, data) {
+      var data = JSON.parse(data);
+      var count = data.hits.total;
+      var from = 0;
 
-		var data = JSON.parse(data), dumps = [];
+      fetchDataMethods.push(function(from, callback) {
+        rest.post('/' + settings.elasticsearch.index + '/_search', JSON.stringify({
+          size: 10000,
+          from: from
+        }), populateRedisQueue.bind(this, callback));
+      }.bind(this, from));
 
-		for(var i = 0, l = data.hits.hits.length; i < l; i++) {
-			var d = data.hits.hits[i];
 
-			log.debug('found url ' + d._id)
+      while(from <= count) {
+        from += 10000;
+        fetchDataMethods.push(function(from, callback) {
+          rest.post('/' + settings.elasticsearch.index + '/_search', JSON.stringify({
+            size: 10000,
+            from: from
+          }), populateRedisQueue.bind(this, callback));
+        }.bind(this, from));
+      }
+      async.series(fetchDataMethods, function(err, res) {
 
-			urls.push(d._id);
-			urls.push(null);
+        if(typeof(err) !== 'undefined' && err !== null) {
+          cb(err);
+          return
+        }
 
-			if(d._type === 'user') {
+        // Add user groups
+        for(k in users) {
 
-				methods.push( function(d, callback) {
+          methods.push(function(user, memberships, callback) {
 
-					redisClient.hmset(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser, function(err, nb) {
-						
-						if (err !== null) {
-							log.critical(redis.USER_PREFIX + d._id, "isActive", d._source.isActive, "isStaff", d._source.isStaff, "isSuperuser", d._source.isSuperuser)
-						}
-						
-						log.debug('added to ' + redis.USER_PREFIX + d._id )
-	
-						callback(err);
-					});
-				}.bind(this, d))
-			
-			} else if (d._type === 'membership') {
-			
-				if (typeof(users[d._source.user]) === 'undefined') {
-					users[d._source.user] = [];
-				}
-				users[d._source.user].push({group : d._source.group, id : d._id});
-			
-			} else if(d._type === 'schema') {
+            var multi = redisClient.multi();
 
-				log.debug('found schema url')
+            memberships.forEach(function(v) {
+              multi.sadd(redis.USER_GROUP_PREFIX + user, v.group);
+              log.debug("membership sadd ", redis.USER_GROUP_PREFIX + user, v.group)
+              multi.sadd(redis.USER_MEMBERSHIP_PREFIX + user, v.id);
+              log.debug("membership sadd ", redis.USER_MEMBERSHIP_PREFIX + user, v.id)
+            });
 
-				if(d._source.status === 'APPROVED') {
-					methods.push( function(id, callback) {
+            multi.exec(function(err) {
 
-						redisClient.sadd(redis.SCHEMA_APPROVED, id, function(err, nb) {
+              if(err !== null) {
+                log.critical("Error when restoring USER_GROUP_PREFIX", user, groups.join(' ,'));
+              }
 
-							log.debug('added to ' + redis.SCHEMA_APPROVED + ' ' + id)
+              callback(err);
+            })
 
-							callback(err);
-						});
-					}.bind(this, d._id))
-				} else if(d._source.status === 'PROPOSAL') {
-					methods.push( function(id, author, callback) {
 
-						redisClient.sadd(redis.PREFIX_SCHEMA_PROPOSAL + author, id, function(err, nb) {
+          }.bind(this, k, users[k]))
+        }
 
-							log.debug('added to ' + redis.PREFIX_SCHEMA_PROPOSAL + author + ' ' + id)
+        _urls = []
+        for(k in urls) {
 
-							callback(err);
-						});
-					}.bind(this, d._id, d._source.author))
-				}
+          _urls.push(k);
+          _urls.push(null);
 
-			}
-		}
-		
-		// Add user groups
-		for (k in users) {
-			
-			methods.push( function(user, memberships, callback) {
-				
-				var multi = redisClient.multi();
-				
-				memberships.forEach(function (v) {
-					multi.sadd( redis.USER_GROUP_PREFIX + user, v.group);
-					log.debug("membership sadd ", redis.USER_GROUP_PREFIX + user, v.group)
-					multi.sadd( redis.USER_MEMBERSHIP_PREFIX + user, v.id);
-					log.debug("membership sadd ", redis.USER_MEMBERSHIP_PREFIX + user, v.id)
-				});
-				
-				multi.exec(function(err) {
-					
-					if (err !== null) {
-						log.critical("Error when restoring USER_GROUP_PREFIX", user, groups.join(' ,'));
-					}
-					
-					callback(err);
-				})
-				
-				
-			}.bind(this, k, users[k]))
-		}
-		
-		methods.push(function(callback) {
+          if(_urls.length > 500) {
+            methods.push(function(_urls, callback) {
 
-			urls.push(function(err, nb) {
+              _urls.push(function(err, nb) {
 
-				if( typeof (err) !== 'undefined') {
-					callback(err);
-					return;
-				}
+                if(typeof(err) !== 'undefined') {
+                  callback(err);
+                  return;
+                }
 
-				if(nb !== 1) {
-					err = 'not all urls were added';
-					callback(err);
-					return;
-				}
-				log.debug('urls added', nb)
-				callback(null);
-			});
+                if(nb !== 1) {
+                  err = 'not all urls were added';
+                  callback(err);
+                  return;
+                }
+                log.debug('urls added', nb)
 
-			log.debug('add urls', urls.length)
-			redisClient.msetnx.apply(redisClient, urls);
-		})
-		cb(err);
-	});
-}
+                callback(null);
+              });
+
+              log.debug('add urls', _urls.length)
+              redisClient.msetnx.apply(redisClient, _urls);
+            }.bind(this, _urls))
+            _urls = []
+          }
+        }
+        if(_urls.length > 0) {
+            methods.push(function(_urls, callback) {
+
+              _urls.push(function(err, nb) {
+
+                if(typeof(err) !== 'undefined') {
+                  callback(err);
+                  return;
+                }
+
+                if(nb !== 1) {
+                  err = 'not all urls were added';
+                  callback(err);
+                  return;
+                }
+                log.debug('urls added', nb)
+
+                callback(null);
+              });
+
+              log.debug('add urls', _urls.length)
+              redisClient.msetnx.apply(redisClient, _urls);
+            }.bind(this, _urls))
+          }
+
+
+        cb(err)
+
+      })
+
+
+    });
+  }
 
 redisClient.on('ready', function(err) {
 
-	redisClient.flushdb(function(err) {
+  redisClient.flushdb(function(err) {
 
-		if(err !== null) {
-			log.warning('Error while flushing redis');
-			redisClient.end();
-			return;
-		}
+    if(err !== null) {
+      log.warning('Error while flushing redis');
+      redisClient.end();
+      return;
+    }
 
-		populateAsync(function(err) {
+    populateAsync(function(err) {
 
-			if(err !== null) {
-				log.warning(err);
-				redisClient.end();
-				return;
-			}
+      if(typeof(err) !== 'undefined' && err !== null) {
+        console.error(err);
+        redisClient.end();
+        return;
+      }
 
-			async.parallel(methods, function(err) {
+      async.series(methods, function(err) {
 
-				if( typeof (err) === 'undefined') {
-					log.notice('all done')
-				} else {
-					log.warning(err)
-				}
+        if(typeof(err) !== 'undefined' && err !== null) {
+          log.warning(err)
+        } else {
+          log.notice('all done')
 
-				redisClient.end();
+        }
 
-			});
-		})
-	});
+        redisClient.end();
+
+      });
+    })
+  });
 });
