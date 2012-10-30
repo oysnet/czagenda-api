@@ -1,12 +1,12 @@
 
 
-if [ -z $1 ] 
+if [ -z $1 ]
 then
 echo "You must provide dbname as first argument";
 exit 0;
 fi
 
-if [ -z $2 ] 
+if [ -z $2 ]
 then
 echo "You must provide server ip as second argument";
 exit 0;
@@ -45,8 +45,8 @@ curl -XPUT "http://$2:9200/$1/oauth-consumer/_mapping" -d '{
 			"updateDate" : {
 				 "type" : "date"
 			},
-			"user" :  {"type" : "string", "index" : "not_analyzed"},			
-			"name": {				
+			"user" :  {"type" : "string", "index" : "not_analyzed"},
+			"name": {
 					"type" : "multi_field",
 	                "fields" : {
 	                    "name" : {"type" : "string", "index" : "analyzed"},
@@ -76,7 +76,7 @@ curl -XPUT "http://$2:9200/$1/event/_mapping" -d '{
 			"computedReadUsers" : {"type" : "string", "index" : "not_analyzed"},
 			"event" : {
 				"properties": {
-					"title": {				
+					"title": {
 						"type" : "multi_field",
 		                "fields" : {
 		                    "title" : {"type" : "string", "index" : "analyzed"},
@@ -86,16 +86,19 @@ curl -XPUT "http://$2:9200/$1/event/_mapping" -d '{
 					"category" :  {"type" : "string", "index" : "not_analyzed"},
 					"childEvents" :  {"type" : "string", "index" : "not_analyzed"},
 					"parentEvent" :  {"type" : "string", "index" : "not_analyzed"},
-					
-					"where": {				
+
+					"where": {
 						"properties": {
 							"geoPt": {
 								"type": "geoPoint",
 								"store" : true
-							}
+							},
+              "country" : {
+                "type" : "string", "index" : "not_analyzed"
+              }
 						}
 					},
-					"who": {				
+					"who": {
 						"properties": {
 							"href": {
 								"type" : "string", "index" : "not_analyzed"
@@ -111,7 +114,7 @@ curl -XPUT "http://$2:9200/$1/event/_mapping" -d '{
 								 "type" : "date"
 							}
 						}
-					}					
+					}
 				}
 			}
 		}
@@ -127,38 +130,38 @@ curl -XPUT "http://$2:9200/$1/entity/_mapping" -d '{
 			"updateDate" : {
 				 "type" : "date"
 			},
-			
+
 			"entity" : {
 				"properties": {
-					"name": {				
+					"name": {
 						"type" : "multi_field",
 		                "fields" : {
 		                    "name" : {"type" : "string", "index" : "analyzed"},
 		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
 		                }
 					},
-					"firstName": {				
+					"firstName": {
 						"type" : "multi_field",
 		                "fields" : {
 		                    "firstName" : {"type" : "string", "index" : "analyzed"},
 		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
 		                }
 					},
-					"lastName": {				
+					"lastName": {
 						"type" : "multi_field",
 		                "fields" : {
 		                    "lastName" : {"type" : "string", "index" : "analyzed"},
 		                    "untouched" : {"type" : "string", "index" : "not_analyzed"}
 		                }
 					},
-					"where": {				
+					"where": {
 						"properties": {
 							"geoPt": {
 								"type": "geoPoint",
 								"store" : true
 							}
 						}
-					}				
+					}
 				}
 			}
 		}
@@ -174,7 +177,7 @@ curl -XPUT "http://$2:9200/$1/agenda/_mapping" -d '{
 			"updateDate" : {
 				 "type" : "date"
 			},
-			"title": {				
+			"title": {
 				"type" : "multi_field",
                 "fields" : {
                     "title" : {"type" : "string", "index" : "analyzed"},
@@ -196,7 +199,7 @@ curl -XPUT "http://$2:9200/$1/category/_mapping" -d '{
 			"updateDate" : {
 				 "type" : "date"
 			},
-			"title": {				
+			"title": {
 				"type" : "multi_field",
                 "fields" : {
                     "title" : {"type" : "string", "index" : "analyzed"},
@@ -216,7 +219,7 @@ curl -XPUT "http://$2:9200/$1/group/_mapping" -d '{
 			"updateDate" : {
 				 "type" : "date"
 			},
-			"title": {				
+			"title": {
 				"type" : "multi_field",
                 "fields" : {
                     "title" : {"type" : "string", "index" : "analyzed"},
@@ -244,21 +247,21 @@ curl -XPUT "http://$2:9200/$1/user/_mapping" -d '{
 			"lastSeen" : {
 				 "type" : "date"
 			},
-			"login": {				
+			"login": {
 				"type" : "multi_field",
                 "fields" : {
                     "login" : {"type" : "string", "index" : "analyzed"},
                     "untouched" : {"type" : "string", "index" : "not_analyzed"}
                 }
 			},
-			"firstName": {				
+			"firstName": {
 				"type" : "multi_field",
                 "fields" : {
                     "firstName" : {"type" : "string", "index" : "analyzed"},
                     "untouched" : {"type" : "string", "index" : "not_analyzed"}
                 }
 			},
-			"lastName": {				
+			"lastName": {
 				"type" : "multi_field",
                 "fields" : {
                     "lastName" : {"type" : "string", "index" : "analyzed"},
