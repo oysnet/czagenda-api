@@ -213,31 +213,6 @@ exports.getIdsSearchPart = function(field, args) {
 
 }
 
-exports.getNotAnalyzedSearchPart = function(field, args) {
-  var q = null;
-
-  if (args.length > 1) {
-    q = {
-      "or" : []
-    }
-    args.forEach(function(arg) {
-          q.or.push(this.getTextSearchPart(field, [arg]));
-        }.bind(this))
-  } else {
-    q = {
-      "query" : {
-        "field" : {}
-      }
-    }
-    q.query.field[field] = {
-      "query" : args[0],
-      "analyzer" : "not_analyzed"
-    }
-  }
-
-  return q;
-}
-
 exports.getTextSearchPart = function(field, args) {
 	var q = null;
 
@@ -374,10 +349,6 @@ exports.constructQueryFields = function(query, req) {
 			case 'term' :
 				return this.getTermSearchPart(field, query[field].split(/\s*,\s*/));
 				break;
-
-      case 'notAnalyzed' :
-        return this.getNotAnalyzedSearchPart(field, query[field].split(/\s*,\s*/));
-        break;
 
 			case 'text' :
 				return this.getTextSearchPart(field, [query[field]]);

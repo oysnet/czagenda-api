@@ -101,7 +101,7 @@ RestEvent.prototype.searchFields = {
 	'event.when.startTime' : 'datetime',
 	'event.when.endTime' : 'datetime',
 	'event.where.city' : 'text',
-	'event.where.country' : 'notAnalyzed',
+	'event.where.country' : 'text',
 	'event.where.admin_level_2' : 'text',
 	'event.where.admin_level_3' : 'text',
 	'event.where.geoPt' : 'geo',
