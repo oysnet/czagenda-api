@@ -618,6 +618,7 @@ To do an operation on an event that is part of an agenda you must have write acc
 </ul>
 </dd>
 </dl>
+<p>Special values for grantTo to grant to all users or all groups are /user/all and /group/all.</p>
 <p>For example, to grant write privilege to group /group/my-group on an event document</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="gp">&gt;&gt;&gt; </span><span class="n">curl</span><span class="o">-</span><span class="n">oauth</span> <span class="o">--</span><span class="n">domain</span> <span class="n">cz</span><span class="o">-</span><span class="n">api</span> <span class="o">--</span><span class="n">json</span> <span class="o">-</span><span class="n">X</span> <span class="n">POST</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">api</span><span class="o">.</span><span class="n">devel</span><span class="o">.</span><span class="n">czagenda</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">api</span><span class="o">/</span><span class="n">perms</span><span class="o">/</span><span class="n">event</span><span class="o">/</span><span class="n">wg</span> <span class="o">-</span><span class="n">d</span> <span class="s">&#39;{</span>
 <span class="go">                &quot;applyOn&quot; : &quot;/event/b31398e4e0de03ef76bb168e32e41948&quot;,</span>
@@ -1008,7 +1009,7 @@ To do an operation on an event that is part of an agenda you must have write acc
     </div>
     <div class="footer">
         &copy; Copyright 2011, Oxys SARL.
-      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.2.
+      Created using <a href="http://sphinx.pocoo.org/">Sphinx</a> 1.1.3.
     </div>
   </body>
 </html>
