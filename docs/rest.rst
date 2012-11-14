@@ -557,7 +557,7 @@ Permissions types and code are:
 	* read group : rg
 
 
-Special values for grantTo to grant to all users or all groups are /user/all and /group/all.
+Special values for grantTo to grant privileges to all users or to all groups are /user/all and /group/all.
 
 
 For example, to grant write privilege to group /group/my-group on an event document
