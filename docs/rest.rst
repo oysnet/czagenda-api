@@ -643,7 +643,7 @@ This kind of search is applied on fulltext searches and text field searches. So 
 
 4. Boolean operators
 
-	Boolean operators allow terms to be combined through logic operators. Operators supported are AND, "+", OR, NOT and "-" (Boolean operators must be ALL CAPS).
+	Boolean operators allow terms to be combined through logic operators. Operators supported are and, "+", or, not and "-".
 
 	You can use boolean operator to combine term and phrase query.
 
@@ -653,7 +653,7 @@ This kind of search is applied on fulltext searches and text field searches. So 
 
 	is exactly the same as
 
-	>>> q=event OR title
+	>>> q=event or title
 
 	The plus operator define a term as required.
 
@@ -661,15 +661,15 @@ This kind of search is applied on fulltext searches and text field searches. So 
 
 	means that documents MUST contain event and MAY contain title.
 
-	The NOT operator excludes documents that contain the term after NOT.
+	The not operator excludes documents that contain the term after not.
 
 	To search document that contain "first stage" but not "second stage" use the query:
 
-	>>> q="first stage" NOT "second stage"
+	>>> q="first stage" not "second stage"
 
-	The NOT operator cannot be used with just one term. For example, the following search will return no results:
+	The not operator cannot be used with just one term. For example, the following search will return no results:
 
-	>>> q=NOT "second stage"
+	>>> q=not "second stage"
 
 	The "-" or prohibit operator excludes documents that contain the term after the "-" symbol.
 
@@ -679,7 +679,7 @@ This kind of search is applied on fulltext searches and text field searches. So 
 
 	Use parentheses to group clauses to form sub queries. This can be very useful if you want to control the boolean logic for a query.
 
-	>>> q=(second OR first) AND stage
+	>>> q=(second OR first) and stage
 
 
 Date searches
