@@ -186,7 +186,7 @@ User.get = function(options, callback) {
 		if(err === null) {
 			obj.initialData = {
 				login : obj.login,
-				password : obj.passsword
+				password : obj.password
 			}
 		}
 
