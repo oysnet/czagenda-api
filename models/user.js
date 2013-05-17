@@ -25,7 +25,8 @@ function User() {
 	Base.call(this, 'user');
 	
 	this.initialData = {
-		login : null
+		login : null,
+		password : null
 	}
 	
 }
@@ -38,6 +39,7 @@ User.publicWriteAttributes = ['firstName', 'lastName', 'email',  'isActive', 'pa
 
 User.staffWriteAttributes = User.publicWriteAttributes.concat([ 'isStaff', 'isSuperuser', 'login']);
 
+User.hiddenPassword = 'HIDDEN-PASSWORD';
 
 util.inherits(User, Base);
 
@@ -76,7 +78,6 @@ User.prototype._validate = function(callback) {
 		this.validateRegexp('login', '^[\-_\.0-9a-zA-Z]{2,30}$', false);
 	}
 	
-	
 	this.validateString('firstName', true, null, 128);
 	this.validateString('lastName', true, null, 128);
 	this.validateEmail('email');
@@ -112,6 +113,11 @@ User.prototype._preSave = function(callback) {
 		this._data.groups = this._data.id + '/groups';
 		this._data.joinedDate = this._data.createDate;
 	}
+	
+	// restore initial password if it is unchanged
+	if (this.password == User.hiddenPassword) {
+   this._data.password = this.initialData.password;
+  }
 	
 	h = crypto.createHash('md5')
 	h.update(this.email);
@@ -160,13 +166,27 @@ User.prototype._postDel = function(err, next) {
 	
 }
 
+User.prototype.serialize = function(keys) {
+
+  var obj = Base.prototype.serialize.call(this, keys);
+  
+  if (keys.indexOf('password') !== -1) {
+    obj.password = User.hiddenPassword;
+  }
+  
+  return obj;
+  
+}
+
+
 User.get = function(options, callback) {
 	Base.get(options, User, function(err, obj) {
 
 		// save initial agenda value to check perms
 		if(err === null) {
 			obj.initialData = {
-				login : obj.login
+				login : obj.login,
+				password : obj.passsword
 			}
 		}
 
