@@ -845,13 +845,11 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 				"or" : [{
 					terms : {
 						computedReadGroups : req.user.groups
-								.concat(["/group/all"]),
-						"minimum_match" : 1
+								.concat(["/group/all"])
 					}
 				}, {
 					terms : {
-						computedReadUsers : ["/user/all", req.user.id],
-						"minimum_match" : 1
+						computedReadUsers : ["/user/all", req.user.id]
 					}
 				}]
 			}
@@ -862,13 +860,11 @@ RestEvent.prototype._setPermsOnQuery = function(req, q) {
 		var restrictPart = {
 			"or" : [{
 				terms : {
-					computedReadGroups : req.user.groups.concat(["/group/all"]),
-					"minimum_match" : 1
+					computedReadGroups : req.user.groups.concat(["/group/all"])
 				}
 			}, {
 				terms : {
-					computedReadUsers : ["/user/all", req.user.id],
-					"minimum_match" : 1
+					computedReadUsers : ["/user/all", req.user.id]
 				}
 			}]
 		};
