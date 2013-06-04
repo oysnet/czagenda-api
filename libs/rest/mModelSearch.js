@@ -303,7 +303,7 @@ exports.getFulltextSearchPart = function(field, args) {
 
 	query = {
 		"query_string" : {
-			"query" : args,
+			"query" : args[0],
 			"analyze_wildcard" : true,
 			"auto_generate_phrase_queries" : true
 
